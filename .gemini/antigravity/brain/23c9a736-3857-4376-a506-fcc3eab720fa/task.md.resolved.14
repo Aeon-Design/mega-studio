@@ -1,0 +1,33 @@
+# Task: Deep System Overhaul & Recovery 🧠
+
+## Part 1: Active System Enhancement
+**Goal:** Apply "Deep Research & Analysis" to every active agent and skill. Add Intervention Protocols, detailed workflows, and strict operational rules.
+
+- [ ] **Phase 1: Executive & Management Layer** <!-- id: 0 -->
+    - [ ] [ceo.md](file:///C:/Users/Abdullah/.agent/agents/ceo.md) (Already Enhanced, Verify) <!-- id: 1 -->
+    - [ ] [cto.md](file:///C:/Users/Abdullah/.agent/agents/cto.md) (Already Enhanced, Verify) <!-- id: 2 -->
+    - [ ] [hr-director.md](file:///C:/Users/Abdullah/.agent/agents/hr-director.md) (Already Enhanced, Verify) <!-- id: 3 -->
+    - [ ] [product-strategist.md](file:///C:/Users/Abdullah/.agent/agents/product-strategist.md) (Already Enhanced, Verify) <!-- id: 4 -->
+- [ ] **Phase 2: Technical & Specialist Layer** <!-- id: 5 -->
+    - [ ] [tech-lead.md](file:///C:/Users/Abdullah/.agent/agents/tech-lead.md) <!-- id: 6 -->
+    - [ ] [mobile-developer.md](file:///C:/Users/Abdullah/.agent/agents/mobile-developer.md) <!-- id: 7 -->
+    - [ ] [backend-specialist.md](file:///C:/Users/Abdullah/.agent/agents/backend-specialist.md) <!-- id: 8 -->
+    - [ ] [frontend-specialist.md](file:///C:/Users/Abdullah/.agent/agents/frontend-specialist.md) <!-- id: 9 -->
+    - [ ] [qa-lead.md](file:///C:/Users/Abdullah/.agent/agents/qa-lead.md) <!-- id: 10 -->
+    - [ ] [security-auditor.md](file:///C:/Users/Abdullah/.agent/agents/security-auditor.md) <!-- id: 11 -->
+    - [ ] [head-of-ux.md](file:///C:/Users/Abdullah/.agent/agents/head-of-ux.md) <!-- id: 12 -->
+- [ ] **Phase 3: Skill System Refinement** <!-- id: 13 -->
+    - [ ] Analyze [clean-code.md](file:///C:/Users/Abdullah/.gemini/antigravity/global_workflows/skills/studio/core/clean-code.md) <!-- id: 14 -->
+    - [ ] Analyze [architecture.md](file:///C:/Users/Abdullah/.gemini/antigravity/global_workflows/skills/studio/core/architecture.md) <!-- id: 15 -->
+    - [ ] Analyze Flutter Skills (`flutter-foundations`, `state-management`) <!-- id: 16 -->
+
+## Part 2: Backup Recovery & Integration
+**Goal:** Identify missing agents in backups, modernize them, and reintegrate.
+
+- [/] **Phase 4: Gap Analysis** <!-- id: 17 -->
+    - [/] Compare Active vs Backup Agents <!-- id: 18 -->
+    - [ ] Compare Active vs Backup Skills <!-- id: 19 -->
+- [ ] **Phase 5: Restoration & Upgrade** <!-- id: 20 -->
+    - [ ] Restore & Upgrade High-Value Missing Agents <!-- id: 21 -->
+    - [ ] Restore & Upgrade High-Value Missing Skills <!-- id: 22 -->
+    - [ ] Update [CORE.md](file:///C:/Users/Abdullah/.gemini/antigravity/CORE.md) with new additions <!-- id: 23 -->

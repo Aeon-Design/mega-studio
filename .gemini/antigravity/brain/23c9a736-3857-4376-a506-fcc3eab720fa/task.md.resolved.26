@@ -1,0 +1,47 @@
+# Task: Deep System Overhaul & Recovery 🧠
+
+## Part 1: Active System Enhancement
+**Goal:** Apply "Deep Research & Analysis" to every active agent and skill. Add Intervention Protocols, detailed workflows, and strict operational rules.
+
+- [x] **Phase 1: Executive & Management Layer** <!-- id: 0 -->
+    - [x] [ceo.md](file:///C:/Users/Abdullah/.agent/agents/ceo.md) (Deep Upgrade) <!-- id: 1 -->
+    - [x] [cto.md](file:///C:/Users/Abdullah/.agent/agents/cto.md) (Deep Upgrade) <!-- id: 2 -->
+    - [x] [hr-director.md](file:///C:/Users/Abdullah/.agent/agents/hr-director.md) (Deep Upgrade) <!-- id: 3 -->
+    - [x] [product-strategist.md](file:///C:/Users/Abdullah/.agent/agents/product-strategist.md) (Deep Upgrade) <!-- id: 4 -->
+- [x] **Phase 2: Technical & Specialist Layer** <!-- id: 5 -->
+    - [x] [tech-lead.md](file:///C:/Users/Abdullah/.agent/agents/tech-lead.md) <!-- id: 6 -->
+    - [x] [mobile-developer.md](file:///C:/Users/Abdullah/.agent/agents/mobile-developer.md) <!-- id: 7 -->
+    - [x] [backend-specialist.md](file:///C:/Users/Abdullah/.agent/agents/backend-specialist.md) <!-- id: 8 -->
+    - [x] [frontend-specialist.md](file:///C:/Users/Abdullah/.agent/agents/frontend-specialist.md) <!-- id: 9 -->
+    - [x] [qa-lead.md](file:///C:/Users/Abdullah/.agent/agents/qa-lead.md) <!-- id: 10 -->
+    - [x] [security-auditor.md](file:///C:/Users/Abdullah/.agent/agents/security-auditor.md) <!-- id: 11 -->
+    - [x] [head-of-ux.md](file:///C:/Users/Abdullah/.agent/agents/head-of-ux.md) <!-- id: 12 -->
+- [x] **Phase 3: Skill System Refinement** <!-- id: 13 -->
+    - [x] Analyze [clean-code.md](file:///C:/Users/Abdullah/.gemini/antigravity/global_workflows/skills/studio/core/clean-code.md) <!-- id: 14 -->
+    - [x] Analyze [architecture.md](file:///C:/Users/Abdullah/.gemini/antigravity/global_workflows/skills/studio/core/architecture.md) <!-- id: 15 -->
+    - [x] Analyze Flutter Skills (`flutter-foundations`, `state-management`) <!-- id: 16 -->
+
+## Part 2: Backup Recovery & Integration
+**Goal:** Identify missing agents in backups, modernize them, and reintegrate.
+
+- [x] **Phase 4: Gap Analysis** <!-- id: 17 -->
+    - [x] Compare Active vs Backup Agents <!-- id: 18 -->
+    - [x] Compare Active vs Backup Skills <!-- id: 19 -->
+- [x] **Phase 5: Restoration & Upgrade** <!-- id: 20 -->
+    - [x] Restore & Upgrade High-Value Missing Agents <!-- id: 21 -->
+    - [x] Restore & Upgrade High-Value Missing Skills <!-- id: 22 -->
+    - [x] Update [CORE.md](file:///C:/Users/Abdullah/.gemini/antigravity/CORE.md) with new additions <!-- id: 23 -->
+- [x] **Phase 6: New Specialist Recruitment** <!-- id: 24 -->
+    - [x] Create [store-policy-expert.md](file:///C:/Users/Abdullah/.agent/agents/store-policy-expert.md) (Apple/Google Rules) <!-- id: 25 -->
+    - [x] Create [android-platform-specialist.md](file:///C:/Users/Abdullah/.agent/agents/android-platform-specialist.md) (Fragmentation/OEMs) <!-- id: 26 -->
+    - [x] Register in [CORE.md](file:///C:/Users/Abdullah/.gemini/antigravity/CORE.md) <!-- id: 27 -->
+- [x] **Phase 7: Media Division Expansion** <!-- id: 28 -->
+    - [x] Create [youtube-strategist.md](file:///C:/Users/Abdullah/.agent/agents/youtube-strategist.md) (The "100k Agent") <!-- id: 29 -->
+    - [x] **Phase 7: Media Division Expansion** <!-- id: 28 -->
+    - [x] Create [youtube-strategist.md](file:///C:/Users/Abdullah/.agent/agents/youtube-strategist.md) (The "100k Agent") <!-- id: 29 -->
+    - [x] Register in [CORE.md](file:///C:/Users/Abdullah/.gemini/antigravity/CORE.md) (Level 3) <!-- id: 30 -->
+- [ ] **Phase 8: Operation 5x (Hyper-Scaling)** <!-- id: 31 -->
+    - [ ] **Batch 1: The C-Suite (Visionary Level)** (CEO, CTO, HR, Product) <!-- id: 32 -->
+    - [ ] **Batch 2: The Core Tech (Principal Level)** (Tech Lead, Mobile, Backend, Frontend) <!-- id: 33 -->
+    - [ ] **Batch 3: The Specialists (Elite Level)** (QA, Security, UX, DevOps) <!-- id: 34 -->
+    - [ ] **Batch 4: The Niche Experts (Grandmaster Level)** (Policy, Android, YouTube, DB, Game, Perf) <!-- id: 35 -->

@@ -1,0 +1,37 @@
+# Sprint 11: Major Feature Updates
+
+## 1. Zikir History Display
+- [ ] Show last 3 zikir records in Home screen tespih area
+
+## 2. Quran Tabs Scroll
+- [ ] Make Surah/Juz tabs scroll away with search bar
+
+## 3. Qibla Icon Missing
+- [ ] Add Kaaba/Qibla icon next to degree display
+
+## 4. Surah Navigation Fix
+- [ ] Fix Kuran and Juz not opening issue
+
+## 5. Daily Verse Improvements
+- [ ] Add share functionality to daily verse
+- [ ] Add random verse refresh button
+
+## 6. Remove See All Buttons
+- [ ] Remove "See all" from Categories section
+- [ ] Remove "See all" from Quick Access section
+
+## 7. Islam 101 Content
+- [ ] Fill Introduction to Islam lessons
+- [ ] Fill other module lessons
+
+## 8. City Selection
+- [ ] Add worldwide city database for location selection
+
+## 9. Remove Asr Calculation Setting
+- [ ] Remove Shafi/Hanafi Asr option from settings
+
+## 10. Quran Bookmark Icon
+- [ ] Add bookmark icon to Quran screen AppBar
+
+## 11. Learn Screen Navigation
+- [ ] Replace Basics category with Bookmark icon

@@ -1,0 +1,16 @@
+# Task: Fix Remaining Audit Issues ✅
+
+## Medium Priority ✅
+- [x] Fix PrayerCard navigation stub
+- [x] Fix Learning screen tiles onTap
+- [x] Fix Names detail Listen/Share buttons
+- [x] Fix Hadith share button
+- [x] Fix Hadith shuffle button
+- [x] Fix Islam101 module navigation
+
+## Low Priority (Cleanup) ✅
+- [x] Delete city_search_screen.dart
+- [x] Fix withOpacity deprecation warnings (50+ instances)
+
+## Verification ✅
+- [x] Build APK and verify

@@ -1,0 +1,51 @@
+# Implementation Plan - Macro Blueprint Indicator
+
+The user wants to implement a comprehensive technical analysis tool based on a specific "Macro" investing tutorial. This tool focuses on high-timeframe trends, liquidity cycles, and weekly operating ranges.
+
+## User Review Required
+> [!IMPORTANT]
+> **Skills Missing**: The project [.agent](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/.agent) folder does not contain a `skills` subdirectory. I will proceed using the internal expertise of the **AlgoTrade Specialist** and the rules defined in [algotrade-specialist.md](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/.agent/agents/algotrade-specialist.md).
+
+## Proposed Changes
+
+### New Indicator: `Macro_Blueprint.pine`
+I will create a brand new indicator that combines the specific logic requested.
+
+#### [NEW] [Macro_Blueprint.pine](file:///c:/Users/Abdullah/Projects/gösterge/Macro_Blueprint.pine)
+- **High Timeframe Moving Averages**:
+    - 200 Daily SMA (The "Trend Baseline")
+    - 50 Weekly SMA (The "Bull Support")
+    - 100 Weekly SMA (The "Deep Value")
+    - 200 Weekly SMA (The "Cycle Bottom")
+- **Cycle Fibonacci Levels (The "Money Zones")**:
+    - **Logic**: Auto-detect Major Cycle High/Low (Highest/Lowest of last 200-300 bars on Weekly).
+    - **Levels**: 0.382, 0.5 (EQ), 0.618 (Golden Pocket).
+    - **Extensions**: 1.618 etc. if requested, but focused on Retracements first.
+- **Weekly Operating System**:
+    - **Previous Week High/Low (PWH/PWL)**: Auto-plotted.
+    - **Monday Range**:
+        - Capture Monday's High and Low.
+        - Calculate Monday EQ (0.5).
+        - Plot Monday Extensions (Standard Deviations or Fib keys).
+- **Anchored VWAP**:
+    - Input for specific Start Time (as requested "6 Oct 2025" in text, will make it user-configurable).
+- **"Heatmap" Dashboard**:
+    - A table widget showing the distance/status of Price relative to all these keys:
+        - "200W SMA: +15% (Bullish)"
+        - "Weekly Range: Inside EQ"
+        - "Monday Bias: Bearish (< EQ)"
+
+## Verification Plan
+
+### Automated Tests
+- **Pine Script Compiler**: Parse check to ensure no version 6 errors.
+- **Visual Validation**:
+    - Apply to `BTCUSDT` (as per video context).
+    - Verify MAs match standard TradingView built-ins.
+    - Verify Monday Range appears correctly on Intraday charts.
+
+### Manual Verification
+- **User Action**: Load the script on TradingView.
+- **Check**:
+    - Does the dashboard populate?
+    - Do the "Weekly" MAs show up correctly even on the Daily/4H chart? (Using `request.security`).

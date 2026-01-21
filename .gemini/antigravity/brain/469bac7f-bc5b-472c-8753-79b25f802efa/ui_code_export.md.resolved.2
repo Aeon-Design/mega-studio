@@ -1,0 +1,118 @@
+# AdhanLife UI Implementation Export (Revised Sunrise Serenity)
+**Status:** Build Successful (APK Ready)
+**Theme:** Sunrise Serenity (Responsive Dark/Light Mode)
+
+## 1. Theme Configuration (AppColors)
+**File:** [lib/core/theme/app_colors.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/theme/app_colors.dart)
+Includes Dark Mode variants and restored compatibility aliases.
+
+```dart
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Sunrise Serenity Ana Paleti
+  static const Color primary = Color(0xFFE07A5F); // Soft Terracotta
+  static const Color primaryDark = Color(0xFFC9654D);
+  static const Color primaryLight = Color(0xFFF2CC8F); // Sun yellow
+  static const Color primaryContainer = primaryLight; 
+  
+  static const Color secondary = Color(0xFF3D405B); // Deep Teal
+  static const Color background = Color(0xFFF4F1DE); // Sandy Beige
+
+  // Surfaces
+  static const Color surface = Colors.white;
+  static const Color surfaceTeal = Color(0xFF3D405B);
+
+  // Indicators
+  static const Color indicatorPassed = Color(0xFFBDBDBD);
+  static const Color indicatorActive = Color(0xFFE07A5F);
+  static const Color indicatorFuture = Color(0xFF81B29A); // Sage Green
+  
+  // Scaffold Backgrounds
+  static const Color scaffoldBackground = background;
+  static const Color scaffoldBackgroundDark = Color(0xFF1E1E1E); // Dark Grey
+
+  // Compatibility / Legacy Support
+  static const Color charcoal = secondary;
+  static const Color backgroundLight = background;
+  static const Color backgroundDark = secondary;
+  static const Color surfaceLight = surface;
+  static const Color surfaceDark = secondary;
+  static const Color gold = Color(0xFFF2CC8F);
+  static const Color info = Color(0xFF3D405B); 
+  static const Color skyBlue = Color(0xFF81B29A);
+
+  // ... (Legacy aliases deepBlue, turquoise etc.)
+}
+```
+
+## 2. App Theme (Dark Mode Logic)
+**File:** [lib/core/theme/app_theme.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/theme/app_theme.dart)
+Enforces White text in Dark Mode and Deep Teal in Light Mode.
+
+```dart
+  // LIGHT THEME
+  static ThemeData get light {
+    return ThemeData(
+      // ...
+      scaffoldBackgroundColor: AppColors.backgroundLight,
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+        // ... all textPrimary
+      ),
+      // ...
+    );
+  }
+
+  // DARK THEME
+  static ThemeData get dark {
+    return ThemeData(
+      // ...
+      scaffoldBackgroundColor: const Color(0xFF121212), // True Dark
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        // ... all white
+      ),
+      // ...
+    );
+  }
+```
+
+## 3. Next Prayer Card (Revised)
+**File:** [lib/features/home/presentation/widgets/next_prayer_card.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/next_prayer_card.dart)
+Simplified layout, no overlapping sun, interactive buttons.
+
+```dart
+// (Key changes in build method)
+                // Timer Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) => Transform.scale(
+                        scale: _pulseAnimation.value,
+                        child: Container(
+                          // ... translucent black container
+                          child: Row(
+                            children: [
+                              const Icon(Icons.timer_outlined, color: Colors.white),
+                              Text(remainingTime, style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+```
+
+## 4. Home Screen
+**File:** [lib/features/home/presentation/screens/home_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/screens/home_screen.dart)
+Uses `Theme.of(context).scaffoldBackgroundColor`.
+
+```dart
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, 
+      // ...
+```

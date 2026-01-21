@@ -1,0 +1,45 @@
+# Macro Blueprint Indicator - Walkthrough
+
+I have created a new TradingView indicator [Macro_Blueprint.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Blueprint.pine) that consolidates the entire "Macro Operating System" described in the transcript. This is your command center for high-timeframe analysis.
+
+## Key Features
+
+### 1. High Timeframe Ribbons (The Trend)
+Automatically plots the most critical Institutional Moving Averages, regardless of what timeframe you are viewing (e.g., viewing 15m chart but seeing Weekly 200 SMA).
+- **Daily 200 SMA (Orange)**: The global baseline.
+- **Weekly 50 SMA (Green)**: The bull market support band.
+- **Weekly 200 SMA (Red)**: The "Cycle Bottom" or "Death Line".
+
+### 2. Cycle Fibonacci (Money Zones)
+- Automatically finds the Cycle High and Low over the last `N` weeks (Default: 200 weeks).
+- Draws the **Golden Pocket (0.618 - 0.66)** and **EQ (0.5)** levels.
+- These are your major "Buy/Sell" zones for long-term positions.
+
+### 3. Weekly Operating System
+- **Monday Range**: Automatically captures Monday's High & Low.
+    - Draws the **Monday EQ** (Midpoint).
+    - Draws **Extensions** (Standard Deviation targets) for the rest of the week.
+- **Previous Week High/Low**: Auto-plotted circles to show simple weekly pivots.
+
+### 4. Anchored VWAP
+- A dedicated Anchored VWAP tool built-in.
+- **Default Date**: Nov 18, 2024 (Adjustable in settings).
+- Use this to track the "average price" since a specific major event (like the Cycle Low).
+
+### 5. Macro Heatmap Dashboard
+A panel in the bottom-right corner that gives you an instant "Health Check" of the asset.
+- **Bullish/Bearish Status**: Based on price position relative to key MAs.
+- **Distance**: Shows how far (%) price is from these key levels (e.g., "+15% above 200W SMA").
+
+## How to Use
+1.  Open **TradingView**.
+2.  Open the **Pine Editor** tab at the bottom.
+3.  Copy/Paste the code from [Macro_Blueprint.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Blueprint.pine).
+4.  Click **"Add to Chart"**.
+5.  **Adjust Inputs**:
+    - Go to Settings (Gear Icon) on the indicator.
+    - Change **"Anchor Year/Month/Day"** to match the specific low you want to track (e.g., the recent Bear Market Bottom).
+
+## Visual Guide
+> [!TIP]
+> **Pro Tip**: Use this indicator on a **4-Hour** or **Daily** timeframe for the best clarity. The lines are visible on lower timeframes (15m), but they are best used for "Big Picture" bias before entering trades with the *Monster Strategy*.

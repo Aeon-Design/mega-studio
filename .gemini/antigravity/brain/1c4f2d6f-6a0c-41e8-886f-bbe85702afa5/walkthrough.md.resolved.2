@@ -1,0 +1,42 @@
+# Macro Strategy (Auto-Bot) - Walkthrough
+
+I have upgraded the blueprint into a fully automated **Strategy Engine** ([Macro_Strategy.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Strategy.pine)). You can now backtest the "Macro Operating System" and even automate it using alerts.
+
+## New Features
+### 1. Automated Backtester
+-   **Win/Loss Tracker**: The dashboard now shows your Realized PnL, Win Rate, and Total Trades.
+-   **Date Range**: Select a specific Start Date (Default: Jan 1 2024) to test recent performance.
+
+### 2. Strategy Logic (Monday Operations)
+-   **Trend Filter**: The bot only takes **Longs** if price is above the Daily 200 SMA & Weekly 50 SMA.
+-   **Monday Breakout**:
+    -   **Long**: Price breaks above Monday High.
+    -   **Short**: Price breaks below Monday Low.
+-   **Risk Management**:
+    -   **Stop Loss**: Auto-set at the opposite side of the Monday Range.
+    -   **Take Profit**: Calculated based on your R:R Input (Default: 1:2).
+    -   **Position Sizing**: Dynamically calculates lot size to risk exactly 1% (or your setting) of equity per trade.
+
+## How to Use
+1.  **Paste & Save**: Copy [Macro_Strategy.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Strategy.pine) into Pine Editor and save it.
+2.  **Add to Chart**: It will load as a "Strategy" (you will see Buy/Sell arrows).
+3.  **Check Results**: Open the **"Strategy Tester"** tab at the bottom of TradingView to see the equity curve.
+4.  **Adjust Inputs**:
+    -   **Risk Per Trade**: Set how much capital to risk (e.g., 1%).
+    -   **Target R:R**: Set your reward ratio (e.g., 2.0 for 2x return).
+
+> [!CAUTION]
+> **Repainting Safety**: This strategy strictly avoids "Future Leak" (Repainting). The Moving Averages are calculated on *closed* bars. This means the backtest results you see are realistic and trustworthy.
+
+## Automated Alerts (Bot Setup)
+This strategy is "Bot Ready". It generates JSON payloads for every Buy/Sell action.
+
+1.  **Create Alert**: Click the "Alert" icon on the strategy tester panel.
+2.  **Message Field**: In the message box, strictly type: `{{strategy.order.alert_message}}`.
+3.  **Webhook**: Paste your 3Commas/Binance webhook URL.
+
+**Payload Format**:
+```json
+{"action": "buy", "symbol": "BTCUSDT", "price": "95000.50"}
+```
+

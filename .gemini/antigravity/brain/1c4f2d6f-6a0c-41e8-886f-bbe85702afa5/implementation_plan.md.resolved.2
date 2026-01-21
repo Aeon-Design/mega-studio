@@ -1,0 +1,58 @@
+# Implementation Plan: Macro Math Engine (Project Titan) 🏛️
+
+**Objective**: Convert the "Macro" video concepts into a rigid, mathematically perfect trading engine that mimics [Monster_Scanner.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Scanner.pine) but for high-timeframe macro cycles.
+
+## 1. Mathematical Axioms (The "Truth")
+
+### A. The Trend Framework (The River)
+*Video Logic: "Price is noise, MAs are truth."*
+1.  **Bull Market**: Price > Daily 200 SMA AND Price > Weekly 50 SMA.
+2.  **Bear Market**: Price < Daily 200 SMA AND Price < Weekly 50 SMA.
+3.  **Value Zone (Buy Dip)**: Price between Weekly 50 SMA and Weekly 100 SMA.
+4.  **Generational Bottom**: Price at Weekly 200 SMA (The "Death Line").
+
+### B. The Cycle Fibonacci (The Grid)
+*Video Logic: "Every cycle respects the Golden Pocket."*
+1.  **Pivot Detection**: `ta.highest(200)` and `ta.lowest(200)` on Weekly timeframe.
+2.  **Retracement Levels**:
+    -   **EQ (0.5)**: The "Fair Value".
+    -   **Golden Pocket (0.618 - 0.66)**: The "Reload Zone".
+3.  **Extension Levels** (for Targets):
+    -   **1.618**: The "Eupyoria" Target.
+    -   **2.618**: The "Blow-off Top".
+
+### C. The Weekly Operating System (Monday Range)
+*Video Logic: "Monday is manipulation. Tuesday reveals truth."*
+1.  **Monday Range**: High/Low of Monday (00:00 - 23:59 UTC).
+2.  **Eq**: (Monday High + Monday Low) / 2.
+3.  **Extensions**:
+    -   **Range Size**: `R = High - Low`
+    -   **Targets**: `High + R` (1.0 Ext), `High + 2R` (2.0 Ext).
+    -   **Stop Hunting**: "Fakeout" detection (Price breaks Monday High, then closes below it = Short Signal).
+
+## 2. Architecture: The "Monster" Structure
+We will use the **Array-Based Scanner** pattern from [Monster_Scanner.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Scanner.pine).
+
+### The "Screener" Logic (Loop)
+```pine
+// Pseudo-Code Concept
+for symbol in [BTC, ETH, SOL, SPX, NASDAQ, GOLD...]
+    // 1. Fetch Data (Tuple Packing to save requests)
+    [d200, w50, w200, mon_h, mon_l] = request_data(symbol)
+
+    // 2. Compute State
+    score = 0
+    if price > d200 and price > w50 -> score += 10 (Trend)
+    if price < mon_eq -> score -= 5 (Weakness)
+    if price inside Golden_Pocket -> score += 50 (Setup!)
+
+    // 3. Render Dashboard
+    table.cell(symbol, score, bias)
+```
+
+## 3. Deliverables
+1.  `Macro_Math_Engine.pine`: The single-chart strategy tool (Backtester).
+2.  `Macro_Scanner.pine`: The multi-ticker dashboard (Heatmap).
+
+## CEO Approval
+> "This isn't just an indicator. It's a Hedge Fund on a Laptop. Approved." - CEO

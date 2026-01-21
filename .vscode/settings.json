@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/.agent": false,
+        "**/.gemini": false
+    },
+    "search.exclude": {
+        "**/.agent": false,
+        "**/.gemini": false
+    },
+    "files.watcherExclude": {
+        "**/.agent": false,
+        "**/.gemini": false
+    }
+}

@@ -1,0 +1,21 @@
+# Sprint 12: Content and Navigation Fixes
+
+## Completed ✅ (6/7)
+
+| # | Issue | Fix |
+|---|-------|-----|
+| 1 | Juz Navigation | Uses negative ID (-juzNumber) |
+| 2 | Prayer Arabic | All 10 positions fixed |
+| 3 | More Duas | Expanded 7→25 items, 9 categories |
+| 4 | Ayatul Kursi | Routes to Surah 2:255 |
+| 5 | Adhkar Categories | Filter via queryParams |
+| 7 | Daily Verse Refresh | Uses microsecondsSinceEpoch |
+
+## Pending (1/7)
+
+| # | Issue | Status |
+|---|-------|--------|
+| 6 | Islam 101 Lessons | Needs lesson screen |
+
+## Build ✅
+- `app-debug.apk` ready

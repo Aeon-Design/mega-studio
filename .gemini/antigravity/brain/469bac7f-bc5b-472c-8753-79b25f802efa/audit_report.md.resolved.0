@@ -1,0 +1,150 @@
+# 🔎 AdhanLife App Audit Report
+
+**Audit Date:** 2026-01-15
+**Health Score:** 72/100
+**Auditor Persona:** The Inspector (App Auditor)
+
+---
+
+## Executive Summary
+
+| Metric | Count |
+|--------|-------|
+| **Total Screens** | 28 |
+| **Feature Modules** | 9 |
+| **Core Services** | 15 |
+| **TODO Comments** | 22 |
+| **FIXME Comments** | 0 |
+
+**Overall Status:** The application is feature-rich and functional for its core purpose (Prayer Times, Qibla, Quran reading). However, several secondary features (audio playback, sharing, favorites) are incomplete stubs. The Premium/IAP flow has basic structure but lacks server-side verification.
+
+---
+
+## Feature Inventory
+
+| Screen | Module | Status | Notes |
+|--------|--------|--------|-------|
+| **HomeScreen** | home | ✅ Working | Prayer times display, location header, Zikr counter |
+| **QiblaScreen** | qibla | ✅ Working | Compass, direction to Makkah, calibration |
+| **QuranScreen** | quran | ✅ Working | Surah/Juz list, search, navigation |
+| **SurahReaderScreen** | quran | ⚠️ Partial | Reader works, but Share/Audio stubs |
+| **BookmarksScreen** | quran | ✅ Working | Save/delete bookmarks |
+| **LearningScreen** | learning | ✅ Working | Content hub with navigation tiles |
+| **DuasScreen** | learning | ⚠️ Partial | List works, Favorites/Audio stubs |
+| **NamesScreen** | learning | ⚠️ Partial | Names list, Audio stub |
+| **Islam101Screen** | learning | ⚠️ Partial | Module list, navigation stub |
+| **HadithScreen** | learning | ⚠️ Partial | Random hadith stub |
+| **TasbihScreen** | learning | ✅ Working | Counter functionality |
+| **QuizScreen** | learning | ✅ Working | Quiz logic implemented |
+| **ZakatCalculatorScreen** | learning | ✅ Working | Calculation logic |
+| **HijriCalendarScreen** | learning | ✅ Working | Calendar display |
+| **SettingsScreen** | settings | ✅ Working | All navigation works |
+| **NotificationSettingsScreen** | settings | ✅ Working | Per-prayer toggles |
+| **LocationSelectionScreen** | settings | ✅ Working | GPS & manual selection |
+| **LanguageScreen** | settings | ✅ Working | Language switching |
+| **QuranSettingsScreen** | settings | ⚠️ Partial | Persistence TODO |
+| **OnboardingScreen** | onboarding | ⚠️ Partial | Permissions work, save state stub |
+| **PremiumScreen** | premium | ⚠️ Partial | UI complete, IAP verification stub |
+| **PrayerTrackerScreen** | prayer_times | ✅ Working | Tracking logic |
+
+---
+
+## Button Map (Critical Actions)
+
+| Location | Button/Action | Handler | Status |
+|----------|---------------|---------|--------|
+| [NextPrayerCard](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/next_prayer_card.dart#11-26) | "Adhan" | SnackBar Mock | ⚠️ Stub |
+| [NextPrayerCard](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/next_prayer_card.dart#11-26) | "Remind" | SnackBar Mock | ⚠️ Stub |
+| [NextPrayerCard](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/next_prayer_card.dart#11-26) | "Share" | SnackBar Mock | ⚠️ Stub |
+| [SurahReaderScreen](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/quran/presentation/screens/surah_reader_screen.dart#13-24) | Share Surah | `// TODO` | ❌ Stub |
+| [SurahReaderScreen](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/quran/presentation/screens/surah_reader_screen.dart#13-24) | Play Audio | `// TODO` | ❌ Stub |
+| [DuasScreen](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/learning/presentation/screens/duas_screen.dart#10-16) | Favorite | `// TODO` | ❌ Stub |
+| [DuasScreen](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/learning/presentation/screens/duas_screen.dart#10-16) | Play Audio | `// TODO` | ❌ Stub |
+| `NamesScreen` | Play All | `// TODO` | ❌ Stub |
+| `SettingsScreen` | Rate App | Empty [onTap](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/notification_service.dart#52-57) | ⚠️ Stub |
+| [PrayerCard](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/prayer_card.dart#9-28) | onTap | `// TODO` navigate | ⚠️ Stub |
+| [OnboardingScreen](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/onboarding/presentation/screens/onboarding_screen.dart#11-17) | Complete | `// TODO` save state | ⚠️ Stub |
+
+---
+
+## Core Services Status
+
+| Service | File | Status | Notes |
+|---------|------|--------|-------|
+| **NotificationService** | [notification_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/notification_service.dart) | ✅ Functional | Schedules per-prayer alerts, TODO: deep link on tap |
+| **PurchaseService** | [purchase_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/purchase_service.dart) | ⚠️ Partial | IAP flow works, TODO: server-side verification |
+| **StorageService** | [storage_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/storage_service.dart) | ✅ Functional | Hive-based, full CRUD for settings |
+| **QuranService** | [quran_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/quran_service.dart) | ✅ Functional | Loads surah data, translations |
+| **BookmarkService** | [bookmark_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/bookmark_service.dart) | ✅ Functional | Verse bookmarks save/load |
+| **QiblaService** | [qibla_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/qibla_service.dart) | ✅ Functional | Calculates direction |
+| **LocationService** | [location_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/location_service.dart) | ✅ Functional | GPS location |
+| **PermissionService** | [permission_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/permission_service.dart) | ✅ Functional | Handles all permissions |
+| **QuizService** | [quiz_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/quiz_service.dart) | ✅ Functional | Quiz logic |
+| **AudioService** | [audio_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/audio_service.dart) | ⚠️ Unused | Service exists, not called |
+| **QuranAudioService** | [quran_audio_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/quran_audio_service.dart) | ⚠️ Unused | Service exists, not called |
+| **DailyVerseService** | [daily_verse_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/daily_verse_service.dart) | ✅ Functional | Daily verse logic |
+| **ProgressService** | [progress_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/progress_service.dart) | ✅ Functional | Tracks user progress |
+| **WidgetService** | [widget_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/widget_service.dart) | ⚠️ Unused | Home widget integration stub |
+
+---
+
+## Issue Log (Prioritized)
+
+| # | Severity | Description | File | Line |
+|---|----------|-------------|------|------|
+| 1 | 🔴 Critical | IAP purchase verification is stubbed (trusts client) | [purchase_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/purchase_service.dart) | 128 |
+| 2 | 🟡 Medium | Onboarding does not persist completion state | [onboarding_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/onboarding/presentation/screens/onboarding_screen.dart) | 163 |
+| 3 | 🟡 Medium | Surah share functionality not implemented | [surah_reader_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/quran/presentation/screens/surah_reader_screen.dart) | 250, 271 |
+| 4 | 🟡 Medium | Verse audio playback not implemented | [surah_reader_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/quran/presentation/screens/surah_reader_screen.dart) | 275 |
+| 5 | 🟡 Medium | Dua favorites not implemented | [duas_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/learning/presentation/screens/duas_screen.dart) | 172 |
+| 6 | 🟡 Medium | Dua/Names audio not implemented | [duas_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/learning/presentation/screens/duas_screen.dart), [names_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/learning/presentation/screens/names_screen.dart) | 180, 26 |
+| 7 | 🟢 Low | Notification tap navigation stub | [notification_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/notification_service.dart) | 54 |
+| 8 | 🟢 Low | Quran settings persistence stub | [quran_settings_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/settings/presentation/screens/quran_settings_screen.dart) | 31 |
+| 9 | 🟢 Low | Home screen notification icon stub | [home_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/screens/home_screen.dart) | 48 |
+| 10 | 🟢 Low | Rate App button is empty | [settings_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/settings/presentation/screens/settings_screen.dart) | 61 |
+
+---
+
+## Action Items (Prioritized)
+
+> [!IMPORTANT]
+> **Phase 1: Critical Fixes (Security/UX)**
+
+1. [ ] **Implement IAP server-side verification** ([purchase_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/purchase_service.dart)) — Critical for production
+2. [ ] **Save onboarding completion state** ([onboarding_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/onboarding/presentation/screens/onboarding_screen.dart)) — Prevents re-showing onboarding
+
+> [!WARNING]
+> **Phase 2: Feature Completion (User Value)**
+
+3. [ ] **Implement Share functionality** (Surah, Verse, NextPrayerCard via `share_plus`)
+4. [ ] **Implement Audio playback** (Quran recitation, Duas, 99 Names via `QuranAudioService`)
+5. [ ] **Implement Favorites system** (Duas, Verses using [StorageService](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/storage_service.dart#53-343))
+
+> [!NOTE]
+> **Phase 3: Polish (Low Priority)**
+
+6. [ ] **Wire Rate App button** to Store URL
+7. [ ] **Persist Quran reader settings** (font size, translation)
+8. [ ] **Implement notification deep-links** to specific screens
+9. [ ] **Remove or use dead services** (`AudioService`, `WidgetService`)
+
+---
+
+## Dead Code / Unused Services
+
+| Item | Location | Recommendation |
+|------|----------|----------------|
+| `AudioService` | [core/services/audio_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/audio_service.dart) | Wire to Duas/Names screens or delete |
+| `QuranAudioService` | [core/services/quran_audio_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/quran_audio_service.dart) | Wire to SurahReaderScreen or delete |
+| `WidgetService` | [core/services/widget_service.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/services/widget_service.dart) | Implement Home Widget or delete |
+| `CitySearchScreen` | `settings/presentation/screens/city_search_screen.dart` | Appears deprecated in favor of `LocationSelectionScreen` |
+
+---
+
+## Strategic Recommendations (CEO Perspective)
+
+1. **Moat Building:** Audio features (recitation, Duas) are a strong differentiator. Prioritize them over purely visual polish.
+2. **Conversion Funnel:** The Premium screen exists but has weak calls to action. Consider a "Free Trial" or "Unlock 5 Features" flow.
+3. **Retention:** The Zikr counter and prayer tracker are good engagement loops. Consider adding streak/gamification.
+4. **Growth:** "Share Verse" is a viral loop opportunity. Implement it properly with branded share cards.
+

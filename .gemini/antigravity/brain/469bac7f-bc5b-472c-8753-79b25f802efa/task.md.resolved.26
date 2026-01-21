@@ -1,0 +1,33 @@
+# Task: UI/UX Issues Fix
+
+## Issue 1: Light Mode Nav Icon ✅
+- [x] Fix selected menu icon visibility in light mode
+
+## Issue 2: Category Emojis ✅
+- [x] Fix missing emojis in Categories grid (showing ??)
+
+## Issue 3: Quick Access ✅
+- [x] Implement Ayatul Kursi navigation
+- [x] Implement Morning Adhkar navigation
+- [x] Implement Evening Adhkar navigation
+- [x] Implement Before Sleep navigation
+
+## Issue 4: Islam 101 Layout
+- [ ] Center logo and text
+- [ ] Add proper spacing between elements
+
+## Issue 5: Islam 101 Content
+- [ ] Create Introduction module content
+- [ ] Create other module content
+
+## Issue 6: Quran Search Bar Scroll
+- [ ] Fix search bar floating issue during scroll
+
+## Verification
+- [ ] Build and test
+
+## Issue 6: Quran Search Bar Scroll
+- [ ] Fix search bar floating issue during scroll
+
+## Verification
+- [ ] Build and test

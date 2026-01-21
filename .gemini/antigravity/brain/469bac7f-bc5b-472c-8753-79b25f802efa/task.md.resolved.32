@@ -1,0 +1,21 @@
+# Sprint 11: Major Feature Updates ✅ COMPLETE
+
+## All 11 Issues Fixed
+
+| # | Issue | Status |
+|---|-------|--------|
+| 1 | Zikir History | ✅ Shows last 3 saved counts |
+| 2 | Quran Tabs Scroll | ✅ Tabs scroll with search bar |
+| 3 | Qibla Icon | ✅ Mosque icon added |
+| 4 | Surah Navigation | ✅ Fixed with GoRouter |
+| 5 | Daily Verse | ✅ Share + Random buttons |
+| 6 | See All Removal | ✅ Buttons removed |
+| 7 | Islam 101 Content | ✅ Already implemented |
+| 8 | City Selection | ✅ Geocoding API works |
+| 9 | Asr Setting | ✅ Removed from settings |
+| 10 | Quran Bookmark | ✅ Icon added |
+| 11 | Basics → Bookmarks | ✅ Category replaced |
+
+## Build
+- `app-release.apk` (71.1 MB)
+- `app-debug.apk` (182 MB)

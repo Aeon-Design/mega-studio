@@ -1,0 +1,20 @@
+# Task: Redesign AdhanLife App UI
+
+- [x] Integrate Prayer Times API <!-- id: 0 -->
+- [x] Create Basic UI Skeleton <!-- id: 1 -->
+- [x] Implement Qibla Direction Feature <!-- id: 2 -->
+- [x] Implement Main Functionality Screen (Qibla/Home based on design) <!-- id: 3 -->
+- [x] Implement Bottom Navigation <!-- id: 4 -->
+- [x] Verify Design Implementation <!-- id: 5 -->
+- [x] Implement 'Sunrise Serenity' Theme (AppColors) <!-- id: 7 -->
+- [x] Revise PrayerCard & HomeScreen for Sunrise Theme <!-- id: 8 -->
+- [x] Build Android APK (Sunrise Edition) <!-- id: 9 -->
+- [x] **Refinement: Dark Mode & Features**
+    - [x] Fix PrayerCard Dark Mode (Match Surah List style)
+    - [x] Brighten Bottom Nav Selection in Dark Mode
+    - [x] Whiten Surah List Text in Dark Mode
+    - [x] Update Background Pattern (Crescent Moon)
+    - [x] Add Zikr Counter Widget (with Haptics)
+    - [x] Build Final Verification APK
+- [x] **Polishing**
+    - [x] Fix Bottom Nav Glass Effect (Transparency/Visibility)

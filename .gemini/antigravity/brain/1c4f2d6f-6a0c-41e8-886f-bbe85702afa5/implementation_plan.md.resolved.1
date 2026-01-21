@@ -1,0 +1,40 @@
+# Implementation Plan - Macro Strategy (Algo Engine)
+
+The user wants to upgrade the visual `Macro_Blueprint` into a fully automated strategy compatible with bot trading, similar to [Monster_Strategy.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Strategy.pine).
+
+## User Review Required
+> [!IMPORTANT]
+> **Strategy Migration**: I will create a new file `Macro_Strategy.pine` instead of overwriting the indicator. This allows the user to keep the lightweight visualization if needed, but the main deliverables will be this new Strategy file.
+
+## Core Logic Transformation
+
+### 1. The Signal Engine (Macro Logic)
+We will define concrete entry triggers based on the transcript's logic:
+-   **Long Trigger**:
+    -   **Trend Filter**: Price > Weekly 50 SMA & Price > Daily 200 SMA.
+    -   **Execution Setup**:
+        -   **Scenario A (Monday Range Break)**: Price breaks above `Monday High`.
+        -   **Scenario B (Cycle Bounce)**: Price taps `Cycle Golden Pocket` and rejects (Hammer candle / MSB).
+-   **Short Trigger**: Inverse of above.
+
+### 2. The Execution Engine (From Monster Strategy)
+I will port the "Virtual Backtester" and "Risk Engine" from [Monster_Strategy.pine](file:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Strategy.pine):
+-   **Win/Loss Tracker**: Table showing Winrate, Net Profit, Streak.
+-   **Risk Management**:
+    -   Stop Loss: Auto-placed at `Monday Low` (for Breakouts) or `Swing Low` (for Reversals).
+    -   Take Profit: Fixed Risk:Reward (e.g., 1:2 or 1:3).
+-   **Alerts**: `alertcondition()` and `alert()` messages formatted for 3Commas/Binance (JSON).
+
+### 3. Mathematical Enhancements
+-   **Position Sizing**: "Smart Risk" calculated based on distance to Stop Loss (Risk % of Equity).
+-   **Extension Logic**: Calculate 'Monday Standard Deviations' to use as dynamic Take Profit targets.
+
+## Proposed Files
+-   `Macro_Strategy.pine`: The new fully featured script.
+
+## Verification Plan
+1.  **Backtest Validation**:
+    -   Run on `BTCUSDT` (Daily/4H).
+    -   Verify trades trigger *only* when Trend Filters are met.
+    -   Verify Stop Loss is respected.
+2.  **Dashboard Check**: Ensure the Win/Loss table updates correctly.

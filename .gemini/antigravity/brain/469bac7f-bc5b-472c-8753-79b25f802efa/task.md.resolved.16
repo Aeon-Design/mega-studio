@@ -1,0 +1,28 @@
+# Task: Complete Audit Remediation
+
+## Sprint 1: Critical + Foundation ✅
+- [x] Save onboarding completion state <!-- id: 100 -->
+- [x] Add IAP verification disclaimer + save premium flag <!-- id: 101 -->
+- [x] Wire Rate App button <!-- id: 102 -->
+
+## Sprint 2: Share System
+- [ ] Implement NextPrayerCard Share <!-- id: 103 -->
+- [ ] Implement SurahReader Share Surah <!-- id: 104 -->
+- [ ] Implement SurahReader Share Verse <!-- id: 105 -->
+
+## Sprint 3: Audio System
+- [ ] Wire QuranAudioService to verse playback <!-- id: 106 -->
+- [ ] Wire AudioService to Duas <!-- id: 107 -->
+- [ ] Wire AudioService to 99 Names <!-- id: 108 -->
+
+## Sprint 4: Favorites & Persistence
+- [ ] Implement Dua Favorites toggle <!-- id: 109 -->
+- [ ] Persist Quran Settings <!-- id: 110 -->
+
+## Sprint 5: Navigation & Cleanup
+- [ ] Implement notification deep-links <!-- id: 111 -->
+- [ ] Wire Home notification icon <!-- id: 112 -->
+- [ ] Delete city_search_screen.dart <!-- id: 113 -->
+
+## Verification
+- [ ] Build APK and verify <!-- id: 114 -->

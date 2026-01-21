@@ -1,0 +1,39 @@
+# Project Titan: Macro Math Engine & Scanner
+
+We have built a "Hedge Fund on a Laptop". This suite consists of two professional-grade tools designed to dominate high-timeframe trading.
+
+## 1. Macro Math Engine (`Macro_Math_Engine.pine`)
+This is your **Single Asset Sniper**. It contains the entire mathematical core.
+
+### The "Truth" Logic (Trend River)
+-   **Bull Market**: Candles painting Green (Price > Daily 200 & Weekly 50).
+-   **Bear Market**: Candles painting Red (Price < Daily 200 & Weekly 50).
+-   **Generational Bottom**: Price touches Weekly 200 SMA (Thick Red Line).
+
+### The "Money Zones" (Golden Grid)
+-   Automatically detects the Cycle High/Low over 300 weeks.
+-   Draws the **Golden Pocket (0.618)** and **Fair Value (0.5)**.
+
+### Weekly Operating System
+-   **Monday Range**: Blue Lines.
+-   **Extensions**: Dotted lines showing statistical exhaustion points for the week.
+
+### Automated Bot Strategy
+-   **Trigger**: Trend is Bullish + Price breaks Monday High.
+-   **Risk**: Auto-calculates lot size to risk 1% equity.
+-   **Alerts**: JSON payloads ready for 3Commas (`{{strategy.order.alert_message}}`).
+
+---
+
+## 2. Macro Scanner (`Macro_Scanner.pine`)
+This is your **Market Radar**. It tracks 15+ assets simultaneously using the "Trend River" logic.
+
+### How to Read the Dashboard
+-   **BULLISH 🚀**: Asset is above Daily 200 AND Weekly 50. (Safe to buy dips).
+-   **BEARISH 🐻**: Asset is below both. (Short rallies).
+-   **VALUE?**: Asset is mixed (e.g., above D200 but below W50). Watch for reversal.
+-   **vs D200**: Shows percentage distance from the baseline.
+
+## Installation
+1.  **Engine**: Copy `Macro_Math_Engine.pine` to a normal chart.
+2.  **Scanner**: Copy `Macro_Scanner.pine` to a separate pane or chart layout to monitor the market.

@@ -1,0 +1,11 @@
+# Task: Redesign AdhanLife App UI
+
+- [x] Integrate Prayer Times API <!-- id: 0 -->
+- [x] Create Basic UI Skeleton <!-- id: 1 -->
+- [x] Implement Qibla Direction Feature <!-- id: 2 -->
+- [x] Implement Main Functionality Screen (Qibla/Home based on design) <!-- id: 3 -->
+- [x] Implement Bottom Navigation <!-- id: 4 -->
+- [x] Verify Design Implementation <!-- id: 5 -->
+- [ ] Implement 'Sunrise Serenity' Theme (AppColors) <!-- id: 7 -->
+- [ ] Revise PrayerCard & HomeScreen for Sunrise Theme <!-- id: 8 -->
+- [ ] Build Android APK (Sunrise Edition) <!-- id: 9 -->

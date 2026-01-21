@@ -1,0 +1,83 @@
+# AdhanLife UI Implementation Export (Sunrise Serenity Edition)
+This document contains the *current* implementation of the "Sunrise Serenity" theme as requested.
+
+## 1. Theme Configuration (AppColors)
+**File:** [lib/core/theme/app_colors.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/theme/app_colors.dart)
+Defines the Soft Terracotta, Deep Teal, and Sandy Beige palette.
+
+```dart
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Sunrise Serenity Ana Paleti
+  static const Color primary = Color(0xFFE07A5F); // Soft Terracotta
+  static const Color primaryDark = Color(0xFFC9654D);
+  static const Color primaryLight = Color(0xFFF2CC8F); // Sun yellow
+  static const Color primaryContainer = primaryLight; 
+  
+  static const Color secondary = Color(0xFF3D405B); // Deep Teal
+  static const Color background = Color(0xFFF4F1DE); // Sandy Beige
+
+  // Surfaces
+  static const Color surface = Colors.white;
+  static const Color surfaceTeal = Color(0xFF3D405B);
+
+  // Indicators
+  static const Color indicatorPassed = Color(0xFFBDBDBD);
+  static const Color indicatorActive = Color(0xFFE07A5F);
+  static const Color indicatorFuture = Color(0xFF81B29A); // Sage Green
+  
+  // Text
+  static const Color textPrimary = Color(0xFF3D405B);
+  static const Color textSecondary = Color(0xFF5F797B);
+
+  // Gradients
+  static const Gradient sunriseGradient = LinearGradient(
+    colors: [Color(0xFFF2CC8F), Color(0xFFE07A5F)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+}
+```
+
+## 2. Prayer Card Widget
+**File:** [lib/features/home/presentation/widgets/prayer_card.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/widgets/prayer_card.dart)
+Implements the outlined, shadowed card design for the active prayer.
+
+```dart
+// (Logic as implemented in the project)
+// ...
+    if (widget.isNext) {
+      cardDecoration = BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.5),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          )
+        ],
+      );
+    }
+// ...
+```
+
+## 3. Home Screen
+**File:** [lib/features/home/presentation/screens/home_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/screens/home_screen.dart)
+Uses the Sandy Beige background and transparent AppBar.
+
+```dart
+    return Scaffold(
+      backgroundColor: AppColors.background, // Sandy Beige
+      body: SafeArea(
+        child: CustomScrollView(
+            // ...
+        ),
+      ),
+    );
+```

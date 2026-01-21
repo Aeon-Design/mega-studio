@@ -1,0 +1,41 @@
+# UI Redesign Implementation Plan
+
+## Goal Description
+Redesign the AdhanLife application's UI to match the "Minimalist Qibla Finder" design provided by the user. This involves updating the color palette, typography, and specific screens (Qibla, Home/Navigation) to reflect the new Sage Green/Minimalist aesthetic.
+
+## User Review Required
+> [!IMPORTANT]
+> The design uses specific custom fonts (Inter) which are already configured in [pubspec.yaml](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/pubspec.yaml). I will assume the asset files exist.
+> The layout changes for Qibla screen are significant and will replace the existing UI.
+
+## Proposed Changes
+
+### Core
+#### [MODIFY] [app_colors.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/theme/app_colors.dart)
+- Update color palette to match the design (Sage Green `#8BA888`, Background `#FDFCF8`, etc.).
+
+#### [MODIFY] [app_theme.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/core/theme/app_theme.dart)
+- Update `ThemeData` (light and dark) to use the new colors and `Inter` font family.
+- Update `AppBarTheme`, `BottomNavigationBarTheme`, `ElevatedButtonTheme` to match the new minimalist style.
+
+### Features
+#### [MODIFY] [qibla_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/qibla/presentation/screens/qibla_screen.dart)
+- Rewrite the UI to match the HTML reference:
+    - Large Degree Display (e.g. "19.2°").
+    - Compass Visual (SVG or Canvas).
+    - "Compass calibrated" pill.
+    - "Distance to Makkah" button.
+
+#### [MODIFY] [home_screen.dart](file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/lib/features/home/presentation/screens/home_screen.dart)
+- Update Bottom Navigation Bar to match the design (Home, Qibla, Quran, Learn, Settings).
+- Ensure specific styling (translucent background, icons).
+
+## Verification Plan
+### Automated Tests
+- Run existing tests to ensure no regressions in logic.
+- `flutter test`
+
+### Manual Verification
+- **Theme Check**: Verify Light and Dark mode colors against the provided HTML colors.
+- **Qibla Screen**: Check visual layout (Degree text size, Compass placement, Button style).
+- **Navigation**: Verify Bottom Nav items and styling (active/inactive states).

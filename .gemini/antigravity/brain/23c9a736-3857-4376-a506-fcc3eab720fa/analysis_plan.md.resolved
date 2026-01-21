@@ -1,0 +1,37 @@
+# Deep Agent Overhaul Plan 🧠
+
+## Part 1: Active Agent Upgrades (Priority 1)
+Enhance the current 11 agents with "Deep Research" standards.
+
+### 1. Executive Floor (`01-executive`)
+-   [ ] **CEO:** Enhance with specific market analysis frameworks (SWOT, Blue Ocean).
+-   [ ] **CTO:** Add "Technology Radar" maintenance protocols.
+-   [ ] **HR Director:** Add specific competency matrices for hiring.
+-   [ ] **Product Strategist:** Add "User Story Mapping" and "Jobs to be Done" frameworks.
+
+### 2. Management & Tech (`02-management`, `05-development`)
+-   [ ] **Tech Lead:** Add strict Code Review checklists and Git Flow enforcement.
+-   [ ] **Mobile Dev:** Add specific Flutter performance metrics (Raster Cache, Build Time).
+-   [ ] **Backend Specialist:** Add Database normalization rules (3NF) and CAP Theorem considerations.
+-   [ ] **Frontend Specialist:** Add SEO Core Web Vitals and specific Accessibility (WCAG 2.1) checks.
+-   [ ] **Head of UX:** Add "Atomic Design" principles and standard Heuristic Evaluation protocols.
+-   [ ] **QA Lead:** Add "Test Pyramid" enforcement (Unit > Integration > E2E).
+-   [ ] **Security Auditor:** Add OWASP Top 10 specific checks.
+
+## Part 2: Backup Recovery (Priority 2)
+Recover and modernize these agents from backup.
+
+### High Value Targets
+1.  **[database-architect.md](file:///C:/Users/Abdullah/.agent/agents/database-architect.md)** -> Restore to `05-development`. Essential for complex schema design.
+2.  **[devops-engineer.md](file:///C:/Users/Abdullah/.agent/agents/devops-engineer.md)** -> Restore to `05-development`. Essential for CI/CD.
+3.  **[game-developer.md](file:///C:/Users/Abdullah/.agent/agents/game-developer.md)** -> Restore to `05-development` (New Role). Rive + Flame expertise.
+4.  **[seo-specialist.md](file:///C:/Users/Abdullah/.agent/agents/seo-specialist.md)** -> Merge capabilities into `frontend-specialist` OR keep as consultant. -> **Decision: Restore as Specialist.**
+5.  **[performance-optimizer.md](file:///C:/Users/Abdullah/.agent/agents/performance-optimizer.md)** -> Restore to `05-development` (Performance Engineer).
+
+### Merge Targets (Do not restore files, merge knowledge)
+-   [penetration-tester.md](file:///C:/Users/Abdullah/.agent/agents/penetration-tester.md) -> Merge into [security-auditor.md](file:///C:/Users/Abdullah/.agent/agents/security-auditor.md).
+-   [test-engineer.md](file:///C:/Users/Abdullah/.agent/agents/test-engineer.md) -> Merge into [qa-lead.md](file:///C:/Users/Abdullah/.agent/agents/qa-lead.md).
+-   [documentation-writer.md](file:///C:/Users/Abdullah/.agent/agents/documentation-writer.md) -> Distributed responsibility (Clean Code).
+
+## Part 3: Skill Deep Dive
+Ensure every skill file (`clean-code`, `architecture`) is a "Masterclass" in itself.
