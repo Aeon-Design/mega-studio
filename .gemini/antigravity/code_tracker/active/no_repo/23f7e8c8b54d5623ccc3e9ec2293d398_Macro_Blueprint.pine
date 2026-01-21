@@ -1,0 +1,227 @@
+·O//@version=6
+indicator("Macro Blueprint [AG]", shorttitle="MACRO BLUEPRINT", overlay=true, max_bars_back=1000, max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+
+// -----------------------------------------------------------------------------
+// 1. CONSTANTS & THEME
+// -----------------------------------------------------------------------------
+var color COLOR_BULL = #089981 // Institutional Green
+var color COLOR_BEAR = #F23645 // Institutional Red
+var color COLOR_NEUTRAL = #787B86
+var color COLOR_TEXT = #FFFFFF
+var color COLOR_BG_DARK = #131722
+var color COLOR_GOLD = #FFD700
+var color COLOR_SILVER = #C0C0C0
+
+// -----------------------------------------------------------------------------
+// 2. INPUTS
+// -----------------------------------------------------------------------------
+grp_ma = "1. High Timeframe Ribbons (The Trend)"
+show_ma_ribbon = input.bool(true, "Show HTF Ribbon", group=grp_ma)
+ma_daily_len = input.int(200, "Daily Baseline (SMA)", group=grp_ma)
+ma_weekly_1 = input.int(50, "Weekly Bull Support (SMA)", group=grp_ma)
+ma_weekly_2 = input.int(100, "Weekly Deep Value (SMA)", group=grp_ma)
+ma_weekly_3 = input.int(200, "Weekly Cycle Bottom (SMA)", group=grp_ma)
+
+grp_cyc = "2. Cycle Fibonacci (The Money Zones)"
+show_fibs = input.bool(true, "Auto-Draw Cycle Fibs", group=grp_cyc)
+fib_bars = input.int(200, "Lookback Period (Weeks)", minval=10, group=grp_cyc)
+
+grp_op = "3. Weekly Operating Release"
+show_pwhl = input.bool(true, "Show Prev Week High/Low", group=grp_op)
+show_monday = input.bool(true, "Show Monday Range & Extensions", group=grp_op)
+monday_ext_mult = input.float(1.0, "Monday Extension Factor", step=0.1, group=grp_op)
+
+grp_vwap = "4. Anchored VWAP (The Heavy Anchor)"
+show_avwap = input.bool(true, "Show Anchored VWAP", group=grp_vwap)
+// Defaulting to a future date as per user request example or current active context
+// User mentioned "Oct 6 2025" in transcript, but we should probably use a relevant recent major low/high for default or let them pick.
+// I will use a generic timestamp input.
+avwap_y = input.int(2024, "Anchor Year", group=grp_vwap)
+avwap_m = input.int(11, "Anchor Month", group=grp_vwap, minval=1, maxval=12)
+avwap_d = input.int(18, "Anchor Day", group=grp_vwap, minval=1, maxval=31)
+
+grp_dash = "5. Heatmap Dashboard"
+show_dash = input.bool(true, "Show Status Panel", group=grp_dash)
+
+// -----------------------------------------------------------------------------
+// 3. CORE LOGIC: HTF MOVING AVERAGES
+// -----------------------------------------------------------------------------
+// Helper for safe fetching
+f_get_ma(tf, len) =>
+    request.security(syminfo.tickerid, tf, ta.sma(close, len))
+
+// 1. Daily 200 (The Baseline)
+d_200 = f_get_ma("D", ma_daily_len)
+
+// 2. Weekly Ribbon
+w_50 = f_get_ma("W", ma_weekly_1)
+w_100 = f_get_ma("W", ma_weekly_2)
+w_200 = f_get_ma("W", ma_weekly_3)
+
+// Plotting
+plot(show_ma_ribbon ? d_200 : na, "Daily 200", color=color.orange, linewidth=2)
+plot(show_ma_ribbon ? w_50 : na, "Weekly 50", color=color.new(COLOR_BULL, 0), linewidth=2)
+plot(show_ma_ribbon ? w_100 : na, "Weekly 100", color=color.new(COLOR_GOLD, 0), linewidth=3)
+plot(show_ma_ribbon ? w_200 : na, "Weekly 200", color=color.new(COLOR_BEAR, 0), linewidth=4)
+
+// -----------------------------------------------------------------------------
+// 4. CORE LOGIC: CYCLE FIBONACCI
+// -----------------------------------------------------------------------------
+// We need the High/Low of the visible range or a fixed period on Weekly Data
+[h_high, l_low] = request.security(syminfo.tickerid, "W", [ta.highest(high, fib_bars), ta.lowest(low, fib_bars)])
+
+var line fib_0 = na
+var line fib_1 = na
+var line fib_382 = na
+var line fib_5 = na
+var line fib_618 = na
+
+if show_fibs and barstate.islast
+    line.delete(fib_0)
+    line.delete(fib_1)
+    line.delete(fib_382)
+    line.delete(fib_5)
+    line.delete(fib_618)
+
+    float range_diff = h_high - l_low
+    if range_diff > 0 
+        // Levels
+        float p_0 = l_low
+        float p_1 = h_high
+        float p_382 = l_low + (range_diff * 0.382)
+        float p_5 = l_low + (range_diff * 0.5)
+        float p_618 = l_low + (range_diff * 0.618)
+        float p_golden_top = l_low + (range_diff * 0.66) // Golden Pocket Top
+
+        // Draw Lines (Extended Right)
+        fib_0 := line.new(bar_index - 50, p_0, bar_index + 10, p_0, color=color.gray, style=line.style_dotted)
+        fib_1 := line.new(bar_index - 50, p_1, bar_index + 10, p_1, color=color.gray, style=line.style_dotted)
+        
+        fib_382 := line.new(bar_index - 50, p_382, bar_index + 10, p_382, color=color.new(COLOR_NEUTRAL, 30), width=1)
+        fib_5 := line.new(bar_index - 50, p_5, bar_index + 10, p_5, color=color.white, width=1, style=line.style_dashed)
+        
+        // Golden Pocket Box
+        box.new(bar_index - 50, p_golden_top, bar_index + 10, p_618, bgcolor=color.new(COLOR_GOLD, 85), border_color=na)
+        
+        // Labels
+        label.new(bar_index + 10, p_5, "Cycle EQ (0.5)", style=label.style_label_left, color=color(na), textcolor=color.white, size=size.small)
+        label.new(bar_index + 10, p_618, "Golden Pocket", style=label.style_label_left, color=color(na), textcolor=COLOR_GOLD, size=size.small)
+
+// -----------------------------------------------------------------------------
+// 5. CORE LOGIC: WEEKLY OPERATING LEVELS
+// -----------------------------------------------------------------------------
+// Previous Week Data
+[pwd_h, pwd_l, pwd_c] = request.security(syminfo.tickerid, "W", [high[1], low[1], close[1]], lookahead=barmerge.lookahead_on)
+
+if show_pwhl
+    plot(pwd_h, "PWH", color=color.new(COLOR_SILVER, 50), style=plot.style_circles)
+    plot(pwd_l, "PWL", color=color.new(COLOR_SILVER, 50), style=plot.style_circles)
+
+// Monday Range Logic
+is_monday = dayofweek == dayofweek.monday
+var float mon_h = na
+var float mon_l = na
+var bool mon_closed = false
+
+if ta.change(time("W"))
+    mon_h := na
+    mon_l := na
+    mon_closed := false
+
+if is_monday
+    mon_h := math.max(nz(mon_h, high), high)
+    mon_l := math.min(nz(mon_l, low), low)
+
+// Tuesday starts -> Lock Monday
+if dayofweek == dayofweek.tuesday and not mon_closed
+    mon_closed := true
+
+// Plot Monday Levels
+if show_monday and not na(mon_h)
+    // Range
+    line.new(bar_index, mon_h, bar_index + 1, mon_h, color=color.blue, width=1)
+    line.new(bar_index, mon_l, bar_index + 1, mon_l, color=color.blue, width=1)
+    float mon_eq = (mon_h + mon_l) / 2
+    line.new(bar_index, mon_eq, bar_index + 1, mon_eq, color=color.new(color.blue, 50), style=line.style_dashed)
+    
+    // Extensions (Monday Range Extension)
+    if mon_closed
+        float rng = mon_h - mon_l
+        float ext_up = mon_h + (rng * monday_ext_mult)
+        float ext_down = mon_l - (rng * monday_ext_mult)
+        
+        line.new(bar_index, ext_up, bar_index + 1, ext_up, color=color.new(COLOR_BEAR, 50), style=line.style_dotted)
+        line.new(bar_index, ext_down, bar_index + 1, ext_down, color=color.new(COLOR_BULL, 50), style=line.style_dotted)
+
+// -----------------------------------------------------------------------------
+// 6. ANCHORED VWAP
+// -----------------------------------------------------------------------------
+// Simple Anchored VWAP Implementation
+start_time = timestamp(avwap_y, avwap_m, avwap_d, 00, 00)
+var float avwap_sum_src_vol = 0.0
+var float avwap_sum_vol = 0.0
+
+if time >= start_time
+    if time[1] < start_time
+        // Reset on exact start
+        avwap_sum_src_vol := 0.0
+        avwap_sum_vol := 0.0
+    
+    avwap_sum_src_vol += hlc3 * volume
+    avwap_sum_vol += volume
+    
+float avwap_val = avwap_sum_vol > 0 ? avwap_sum_src_vol / avwap_sum_vol : na
+
+plot(show_avwap ? avwap_val : na, "Anchored VWAP", color=color.purple, linewidth=2, style=plot.style_line)
+
+
+// -----------------------------------------------------------------------------
+// 7. HEATMAP DASHBOARD
+// -----------------------------------------------------------------------------
+var table heat = table.new(position.bottom_right, 3, 10, bgcolor=color.new(COLOR_BG_DARK, 10), border_width=1, border_color=color.gray)
+
+f_status_cell(row, title, val, ref_val, is_bullish_cond) =>
+    table.cell(heat, 0, row, title, text_color=color.silver, text_size=size.small, bgcolor=COLOR_BG_DARK)
+    
+    string status = is_bullish_cond ? "ðŸŸ¢ BULL" : "ðŸ”´ BEAR"
+    color c = is_bullish_cond ? COLOR_BULL : COLOR_BEAR
+    
+    float diff = ((val - ref_val) / ref_val) * 100
+    string val_txt = str.tostring(diff, "#.##") + "%"
+    
+    table.cell(heat, 1, row, status, text_color=c, text_size=size.small, bgcolor=color.new(c, 90))
+    table.cell(heat, 2, row, val_txt, text_color=color.white, text_size=size.small, bgcolor=COLOR_BG_DARK)
+
+if show_dash and barstate.islast
+    table.cell(heat, 0, 0, "MACRO HEATMAP", bgcolor=color.black, text_color=color.white)
+    table.merge_cells(heat, 0, 0, 2, 0)
+    
+    // Rows
+    f_status_cell(1, "Daily 200 SMA", close, d_200, close > d_200)
+    f_status_cell(2, "Weekly 50 SMA", close, w_50, close > w_50)
+    f_status_cell(3, "Weekly 200 SMA", close, w_200, close > w_200)
+    
+    if show_avwap and not na(avwap_val)
+        f_status_cell(4, "Anchor VWAP", close, avwap_val, close > avwap_val)
+    
+    // Cycle Check
+    if not na(h_high)
+        float mid = (h_high + l_low) / 2
+        f_status_cell(5, "Cycle EQ", close, mid, close > mid)
+
+    table.cell(heat, 0, 6, "Monday Bias", text_color=color.silver, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    string mon_txt = "WAIT"
+    color mon_c = color.gray
+    
+    if not na(mon_h)
+        float m_eq = (mon_h + mon_l) / 2
+        if close > m_eq
+            mon_txt := "ABOVE EQ"
+            mon_c := COLOR_BULL
+        else
+            mon_txt := "BELOW EQ"
+            mon_c := COLOR_BEAR
+            
+    table.cell(heat, 1, 6, mon_txt, text_color=mon_c, bgcolor=color.new(mon_c, 90), text_size=size.small)
+    table.merge_cells(heat, 1, 6, 2, 6)
+·O2Bfile:///Users/Abdullah/Projects/g%C3%B6sterge/Macro_Blueprint.pine

@@ -1,0 +1,674 @@
+��[
+    {
+        "id": "faith_basics",
+        "icon": "lightbulb_outline",
+        "lessons_count": 5,
+        "duration": "15 min",
+        "title": {
+            "en": "Introduction to Islam",
+            "tr": "İslam'a Giriş"
+        },
+        "description": {
+            "en": "Understanding the basics of Islam",
+            "tr": "İslam'ın temellerini anlamak"
+        },
+        "lessons": [
+            {
+                "id": "faith_basics_1",
+                "title": {
+                    "en": "What is Islam?",
+                    "tr": "İslam Nedir?"
+                },
+                "content": {
+                    "en": "Islam is a monotheistic religion that originated in the 7th century CE in Mecca, now in Saudi Arabia. The word 'Islam' comes from the Arabic root 'S-L-M' meaning peace, purity, submission, and obedience. In religious context, Islam means submission to the will of Allah (God).\n\nIslam is the second-largest religion in the world with over 1.8 billion followers, called Muslims. Muslims believe in one God (Allah) and that Muhammad (peace be upon him) is His final messenger.",
+                    "tr": "İslam, MS 7. yüzyılda Mekke'de ortaya çıkan tek tanrılı bir dindir. 'İslam' kelimesi Arapça 'S-L-M' kökünden gelir ve barış, saflık, teslimiyet ve itaat anlamlarına gelir."
+                }
+            },
+            {
+                "id": "faith_basics_2",
+                "title": {
+                    "en": "The Concept of Allah",
+                    "tr": "Allah Kavramı"
+                },
+                "content": {
+                    "en": "Allah is the Arabic word for God. Muslims believe Allah is the one and only God, the Creator of the universe and everything in it. Allah has no partners, no children, and nothing is comparable to Him.\n\nAllah has 99 Beautiful Names (Asma ul-Husna) that describe His attributes, such as Ar-Rahman (The Most Merciful), Al-Aleem (The All-Knowing), and Al-Qadeer (The All-Powerful).",
+                    "tr": "Allah, Tanrı'nın Arapça karşılığıdır. Müslümanlar Allah'ın tek ve bir olduğuna, evrenin ve içindeki her şeyin yaratıcısı olduğuna inanırlar."
+                }
+            },
+            {
+                "id": "faith_basics_3",
+                "title": {
+                    "en": "Prophet Muhammad ﷺ",
+                    "tr": "Hz. Muhammed ﷺ"
+                },
+                "content": {
+                    "en": "Prophet Muhammad (peace be upon him) was born in Mecca in 570 CE. He received the first revelation from Allah through Angel Gabriel (Jibreel) at age 40 in the Cave of Hira.\n\nHe is the final prophet in a long line of prophets including Adam, Noah, Abraham, Moses, and Jesus. Muslims follow his teachings (Sunnah) and consider him the perfect example of how to live a righteous life.",
+                    "tr": "Hz. Muhammed (sav) MS 570'te Mekke'de doğdu. 40 yaşında Hira Mağarası'nda Cebrail aracılığıyla ilk vahyi aldı."
+                }
+            },
+            {
+                "id": "faith_basics_4",
+                "title": {
+                    "en": "The Holy Quran",
+                    "tr": "Kutsal Kur'an"
+                },
+                "content": {
+                    "en": "The Quran is the holy book of Islam, believed to be the literal word of Allah revealed to Prophet Muhammad over 23 years. It contains 114 chapters (Surahs) and over 6,200 verses (Ayahs).\n\nMuslims believe the Quran is preserved exactly as it was revealed, unchanged for over 1,400 years. It serves as a complete guide for life, covering spiritual, moral, social, and legal matters.",
+                    "tr": "Kur'an, 23 yıl boyunca Hz. Muhammed'e vahyedilen Allah'ın sözleri olarak kabul edilen İslam'ın kutsal kitabıdır. 114 sure ve 6200'den fazla ayet içerir."
+                }
+            },
+            {
+                "id": "faith_basics_5",
+                "title": {
+                    "en": "Muslims Around the World",
+                    "tr": "Dünyada Müslümanlar"
+                },
+                "content": {
+                    "en": "Islam is the fastest-growing religion in the world. Muslims live on every continent and come from diverse ethnic, cultural, and linguistic backgrounds.\n\nThe largest Muslim populations are in Indonesia, Pakistan, India, Bangladesh, and Egypt. About 20% of the world's population is Muslim, united by their faith in Allah and the teachings of Islam.",
+                    "tr": "İslam dünyanın en hızlı büyüyen dinidir. Müslümanlar her kıtada yaşar ve çeşitli etnik, kültürel ve dilsel geçmişlerden gelirler."
+                }
+            }
+        ]
+    },
+    {
+        "id": "five_pillars",
+        "icon": "account_balance",
+        "lessons_count": 6,
+        "duration": "20 min",
+        "title": {
+            "en": "The Five Pillars",
+            "tr": "İslam'ın Beş Şartı"
+        },
+        "description": {
+            "en": "Shahada, Salah, Zakat, Sawm, Hajj",
+            "tr": "Şehadet, Namaz, Zekat, Oruç, Hac"
+        },
+        "lessons": [
+            {
+                "id": "pillars_1",
+                "title": {
+                    "en": "Overview of the Five Pillars",
+                    "tr": "Beş Şartın Özeti"
+                },
+                "content": {
+                    "en": "The Five Pillars of Islam are the foundation of Muslim life. They are:\n\n1. Shahada (Declaration of Faith)\n2. Salah (Prayer - 5 times daily)\n3. Zakat (Charitable Giving)\n4. Sawm (Fasting during Ramadan)\n5. Hajj (Pilgrimage to Mecca)\n\nThese pillars provide a framework for worship and living a morally responsible life.",
+                    "tr": "İslam'ın Beş Şartı, Müslüman yaşamının temelidir: Şehadet, Namaz, Zekat, Oruç, Hac."
+                }
+            },
+            {
+                "id": "pillars_2",
+                "title": {
+                    "en": "Shahada - Declaration of Faith",
+                    "tr": "Şehadet - İman İkrarı"
+                },
+                "content": {
+                    "en": "The Shahada is the Islamic declaration of faith: 'La ilaha illa Allah, Muhammad rasul Allah' - There is no god but Allah, and Muhammad is the Messenger of Allah.\n\nSincerely reciting this declaration with understanding makes one a Muslim. It is the most fundamental expression of Islamic beliefs.",
+                    "tr": "Şehadet, İslami iman beyanıdır: 'La ilahe illallah, Muhammedün Resulullah' - Allah'tan başka ilah yoktur ve Muhammed O'nun elçisidir."
+                }
+            },
+            {
+                "id": "pillars_3",
+                "title": {
+                    "en": "Salah - Daily Prayer",
+                    "tr": "Namaz - Günlük İbadet"
+                },
+                "content": {
+                    "en": "Salah is the obligatory prayer performed five times daily:\n\n• Fajr - Dawn prayer\n• Dhuhr - Noon prayer\n• Asr - Afternoon prayer\n• Maghrib - Sunset prayer\n• Isha - Night prayer\n\nPrayer connects Muslims directly to Allah and is performed facing the Kaaba in Mecca.",
+                    "tr": "Namaz, günde beş kez kılınan farz ibadettir: Sabah, Öğle, İkindi, Akşam, Yatsı."
+                }
+            },
+            {
+                "id": "pillars_4",
+                "title": {
+                    "en": "Zakat - Charitable Giving",
+                    "tr": "Zekat - Hayır İşi"
+                },
+                "content": {
+                    "en": "Zakat is the obligatory giving of 2.5% of one's wealth to help those in need. It purifies one's wealth and helps create economic equality in society.\n\nRecipients include the poor, those in debt, travelers in need, and those working to spread Islam.",
+                    "tr": "Zekat, ihtiyaç sahiplerine yardım etmek için kişinin servetinin %2,5'ini vermek zorundadır. Serveti arındırır ve toplumda ekonomik eşitlik yaratır."
+                }
+            },
+            {
+                "id": "pillars_5",
+                "title": {
+                    "en": "Sawm - Fasting in Ramadan",
+                    "tr": "Oruç - Ramazan Ayında Oruç"
+                },
+                "content": {
+                    "en": "During Ramadan, Muslims fast from dawn to sunset, abstaining from food, drink, and other physical needs. The fast teaches self-discipline, spiritual reflection, and empathy for those less fortunate.\n\nRamadan is also a time for increased prayer, Quran reading, and acts of charity.",
+                    "tr": "Ramazan ayında Müslümanlar, şafaktan gün batımına kadar yeme, içme ve diğer fiziksel ihtiyaçlardan uzak durarak oruç tutarlar."
+                }
+            },
+            {
+                "id": "pillars_6",
+                "title": {
+                    "en": "Hajj - Pilgrimage to Mecca",
+                    "tr": "Hac - Mekke Haccı"
+                },
+                "content": {
+                    "en": "Hajj is the annual pilgrimage to Mecca that every Muslim must undertake at least once in their lifetime if physically and financially able.\n\nOver 2 million Muslims gather each year to perform rituals commemorating Prophet Ibrahim and expressing unity, equality, and devotion to Allah.",
+                    "tr": "Hac, fiziksel ve maddi olarak güç yetiren her Müslümanın hayatında en az bir kez yapması gereken yıllık Mekke haccıdır."
+                }
+            }
+        ]
+    },
+    {
+        "id": "six_articles",
+        "icon": "favorite",
+        "lessons_count": 7,
+        "duration": "25 min",
+        "title": {
+            "en": "The Six Articles of Faith",
+            "tr": "İmanın Altı Şartı"
+        },
+        "description": {
+            "en": "Belief in Allah, Angels, Books, Prophets...",
+            "tr": "Allah'a, Meleklere, Kitaplara, Peygamberlere iman..."
+        },
+        "lessons": [
+            {
+                "id": "articles_1",
+                "title": {
+                    "en": "Overview of Articles of Faith",
+                    "tr": "İman Şartlarının Özeti"
+                },
+                "content": {
+                    "en": "The Six Articles of Faith (Arkan al-Iman) are the core beliefs every Muslim must hold:\n\n1. Belief in Allah\n2. Belief in Angels\n3. Belief in Holy Books\n4. Belief in Prophets\n5. Belief in the Day of Judgment\n6. Belief in Divine Decree (Qadar)\n\nThese beliefs form the foundation of Islamic faith.",
+                    "tr": "İmanın Altı Şartı, her Müslümanın kabul etmesi gereken temel inançlardır."
+                }
+            },
+            {
+                "id": "articles_2",
+                "title": {
+                    "en": "Belief in Allah",
+                    "tr": "Allah'a İman"
+                },
+                "content": {
+                    "en": "The belief in Allah as the one and only God is the central concept of Islam. Muslims believe:\n\n• Allah is the Creator of everything\n• Allah is All-Knowing and All-Powerful\n• Allah is Most Merciful and Just\n• Nothing is comparable to Allah\n• Allah has no partners or children",
+                    "tr": "Allah'a tek ve bir Tanrı olarak inanmak, İslam'ın temel kavramıdır."
+                }
+            },
+            {
+                "id": "articles_3",
+                "title": {
+                    "en": "Belief in Angels",
+                    "tr": "Meleklere İman"
+                },
+                "content": {
+                    "en": "Angels (Malaika) are beings created by Allah from light. They have no free will and always obey Allah. Important angels include:\n\n• Jibreel (Gabriel) - brought revelations\n• Mikail - controls nature and provisions\n• Israfil - will blow the trumpet on Judgment Day\n• Izrail - Angel of Death",
+                    "tr": "Melekler, Allah'ın nurdan yarattığı varlıklardır. Özgür iradeleri yoktur ve her zaman Allah'a itaat ederler."
+                }
+            },
+            {
+                "id": "articles_4",
+                "title": {
+                    "en": "Belief in Holy Books",
+                    "tr": "Kutsal Kitaplara İman"
+                },
+                "content": {
+                    "en": "Muslims believe in all holy books revealed by Allah:\n\n• Tawrat (Torah) - revealed to Musa (Moses)\n• Zabur (Psalms) - revealed to Dawud (David)\n• Injil (Gospel) - revealed to Isa (Jesus)\n• Quran - revealed to Muhammad ﷺ\n\nThe Quran is the final, complete, and preserved revelation.",
+                    "tr": "Müslümanlar Allah'ın indirdiği tüm kutsal kitaplara inanırlar: Tevrat, Zebur, İncil ve Kur'an."
+                }
+            },
+            {
+                "id": "articles_5",
+                "title": {
+                    "en": "Belief in Prophets",
+                    "tr": "Peygamberlere İman"
+                },
+                "content": {
+                    "en": "Muslims believe in all prophets sent by Allah to guide humanity. 25 prophets are mentioned in the Quran, including:\n\n• Adam, Nuh (Noah), Ibrahim (Abraham)\n• Musa (Moses), Dawud (David), Sulayman (Solomon)\n• Isa (Jesus), Muhammad ﷺ (the final prophet)\n\nAll prophets brought the same essential message: worship Allah alone.",
+                    "tr": "Müslümanlar, insanlığı doğru yola iletmek için Allah'ın gönderdiği tüm peygamberlere inanırlar."
+                }
+            },
+            {
+                "id": "articles_6",
+                "title": {
+                    "en": "Belief in the Day of Judgment",
+                    "tr": "Ahiret Gününe İman"
+                },
+                "content": {
+                    "en": "Muslims believe in the Day of Judgment (Yawm al-Qiyamah) when all humans will be resurrected and held accountable for their deeds.\n\nGood deeds will be rewarded with Paradise (Jannah), while sins may lead to punishment in Hellfire (Jahannam). Allah is the ultimate Judge, Most Just and Most Merciful.",
+                    "tr": "Müslümanlar, tüm insanların diriltileceği ve amellerinden hesap vereceği Kıyamet Gününe inanırlar."
+                }
+            },
+            {
+                "id": "articles_7",
+                "title": {
+                    "en": "Belief in Divine Decree",
+                    "tr": "Kadere İman"
+                },
+                "content": {
+                    "en": "Qadar (Divine Decree) means Allah has knowledge of all things and has decreed everything. Muslims believe:\n\n• Allah knows everything past, present, and future\n• Everything happens by Allah's will and permission\n• Humans have free will to choose their actions\n• We are responsible for our choices\n\nThis belief brings peace and acceptance of life's circumstances.",
+                    "tr": "Kader, Allah'ın her şeyi bildiği ve her şeyi takdir ettiği anlamına gelir."
+                }
+            }
+        ]
+    },
+    {
+        "id": "prayer_intro",
+        "icon": "access_time",
+        "lessons_count": 5,
+        "duration": "20 min",
+        "title": {
+            "en": "Introduction to Prayer",
+            "tr": "Namaza Giriş"
+        },
+        "description": {
+            "en": "Learning the basics of Salah",
+            "tr": "Namazın temellerini öğrenmek"
+        },
+        "lessons": [
+            {
+                "id": "prayer_1",
+                "title": {
+                    "en": "The Importance of Prayer",
+                    "tr": "Namazın Önemi"
+                },
+                "content": {
+                    "en": "Prayer (Salah) is the second pillar of Islam and the most important act of worship. It was the first duty prescribed by Allah and will be the first matter judged on the Day of Judgment.\n\nPrayer distinguishes a Muslim from a non-Muslim and provides a direct connection to Allah five times daily.",
+                    "tr": "Namaz, İslam'ın ikinci şartıdır ve en önemli ibadet şeklidir."
+                }
+            },
+            {
+                "id": "prayer_2",
+                "title": {
+                    "en": "The Five Daily Prayers",
+                    "tr": "Beş Vakit Namaz"
+                },
+                "content": {
+                    "en": "The five daily prayers and their times:\n\n• Fajr: From dawn until sunrise (2 rakats)\n• Dhuhr: After the sun passes its zenith (4 rakats)\n• Asr: Afternoon until sunset (4 rakats)\n• Maghrib: Just after sunset (3 rakats)\n• Isha: Night until dawn (4 rakats)\n\nTotal: 17 obligatory rakats daily",
+                    "tr": "Beş vakit namaz ve vakitleri: Sabah, Öğle, İkindi, Akşam, Yatsı."
+                }
+            },
+            {
+                "id": "prayer_3",
+                "title": {
+                    "en": "Conditions for Prayer",
+                    "tr": "Namazın Şartları"
+                },
+                "content": {
+                    "en": "Before praying, certain conditions must be met:\n\n1. Being Muslim\n2. Being of sound mind (sane)\n3. Having reached puberty\n4. Being in a state of purity (Wudu)\n5. Facing the Qibla (toward Mecca)\n6. Covering the Awrah (body parts)\n7. Prayer time has entered",
+                    "tr": "Namaz kılmadan önce belirli şartlar yerine getirilmelidir."
+                }
+            },
+            {
+                "id": "prayer_4",
+                "title": {
+                    "en": "The Pillars of Prayer",
+                    "tr": "Namazın Rükünleri"
+                },
+                "content": {
+                    "en": "The essential parts (Arkan) of prayer that cannot be skipped:\n\n1. Standing (Qiyam) if able\n2. Opening Takbir\n3. Reciting Al-Fatiha\n4. Bowing (Ruku)\n5. Rising from bowing\n6. Prostration (Sujud)\n7. Sitting between prostrations\n8. The final Tashahhud\n9. Saying Salam",
+                    "tr": "Namazın atlanamayan temel parçaları: Kıyam, Tekbir, Fatiha, Rükü, Secde, Teşehhüd, Selam."
+                }
+            },
+            {
+                "id": "prayer_5",
+                "title": {
+                    "en": "Benefits of Prayer",
+                    "tr": "Namazın Faydaları"
+                },
+                "content": {
+                    "en": "Prayer provides numerous benefits:\n\n• Direct connection to Allah\n• Spiritual peace and tranquility\n• Physical exercise and flexibility\n• Discipline and time management\n• Community bonds (congregation prayer)\n• Protection from sin and wrongdoing\n• Forgiveness of minor sins",
+                    "tr": "Namaz birçok fayda sağlar: Allah ile doğrudan bağlantı, huzur, disiplin, cemaat bağları."
+                }
+            }
+        ]
+    },
+    {
+        "id": "wudu",
+        "icon": "water_drop",
+        "lessons_count": 4,
+        "duration": "15 min",
+        "title": {
+            "en": "Wudu (Ablution)",
+            "tr": "Abdest"
+        },
+        "description": {
+            "en": "How to perform ritual purification",
+            "tr": "Abdest nasıl alınır"
+        },
+        "lessons": [
+            {
+                "id": "wudu_1",
+                "title": {
+                    "en": "What is Wudu?",
+                    "tr": "Abdest Nedir?"
+                },
+                "content": {
+                    "en": "Wudu (ablution) is the Islamic ritual of washing certain body parts with clean water before prayer. It is a form of purification that prepares a Muslim both physically and spiritually for worship.\n\nAllah says in the Quran: 'O you who believe, when you rise to pray, wash your faces and your hands up to the elbows, and wipe your heads and your feet up to the ankles.' (5:6)",
+                    "tr": "Abdest, namaz kılmadan önce belirli vücut bölgelerini temiz su ile yıkama ritüelidir."
+                }
+            },
+            {
+                "id": "wudu_2",
+                "title": {
+                    "en": "Steps of Wudu",
+                    "tr": "Abdest Alma Adımları"
+                },
+                "content": {
+                    "en": "The steps of Wudu in order:\n\n1. Make intention (Niyyah)\n2. Say Bismillah\n3. Wash hands 3 times\n4. Rinse mouth 3 times\n5. Clean nose 3 times\n6. Wash face 3 times\n7. Wash arms to elbows 3 times\n8. Wipe head once\n9. Wipe ears once\n10. Wash feet to ankles 3 times",
+                    "tr": "Abdestin sırasıyla adımları: Niyet, Besmele, Eller, Ağız, Burun, Yüz, Kollar, Baş, Kulaklar, Ayaklar."
+                }
+            },
+            {
+                "id": "wudu_3",
+                "title": {
+                    "en": "What Breaks Wudu",
+                    "tr": "Abdesti Bozan Şeyler"
+                },
+                "content": {
+                    "en": "Things that invalidate Wudu:\n\n• Going to the bathroom\n• Passing gas\n• Deep sleep\n• Loss of consciousness\n• Bleeding (major)\n• Touching private parts directly\n\nAfter any of these, Wudu must be renewed before praying.",
+                    "tr": "Abdesti bozan şeyler: Tuvalet, gaz çıkarmak, derin uyku, bilinç kaybı, kanama."
+                }
+            },
+            {
+                "id": "wudu_4",
+                "title": {
+                    "en": "Tayammum - Dry Ablution",
+                    "tr": "Teyemmüm - Kuru Abdest"
+                },
+                "content": {
+                    "en": "When water is unavailable or harmful to use, Tayammum (dry ablution) is permitted using clean earth or sand:\n\n1. Make intention\n2. Strike hands on clean earth\n3. Wipe face with hands\n4. Strike hands again\n5. Wipe arms to elbows\n\nThis is allowed when sick, traveling without water, or water would cause harm.",
+                    "tr": "Su bulunmadığında veya kullanımı zararlı olduğunda, temiz toprak veya kum kullanarak teyemmüm yapılabilir."
+                }
+            }
+        ]
+    },
+    {
+        "id": "quran_intro",
+        "icon": "menu_book",
+        "lessons_count": 5,
+        "duration": "20 min",
+        "title": {
+            "en": "Understanding the Quran",
+            "tr": "Kur'an'ı Anlamak"
+        },
+        "description": {
+            "en": "Introduction to the Holy Book",
+            "tr": "Kutsal Kitaba Giriş"
+        },
+        "lessons": [
+            {
+                "id": "quran_1",
+                "title": {
+                    "en": "What is the Quran?",
+                    "tr": "Kur'an Nedir?"
+                },
+                "content": {
+                    "en": "The Quran is the holy book of Islam, believed to be the literal word of Allah revealed to Prophet Muhammad over 23 years through Angel Gabriel. It contains 114 chapters (Surahs) and over 6,200 verses (Ayahs).\n\nThe Quran was revealed in Arabic and Muslims believe it has been preserved exactly as revealed, unchanged for over 1,400 years.",
+                    "tr": "Kur'an, 23 yıl boyunca Hz. Muhammed'e vahyedilen Allah'ın kelamıdır."
+                }
+            },
+            {
+                "id": "quran_2",
+                "title": {
+                    "en": "Structure of the Quran",
+                    "tr": "Kur'an'ın Yapısı"
+                },
+                "content": {
+                    "en": "The Quran is divided into:\n\n• 114 Surahs (chapters)\n• 30 Juz (parts) for easy recitation\n• 7 Manzils (sections)\n\nSurahs are classified as Makki (revealed in Mecca) or Madani (revealed in Medina). The longest Surah is Al-Baqarah (286 verses) and the shortest is Al-Kawthar (3 verses).",
+                    "tr": "Kur'an 114 sure, 30 cüz ve 7 menzilden oluşur."
+                }
+            },
+            {
+                "id": "quran_3",
+                "title": {
+                    "en": "Major Themes",
+                    "tr": "Ana Temalar"
+                },
+                "content": {
+                    "en": "The Quran covers many themes:\n\n• Tawheed (Oneness of Allah)\n• Stories of Prophets\n• Day of Judgment\n• Paradise and Hellfire\n• Laws and guidance\n• Moral and ethical teachings\n• Signs of Allah in nature",
+                    "tr": "Kur'an'ın ana temaları: Tevhid, Peygamber kıssaları, Ahiret, Cennet ve Cehennem, Hukuk ve ahlak."
+                }
+            },
+            {
+                "id": "quran_4",
+                "title": {
+                    "en": "How to Read the Quran",
+                    "tr": "Kur'an Nasıl Okunur"
+                },
+                "content": {
+                    "en": "Etiquette for reading the Quran:\n\n1. Be in a state of Wudu\n2. Face the Qibla if possible\n3. Begin with 'A'udhu billah' and 'Bismillah'\n4. Recite slowly with Tajweed\n5. Reflect on the meanings\n6. Show respect to the Mushaf\n\nReading one letter earns 10 good deeds.",
+                    "tr": "Kur'an okuma adabı: Abdestli olmak, Kıble'ye dönmek, Euzü Besmele ile başlamak."
+                }
+            },
+            {
+                "id": "quran_5",
+                "title": {
+                    "en": "Virtues of Recitation",
+                    "tr": "Okumanın Fazileti"
+                },
+                "content": {
+                    "en": "Benefits of reciting the Quran:\n\n• Each letter equals 10 rewards\n• Quran will intercede on Day of Judgment\n• Heart finds peace and tranquility\n• Protection from evil\n• Elevated status in Paradise\n\nThe Prophet ﷺ said: 'The best of you are those who learn the Quran and teach it.'",
+                    "tr": "Kur'an okumanın faziletleri: Her harf 10 sevap, şefaatçi olması, kalp huzuru."
+                }
+            }
+        ]
+    },
+    {
+        "id": "prophet_life",
+        "icon": "person",
+        "lessons_count": 6,
+        "duration": "25 min",
+        "title": {
+            "en": "Prophet Muhammad ﷺ",
+            "tr": "Hz. Muhammed ﷺ"
+        },
+        "description": {
+            "en": "Life and teachings of the Prophet",
+            "tr": "Peygamberin hayatı ve öğretileri"
+        },
+        "lessons": [
+            {
+                "id": "prophet_1",
+                "title": {
+                    "en": "Early Life",
+                    "tr": "Erken Hayatı"
+                },
+                "content": {
+                    "en": "Prophet Muhammad ﷺ was born in Mecca in 570 CE, the Year of the Elephant. His father Abdullah died before his birth, and his mother Aminah passed when he was 6.\n\nHe was raised by his grandfather Abdul Muttalib, then his uncle Abu Talib. Known as 'Al-Amin' (The Trustworthy), he was respected for his honesty.",
+                    "tr": "Hz. Muhammed (sav) 570'te Fil Yılı'nda Mekke'de doğdu. El-Emin (Güvenilir) lakabıyla tanınırdı."
+                }
+            },
+            {
+                "id": "prophet_2",
+                "title": {
+                    "en": "The First Revelation",
+                    "tr": "İlk Vahiy"
+                },
+                "content": {
+                    "en": "At age 40, while meditating in Cave Hira, Angel Gabriel appeared and commanded: 'Read!' (Iqra). The first verses revealed were Surah Al-Alaq (96:1-5).\n\nThis marked the beginning of his prophethood and 23 years of revelation.",
+                    "tr": "40 yaşında Hira Mağarası'nda Cebrail (as) geldi ve 'Oku!' dedi. İlk vahiy Alak Suresi'ydi."
+                }
+            },
+            {
+                "id": "prophet_3",
+                "title": {
+                    "en": "Message and Opposition",
+                    "tr": "Mesaj ve Muhalefet"
+                },
+                "content": {
+                    "en": "The Prophet ﷺ called people to:\n\n• Worship Allah alone\n• Abandon idol worship\n• Justice and equality\n• Care for the poor\n\nThe Quraysh opposed him, leading to persecution of early Muslims and the migration to Abyssinia.",
+                    "tr": "Peygamber (sav) insanları tek Allah'a ibadete, putları bırakmaya ve adalete çağırdı."
+                }
+            },
+            {
+                "id": "prophet_4",
+                "title": {
+                    "en": "The Hijrah",
+                    "tr": "Hicret"
+                },
+                "content": {
+                    "en": "In 622 CE, the Prophet ﷺ migrated from Mecca to Medina (Yathrib). This event, the Hijrah, marks the beginning of the Islamic calendar.\n\nIn Medina, he established the first Islamic state, built Masjid an-Nabawi, and created the Constitution of Medina.",
+                    "tr": "622'de Peygamber (sav) Mekke'den Medine'ye hicret etti. İslam takvimi bu tarihle başlar."
+                }
+            },
+            {
+                "id": "prophet_5",
+                "title": {
+                    "en": "Conquest of Mecca",
+                    "tr": "Mekke'nin Fethi"
+                },
+                "content": {
+                    "en": "In 630 CE, the Prophet ﷺ peacefully conquered Mecca with 10,000 companions. He showed mercy to his former enemies, declaring general amnesty.\n\nHe cleansed the Kaaba of idols, restoring it to the worship of Allah alone.",
+                    "tr": "630'da Peygamber (sav) 10.000 sahabiyle Mekke'yi fetetti ve genel af ilan etti."
+                }
+            },
+            {
+                "id": "prophet_6",
+                "title": {
+                    "en": "His Character",
+                    "tr": "Karakteri"
+                },
+                "content": {
+                    "en": "The Prophet ﷺ was known for:\n\n• Kindness to all, including animals\n• Humility despite his status\n• Patience in hardship\n• Generosity - never said 'no' to requests\n• Justice - even against himself\n• Mercy - even to enemies\n\nAisha (RA) said: 'His character was the Quran.'",
+                    "tr": "Peygamber (sav) merhameti, sabrı, cömertliği ve adaleti ile tanınırdı."
+                }
+            }
+        ]
+    },
+    {
+        "id": "ethics",
+        "icon": "balance",
+        "lessons_count": 5,
+        "duration": "20 min",
+        "title": {
+            "en": "Islamic Ethics",
+            "tr": "İslam Ahlakı"
+        },
+        "description": {
+            "en": "Moral values and character",
+            "tr": "Ahlaki değerler ve karakter"
+        },
+        "lessons": [
+            {
+                "id": "ethics_1",
+                "title": {
+                    "en": "Importance of Akhlaq",
+                    "tr": "Ahlakın Önemi"
+                },
+                "content": {
+                    "en": "Akhlaq (character) is central to Islam. The Prophet ﷺ said: 'I was sent to perfect good character.'\n\nGood character is heavier on the scales than prayer and fasting. A believer with good character reaches the level of those who pray at night and fast during the day.",
+                    "tr": "Ahlak İslam'ın merkezindedir. Peygamber (sav): 'Güzel ahlakı tamamlamak için gönderildim.'"
+                }
+            },
+            {
+                "id": "ethics_2",
+                "title": {
+                    "en": "Truthfulness (Sidq)",
+                    "tr": "Doğruluk (Sıdk)"
+                },
+                "content": {
+                    "en": "Islam emphasizes truthfulness:\n\n• 'Truthfulness leads to righteousness' - Hadith\n• Allah is called Al-Haqq (The Truth)\n• Lying is forbidden even in jest\n• Business dealings must be honest\n\nThe Prophet ﷺ was known as As-Sadiq (The Truthful).",
+                    "tr": "İslam doğruluğu vurgular. Yalan şakada bile yasaktır."
+                }
+            },
+            {
+                "id": "ethics_3",
+                "title": {
+                    "en": "Kindness to Parents",
+                    "tr": "Anne Babaya İyilik"
+                },
+                "content": {
+                    "en": "Birr al-Walidayn (kindness to parents) is emphasized repeatedly:\n\n• Mentioned right after worshipping Allah in Quran\n• 'Paradise lies under the feet of mothers'\n• Must be kind even if they are non-Muslim\n• Disobedience to parents is a major sin",
+                    "tr": "Anne babaya iyilik Kur'an'da Allah'a ibadetten hemen sonra zikredilir."
+                }
+            },
+            {
+                "id": "ethics_4",
+                "title": {
+                    "en": "Rights of Others",
+                    "tr": "Başkalarının Hakları"
+                },
+                "content": {
+                    "en": "Islam teaches respecting others' rights:\n\n• Neighbors - even non-Muslims\n• Orphans - their care is heavily emphasized\n• Poor - Zakat is obligatory\n• Animals - must not be harmed\n• Environment - no waste or destruction\n\n'None of you truly believes until he loves for his brother what he loves for himself.'",
+                    "tr": "İslam komşu, yetim, fakir, hayvan ve çevre haklarını korur."
+                }
+            },
+            {
+                "id": "ethics_5",
+                "title": {
+                    "en": "Avoiding Bad Character",
+                    "tr": "Kötü Ahlaktan Kaçınma"
+                },
+                "content": {
+                    "en": "Islam forbids:\n\n• Arrogance (Kibr)\n• Envy (Hasad)\n• Backbiting (Gheebah)\n• Slander (Buhtaan)\n• Anger without cause\n• Stinginess\n• Showing off (Riyaa)\n\nThese destroy good deeds and harm relationships.",
+                    "tr": "İslam kibir, haset, gıybet, iftira, cimrilik ve gösterişi yasaklar."
+                }
+            }
+        ]
+    },
+    {
+        "id": "ramadan",
+        "icon": "nights_stay",
+        "lessons_count": 5,
+        "duration": "15 min",
+        "title": {
+            "en": "Fasting in Ramadan",
+            "tr": "Ramazan Orucu"
+        },
+        "description": {
+            "en": "Understanding and practicing Sawm",
+            "tr": "Orucu anlamak ve uygulamak"
+        },
+        "lessons": [
+            {
+                "id": "ramadan_1",
+                "title": {
+                    "en": "What is Ramadan?",
+                    "tr": "Ramazan Nedir?"
+                },
+                "content": {
+                    "en": "Ramadan is the 9th month of the Islamic calendar. Fasting during Ramadan is the 4th pillar of Islam, obligatory for all adult Muslims.\n\nIt was in Ramadan that the Quran was first revealed to Prophet Muhammad ﷺ.",
+                    "tr": "Ramazan, İslam takviminin 9. ayıdır. Ramazan orucu İslam'ın 4. şartıdır."
+                }
+            },
+            {
+                "id": "ramadan_2",
+                "title": {
+                    "en": "Rules of Fasting",
+                    "tr": "Orucun Kuralları"
+                },
+                "content": {
+                    "en": "Fasting (Sawm) includes abstaining from:\n\n• Food and drink\n• Smoking\n• Marital relations\n\nFrom Fajr (dawn) until Maghrib (sunset). The fast is broken with Iftar, traditionally with dates and water.",
+                    "tr": "Oruç, fecirden akşama kadar yeme, içme ve sigara içmekten kaçınmayı içerir."
+                }
+            },
+            {
+                "id": "ramadan_3",
+                "title": {
+                    "en": "Who is Exempt?",
+                    "tr": "Kimler Muaf?"
+                },
+                "content": {
+                    "en": "Those exempt from fasting:\n\n• Children (before puberty)\n• Elderly who cannot fast\n• Sick (temporarily ill)\n• Travelers\n• Pregnant/nursing women\n• Menstruating women\n\nMissed days should be made up later when possible, or Fidya (feeding the poor) should be given.",
+                    "tr": "Muaf olanlar: Çocuklar, yaşlılar, hastalar, yolcular, hamile/emziren kadınlar."
+                }
+            },
+            {
+                "id": "ramadan_4",
+                "title": {
+                    "en": "Spiritual Benefits",
+                    "tr": "Manevi Faydaları"
+                },
+                "content": {
+                    "en": "Benefits of fasting:\n\n• Develops Taqwa (God-consciousness)\n• Empathy for the hungry\n• Self-discipline and patience\n• Purification of the soul\n• Forgiveness of past sins\n• Gates of Paradise are opened\n• Devils are chained",
+                    "tr": "Orucun faydaları: Takva, empati, sabır, nefis terbiyesi, günahların affı."
+                }
+            },
+            {
+                "id": "ramadan_5",
+                "title": {
+                    "en": "Laylatul Qadr",
+                    "tr": "Kadir Gecesi"
+                },
+                "content": {
+                    "en": "Laylatul Qadr (Night of Power) is the most blessed night, occurring in the last 10 nights of Ramadan (odd nights: 21, 23, 25, 27, 29).\n\nWorship on this night is better than 1,000 months (83+ years). The Quran was revealed on this night. Signs include a calm, peaceful night.",
+                    "tr": "Kadir Gecesi, Ramazan'ın son 10 gününde (tek gecelerde) olan en mübarek gecedir. 1000 aydan hayırlıdır."
+                }
+            }
+        ]
+    }
+]ȯ *cascade08ȯ��*cascade08���� *cascade08"(ad531abe872c7cf491ed881344a14c5a674c9d842Qfile:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life/assets/data/islam101.json:7file:///c:/Users/Abdullah/Projects/AdhanLife/adhan_life

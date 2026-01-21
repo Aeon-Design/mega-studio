@@ -1,0 +1,120 @@
+�## 🎯 Prompt Engineering Grimoire
+
+> **Owner:** CEO / All Leader Agents
+> **Purpose:** Transform vague user requests into precise, actionable prompts. Extracted from state-of-the-art LLM system prompts.
+
+---
+
+## 🧠 Core Principle: "Understand Before Act"
+
+> [!IMPORTANT]
+> **ALWAYS read relevant knowledge/skills BEFORE writing any code or taking action.**
+> This single habit separates mediocre agents from world-class ones.
+
+**The Protocol:**
+1.  User gives a request.
+2.  **PAUSE.** Do not act.
+3.  **CLASSIFY** the request type.
+4.  **CONSULT** relevant Grimoire(s).
+5.  **REFINE** the prompt if unclear.
+6.  **EXECUTE** with full context.
+
+---
+
+## 📥 Request Classification Framework
+
+Before ANY action, classify the user's request:
+
+| Request Type | Trigger Keywords | Required Action |
+|--------------|------------------|-----------------|
+| **QUESTION** | "what is", "how does", "explain" | Answer directly (no code) |
+| **SIMPLE FIX** | "fix", "change", "add" (single file) | Quick edit, ask for context |
+| **COMPLEX BUILD** | "build", "create", "implement" | **Full planning required** |
+| **DEBUG** | "not working", "error", "crash" | **Gather logs first** |
+| **DESIGN** | "design", "UI", "look", "feel" | **Consult Design Grimoire** |
+| **VAGUE** | "make it better", "improve" | **ASK clarifying questions** |
+
+---
+
+## 🔍 Prompt Refinement Protocol
+
+When user's prompt is vague, apply this framework:
+
+### Step 1: Extract Keywords (The Substance)
+**Good keywords (use these):**
+*   Nouns: `animation`, `widget`, `API`, `database`
+*   Technologies: `Flutter`, `Riverpod`, `Firebase`
+*   Specific terms: `jank`, `memory leak`, `500 error`
+
+**Bad keywords (ignore these):**
+*   Generic verbs: `make`, `do`, `fix`, `change`
+*   Vague nouns: `thing`, `stuff`, `issue`, `problem`
+*   Meta-words: `help`, `want`, `need`
+
+### Step 2: Ask Strategic Questions
+If after keyword extraction you still lack clarity, ask:
+1.  **WHAT specifically?** "Which screen/component?"
+2.  **WHY?** "What's the goal/expected behavior?"
+3.  **HOW it fails?** "What's the error/current behavior?"
+
+### Step 3: Rephrase Before Executing
+Transform user prompt into a structured task:
+
+**Before (User says):**
+> "Animasyonda bi sorun var düzelt"
+
+**After (Agent understands):**
+> "Task: Debug animation issue.
+> Domain: Flutter Animations.
+> Consult: `flutter_animations.md`, `flutter_performance.md`.
+> Action: Profile with DevTools, identify jank source, apply fix."
+
+---
+
+## 🛠️ Decision Frameworks
+
+### When to Ask vs When to Act?
+| Situation | Action |
+|-----------|--------|
+| 1+ specific keywords + clear scope | **ACT** |
+| 0 specific keywords | **ASK** "Which X specifically?" |
+| Contradictory requirements | **ASK** "Do you want A or B?" |
+| High-risk change (delete, deploy) | **CONFIRM** before executing |
+
+### When to Delegate vs Self-Execute?
+| If you are... | And the task is... | Then... |
+|---------------|--------------------|---------|
+| CEO | Technical | Delegate to CTO |
+| CTO | Code implementation | Delegate to Tech Lead |
+| Tech Lead | Specific domain (Mobile/Backend) | Delegate to specialist |
+| Specialist | Within your domain | **Execute yourself** |
+
+---
+
+## 📜 The Checklist (Pre-Execution)
+
+Before writing ANY code or taking ANY action:
+
+- [ ] Have I classified the request type?
+- [ ] Have I extracted specific keywords?
+- [ ] Is the scope clear? (If not, ASK)
+- [ ] Have I consulted the relevant Grimoire?
+- [ ] Am I the right agent? (If not, DELEGATE)
+- [ ] Is this high-risk? (If yes, CONFIRM)
+
+---
+
+## 💡 Prompt Transformation Examples
+
+### Example 1: Vague → Specific
+**User:** "Make the app faster"
+**Refined:** "Optimize app performance. Consult `flutter_performance.md`. Profile startup time, scroll performance, and memory usage. Report findings before making changes."
+
+### Example 2: Broad → Actionable
+**User:** "Add login"
+**Refined:** "Implement authentication feature. Clarify: Email/Password? Google OAuth? Apple Sign-In? Consult `flutter_architecture.md` for auth service structure. Consult `backend_scaling.md` for JWT handling."
+
+### Example 3: Emotional → Technical
+**User:** "The animation is ugly"
+**Refined:** "Improve animation quality. Clarify: Is it 'ugly' because of timing (too fast/slow), easing (too linear), or design (wrong colors/shapes)? Consult `flutter_animations.md` for motion design principles."
+�#*cascade082Afile:///C:/Users/Abdullah/.gemini/knowledge/prompt_engineering.md

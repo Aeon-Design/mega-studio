@@ -1,0 +1,297 @@
+Ëz//@version=6
+strategy("Macro Math Engine [Titan]", shorttitle="TITAN ENG", overlay=true, initial_capital=10000, default_qty_type=strategy.cash, default_qty_value=10000, currency=currency.USD, commission_type=strategy.commission.percent, commission_value=0.04)
+
+// -----------------------------------------------------------------------------
+// 1. CONSTANTS & THEME
+// -----------------------------------------------------------------------------
+var color COLOR_BULL = #089981     // Institutional Green
+var color COLOR_BEAR = #F23645     // Institutional Red
+var color COLOR_NEUTRAL = #787B86  // Grey
+var color COLOR_GOLD = #FFD700     // Gold (Value/Fib)
+var color COLOR_SILVER = #C0C0C0   // Silver (Pivots)
+var color COLOR_BG_DARK = #131722
+
+// -----------------------------------------------------------------------------
+// 2. INPUTS (The Control Panel)
+// -----------------------------------------------------------------------------
+grp_logic = "ğŸ§  MACRO LOGIC ENGINE"
+use_trend_filter = input.bool(true, "Trend River Filter (200D + 50W)", group=grp_logic, tooltip="Only trade Long if Price > 200D & 50W. Only Short if Price < 200D & 50W.")
+monday_manipulation = input.bool(true, "Monday Manipulation Logic", group=grp_logic, tooltip="If True, treats Monday High/Low breaks as potential fakeouts or breakout triggers.")
+risk_per_trade = input.float(1.0, "Risk Per Trade (%)", minval=0.1, step=0.1, group=grp_logic)
+reward_ratio = input.float(2.0, "Target R:R", minval=1.0, step=0.1, group=grp_logic)
+
+grp_ma = "1. Trend River (The Truth)"
+show_ma = input.bool(true, "Show MAs", group=grp_ma)
+len_d200 = input.int(200, "Daily Baseline", group=grp_ma)
+len_w50 = input.int(50, "Weekly Bull Support", group=grp_ma)
+len_w100 = input.int(100, "Weekly Deep Value", group=grp_ma)
+len_w200 = input.int(200, "Weekly Cycle Bottom", group=grp_ma)
+
+grp_fib = "2. Golden Grid (The Money Zones)"
+show_fib = input.bool(true, "Show Cycle Fibs", group=grp_fib)
+fib_lookback = input.int(300, "Cycle Lookback (Weeks)", group=grp_fib)
+
+grp_op = "3. Weekly OS (Operating System)"
+show_mon = input.bool(true, "Show Monday Range", group=grp_op)
+mon_ext_factor = input.float(1.0, "Monday Expansion Factor", group=grp_op)
+
+// -----------------------------------------------------------------------------
+// 3. MATHEMATICAL CORE: TREND RIVER
+// -----------------------------------------------------------------------------
+// Fetching HTF Data without Repainting (Strict Close)
+d200 = request.security(syminfo.tickerid, "D", ta.sma(close, len_d200))
+w50 = request.security(syminfo.tickerid, "W", ta.sma(close, len_w50))
+w100 = request.security(syminfo.tickerid, "W", ta.sma(close, len_w100))
+w200 = request.security(syminfo.tickerid, "W", ta.sma(close, len_w200))
+
+// Trend State Machine
+var string trend_state = "NEUTRAL"
+if close > d200 and close > w50
+    trend_state := "BULLISH"
+else if close < d200 and close < w50
+    trend_state := "BEARISH"
+else if close < w50 and close > w100
+    trend_state := "VALUE ZONE"
+else if close < w200
+    trend_state := "GENERATIONAL BOTTOM"
+
+// Plotting (Visuals)
+plot(show_ma ? d200 : na, "Daily 200", color=color.orange, linewidth=2)
+plot(show_ma ? w50 : na, "Weekly 50", color=COLOR_BULL, linewidth=2)
+plot(show_ma ? w100 : na, "Weekly 100", color=COLOR_GOLD, linewidth=3)
+plot(show_ma ? w200 : na, "Weekly 200", color=COLOR_BEAR, linewidth=4)
+
+// -----------------------------------------------------------------------------
+// 4. MATHEMATICAL CORE: GOLDEN GRID (FIBONACCI & EQ)
+// -----------------------------------------------------------------------------
+// Daily Equilibrium (Previous Day Midpoint)
+[pd_h, pd_l] = request.security(syminfo.tickerid, "D", [high[1], low[1]])
+float daily_eq = (pd_h + pd_l) / 2
+plot(daily_eq, "Daily EQ", color=color.new(color.white, 50), style=plot.style_circles)
+
+// Auto-detect Cycle High/Low (Dynamic Pivot Mode)
+// If lookback > 0, use fixed. If 0, use Pivot.
+// For now, let's stick to the robust Lookback but make it adjustable or add Pivot option if user requested.
+// User asked for "Auto select". 
+// Let's use a hybrid: Highest in last X weeks.
+[cyc_h, cyc_l] = request.security(syminfo.tickerid, "W", [ta.highest(high, fib_lookback), ta.lowest(low, fib_lookback)])
+
+var line f_0 = na
+var line f_1 = na
+var line f_5 = na
+var line f_618 = na
+
+if show_fib and barstate.islast
+    line.delete(f_0)
+    line.delete(f_1)
+    line.delete(f_5)
+    line.delete(f_618)
+
+    float rng = cyc_h - cyc_l
+    float p_5 = cyc_l + (rng * 0.5)
+    float p_618 = cyc_l + (rng * 0.618)
+    float p_66 = cyc_l + (rng * 0.66) // Golden Pocket Top
+
+    f_0 := line.new(bar_index - 50, cyc_l, bar_index + 10, cyc_l, color=color.gray, style=line.style_dotted)
+    f_1 := line.new(bar_index - 50, cyc_h, bar_index + 10, cyc_h, color=color.gray, style=line.style_dotted)
+    f_5 := line.new(bar_index - 50, p_5, bar_index + 10, p_5, color=color.white, width=1, style=line.style_dashed)
+    
+    // Golden Pocket region
+    box.new(bar_index - 50, p_66, bar_index + 10, p_618, bgcolor=color.new(COLOR_GOLD, 85), border_color=na)
+    
+    label.new(bar_index + 10, p_5, "EQ (0.5)", style=label.style_label_left, textcolor=color.white, color=color(na))
+    label.new(bar_index + 10, p_618, "Golden Pocket", style=label.style_label_left, textcolor=COLOR_GOLD, color=color(na))
+
+// -----------------------------------------------------------------------------
+// 5. MATHEMATICAL CORE: WEEKLY OS (MONDAY RANGE)
+// -----------------------------------------------------------------------------
+is_monday = dayofweek == dayofweek.monday
+var float mon_h = na
+var float mon_l = na
+var bool mon_closed = false
+
+
+// Reset on new week
+if ta.change(time("W")) != 0
+    mon_h := na
+    mon_l := na
+    mon_closed := false
+
+if is_monday
+    mon_h := math.max(nz(mon_h, high), high)
+    mon_l := math.min(nz(mon_l, low), low)
+
+if dayofweek == dayofweek.tuesday and not mon_closed
+    mon_closed := true
+
+// Plotting Monday Range
+if show_mon and not na(mon_h)
+    line.new(bar_index, mon_h, bar_index + 1, mon_h, color=color.blue, width=1)
+    line.new(bar_index, mon_l, bar_index + 1, mon_l, color=color.blue, width=1)
+    
+    // Extensions
+    if mon_closed
+        float m_rng = mon_h - mon_l
+        float ext_up = mon_h + (m_rng * mon_ext_factor)
+        float ext_down = mon_l - (m_rng * mon_ext_factor)
+        line.new(bar_index, ext_up, bar_index + 1, ext_up, color=color.new(COLOR_BEAR, 50), style=line.style_dotted)
+        line.new(bar_index, ext_down, bar_index + 1, ext_down, color=color.new(COLOR_BULL, 50), style=line.style_dotted)
+
+// -----------------------------------------------------------------------------
+// 6. EXECUTION ENGINE (THE STRATEGY)
+// -----------------------------------------------------------------------------
+// Trigger Logic: Monday Breakout + Trend Filter
+bool signal_long = false
+bool signal_short = false
+float stop_loss = na
+float take_profit = na
+
+// Calculate crosses GLOBALLY to preserve series history (Pine Script Rule)
+bool x_over_mon = ta.crossover(close, mon_h)
+bool x_under_mon = ta.crossunder(close, mon_l)
+
+if mon_closed
+    // LONG: Break Monday High AND Trend is Bullish
+    if x_over_mon and (not use_trend_filter or trend_state == "BULLISH")
+        signal_long := true
+        stop_loss := mon_l
+        float risk = close - stop_loss
+        take_profit := close + (risk * reward_ratio)
+
+    // SHORT: Break Monday Low AND Trend is Bearish
+    if x_under_mon and (not use_trend_filter or trend_state == "BEARISH")
+
+        signal_short := true
+        stop_loss := mon_h
+        float risk = stop_loss - close
+        take_profit := close - (risk * reward_ratio)
+
+// Execution with Smart Visuals ("Adam Gibi" Mode)
+// -----------------------------------------------------------------------------
+if signal_long and strategy.position_size == 0
+    float risk_amt = strategy.equity * (risk_per_trade / 100)
+    float risk_dist = math.abs(close - stop_loss)
+    if risk_dist > 0
+        float qty_l = risk_amt / risk_dist
+        
+        // Rich Label
+        string txt = "ğŸš€ LONG\n" + 
+                     "Entry: " + str.tostring(close, format.mintick) + "\n" +
+                     "QTY: " + str.tostring(qty_l, "#.####") + "\n" +
+                     "RISK: $" + str.tostring(risk_amt, "#.##") + "\n" +
+                     "TP: " + str.tostring(take_profit, format.mintick)
+                     
+        label.new(bar_index, low, txt, color=color.new(COLOR_BULL, 10), style=label.style_label_up, textcolor=color.white, size=size.normal)
+        
+        // Lines
+        // Entry
+        line.new(bar_index, close, bar_index + 5, close, color=color.gray, style=line.style_dotted)
+        // SL
+        line.new(bar_index, stop_loss, bar_index + 20, stop_loss, color=COLOR_BEAR, style=line.style_solid, width=2)
+        label.new(bar_index + 20, stop_loss, "SL", style=label.style_label_left, textcolor=color.white, color=COLOR_BEAR, size=size.tiny)
+        // TP
+        line.new(bar_index, take_profit, bar_index + 20, take_profit, color=COLOR_BULL, style=line.style_dashed, width=1)
+        label.new(bar_index + 20, take_profit, "TP", style=label.style_label_left, textcolor=COLOR_BULL, color=color(na), size=size.tiny)
+
+        // JSON Payload
+        string json_alert = '{"action": "buy", "symbol": "' + syminfo.tickerid + '", "price": "' + str.tostring(close) + '"}'
+        strategy.entry("Long", strategy.long, qty=qty_l, alert_message=json_alert)
+        string json_exit = '{"action": "close", "symbol": "' + syminfo.tickerid + '"}'
+        strategy.exit("Exit Long", "Long", stop=stop_loss, limit=take_profit, comment_loss="SL", comment_profit="TP", alert_message=json_exit)
+
+if signal_short and strategy.position_size == 0
+    float risk_amt = strategy.equity * (risk_per_trade / 100)
+    float risk_dist = math.abs(stop_loss - close)
+    if risk_dist > 0
+        float qty_s = risk_amt / risk_dist
+        
+        // Rich Label
+        string txt = "ğŸ» SHORT\n" + 
+                     "Entry: " + str.tostring(close, format.mintick) + "\n" +
+                     "QTY: " + str.tostring(qty_s, "#.####") + "\n" +
+                     "RISK: $" + str.tostring(risk_amt, "#.##") + "\n" +
+                     "TP: " + str.tostring(take_profit, format.mintick)
+
+        label.new(bar_index, high, txt, color=color.new(COLOR_BEAR, 10), style=label.style_label_down, textcolor=color.white, size=size.normal)
+        
+        // Lines
+        // Entry
+        line.new(bar_index, close, bar_index + 5, close, color=color.gray, style=line.style_dotted)
+        // SL
+        line.new(bar_index, stop_loss, bar_index + 20, stop_loss, color=COLOR_BEAR, style=line.style_solid, width=2)
+        label.new(bar_index + 20, stop_loss, "SL", style=label.style_label_left, textcolor=color.white, color=COLOR_BEAR, size=size.tiny)
+        // TP
+        line.new(bar_index, take_profit, bar_index + 20, take_profit, color=COLOR_GOLD, style=line.style_dashed, width=1)
+        label.new(bar_index + 20, take_profit, "TP", style=label.style_label_left, textcolor=COLOR_GOLD, color=color(na), size=size.tiny)
+
+        string json_alert = '{"action": "sell", "symbol": "' + syminfo.tickerid + '", "price": "' + str.tostring(close) + '"}'
+        strategy.entry("Short", strategy.short, qty=qty_s, alert_message=json_alert)
+        string json_exit = '{"action": "close", "symbol": "' + syminfo.tickerid + '"}'
+        strategy.exit("Exit Short", "Short", stop=stop_loss, limit=take_profit, comment_loss="SL", comment_profit="TP", alert_message=json_exit)
+
+// -----------------------------------------------------------------------------
+// 7. PERFORMANCE DASHBOARD (MULTI-ASSET & STATS)
+// -----------------------------------------------------------------------------
+var table board = table.new(position.bottom_right, 4, 10, bgcolor=color.new(COLOR_BG_DARK, 10), border_width=1, border_color=color.gray)
+
+// Function to get Trend River Status for ANY symbol
+f_get_status(sym) =>
+    [c, d2] = request.security(sym, "D", [close, ta.sma(close, len_d200)])
+    [w5] = request.security(sym, "W", [ta.sma(close, len_w50)])
+    string st = "NEUTRAL"
+    color col = color.gray
+    if c > d2 and c > w5
+        st := "BULL"
+        col := COLOR_BULL
+    else if c < d2 and c < w5
+        st := "BEAR"
+        col := COLOR_BEAR
+    else if c < w5
+        st := "VALUE"
+        col := COLOR_GOLD
+    [st, col, c]
+
+// -----------------------------------------------------------------------------
+// DATA FETCHING (MUST BE GLOBAL)
+// -----------------------------------------------------------------------------
+[s_btc, c_btc, p_btc] = f_get_status("BINANCE:BTCUSDT")
+[s_eth, c_eth, p_eth] = f_get_status("BINANCE:ETHUSDT")
+[s_sol, c_sol, p_sol] = f_get_status("BINANCE:SOLUSDT")
+[s_gold, c_gold, p_gold] = f_get_status("TVC:GOLD")
+
+if barstate.islast
+    // Header
+    table.cell(board, 0, 0, "TITAN V2", bgcolor=color.black, text_color=color.white)
+    table.cell(board, 1, 0, "STATUS", bgcolor=color.black, text_color=color.white)
+    table.cell(board, 2, 0, "PRICE", bgcolor=color.black, text_color=color.white)
+    table.cell(board, 3, 0, "WIN RATE", bgcolor=color.black, text_color=color.white)
+
+    // Row 1: Current Strategy Symbol
+    table.cell(board, 0, 1, syminfo.ticker, text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 1, 1, trend_state, text_color=trend_state=="BULLISH"?COLOR_BULL:(trend_state=="BEARISH"?COLOR_BEAR:COLOR_GOLD), bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 2, 1, str.tostring(close, format.mintick), text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    
+    // Win Rate Logic
+    float total = strategy.wintrades + strategy.losstrades
+    float wr = total > 0 ? ((strategy.wintrades * 1.0) / total * 100) : 0.0
+    table.cell(board, 3, 1, str.tostring(wr, "#") + "%", text_color=wr > 50 ? COLOR_BULL : COLOR_BEAR, bgcolor=COLOR_BG_DARK, text_size=size.small)
+
+    // Row 2-6: Market Overview
+    // RENDER DATA (Calculated Globally)
+    table.cell(board, 0, 2, "BTC", text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 1, 2, s_btc, text_color=c_btc, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 2, 2, str.tostring(p_btc, format.mintick), text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+
+    table.cell(board, 0, 3, "ETH", text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 1, 3, s_eth, text_color=c_eth, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 2, 3, str.tostring(p_eth, format.mintick), text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    
+    table.cell(board, 0, 4, "SOL", text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 1, 4, s_sol, text_color=c_sol, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 2, 4, str.tostring(p_sol, format.mintick), text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    
+    table.cell(board, 0, 5, "GOLD", text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 1, 5, s_gold, text_color=c_gold, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(board, 2, 5, str.tostring(p_gold, format.mintick), text_color=color.white, bgcolor=COLOR_BG_DARK, text_size=size.small)
+@ *cascade08@C*cascade08CD *cascade08DE*cascade08Eí *cascade08íò*cascade08òÇ *cascade08Ç¾*cascade08¾Û *cascade08Ûã *cascade08ã - *cascade08-†- *cascade08†-°- *cascade08°-µ-*cascade08µ-¢7 *cascade08¢7Ï8*cascade08Ï8š9 *cascade08š9œ9*cascade08œ9 9 *cascade08 9¡9*cascade08¡9²; *cascade08²;´;*cascade08´;¹; *cascade08¹;º;*cascade08º;ô; *cascade08ô;ö;*cascade08ö;= *cascade08=±=*cascade08±=–>*cascade08–>ü? *cascade08ü?†@*cascade08†@‘@ *cascade08‘@’@*cascade08’@“@ *cascade08“@—@*cascade08—@˜@ *cascade08˜@š@*cascade08š@¥@ *cascade08¥@§@*cascade08§@ª@ *cascade08ª@­@*cascade08­@®@ *cascade08®@¯@*cascade08¯@°@ *cascade08°@±@*cascade08±@³@ *cascade08³@¸@*cascade08¸@¹@ *cascade08¹@¼@*cascade08¼@¾@ *cascade08¾@ß@*cascade08ß@ò@ *cascade08ò@ó@*cascade08ó@ö@ *cascade08ö@÷@*cascade08÷@A *cascade08AºB*cascade08ºBëB *cascade08ëB©C*cascade08©C±C *cascade08±C»C*cascade08»C¼C *cascade08¼C½C *cascade08½CÆC*cascade08ÆCÇC *cascade08ÇCÌC*cascade08ÌCÓC*cascade08ÓCÔC *cascade08ÔCÚC*cascade08ÚCÜC *cascade08ÜCíC*cascade08íCîC *cascade08îC‰D *cascade08‰DŒD*cascade08ŒDD *cascade08DD *cascade08DD *cascade08DÈD*cascade08ÈDÉD *cascade08ÉD¢E*cascade08¢E­E *cascade08­E¼E*cascade08¼EËE *cascade08ËEÌE *cascade08ÌEÏE*cascade08ÏEĞE *cascade08ĞEÖE*cascade08ÖE×E *cascade08×EİE*cascade08İEŞE *cascade08ŞEäE*cascade08äEåE *cascade08åEçE *cascade08çEèE*cascade08èEñE *cascade08ñEòE *cascade08òEóE*cascade08óEôE *cascade08ôE‚F*cascade08‚FƒF *cascade08ƒFF*cascade08F‘F *cascade08‘F™F *cascade08™FF*cascade08FF *cascade08F³F*cascade08³F´F *cascade08´FÓF*cascade08ÓFÔF *cascade08ÔFŒG*cascade08ŒGG *cascade08GG*cascade08GG *cascade08G²G*cascade08²G½G *cascade08½GÌG*cascade08ÌGÎG *cascade08ÎGÏG *cascade08ÏGùG *cascade08ùGúG*cascade08úGŠH *cascade08ŠH‹H *cascade08‹H H*cascade08 H¡H *cascade08¡H³H *cascade08³HÇI*cascade08ÇIãI *cascade08ãI…O *cascade08…OœO *cascade08œOO*cascade08OO *cascade08O¢O*cascade08¢O£O *cascade08£O¥O*cascade08¥O°O *cascade08°O²O*cascade08²OµO *cascade08µO¸O*cascade08¸O¹O *cascade08¹OºO*cascade08ºO»O *cascade08»O¼O*cascade08¼O¾O *cascade08¾OÃO*cascade08ÃOÄO *cascade08ÄOÈO*cascade08ÈOÊO *cascade08ÊOëO*cascade08ëOşO *cascade08şOÿO*cascade08ÿO‚P *cascade08‚PƒP*cascade08ƒPšP *cascade08šPÆQ*cascade08ÆQ÷Q *cascade08÷Q¡R*cascade08¡R©R *cascade08©R³R*cascade08³R½R *cascade08½RÂR*cascade08ÂRƒS *cascade08ƒS†S*cascade08†S‰S *cascade08‰S×S*cascade08×SØS *cascade08ØSœT*cascade08œT§T *cascade08§T¶T*cascade08¶TáT *cascade08áTâT*cascade08âT“U *cascade08“U—U*cascade08—U˜U *cascade08˜U­U*cascade08­U®U *cascade08®UÆU*cascade08ÆUÇU *cascade08ÇU†V*cascade08†V‡V *cascade08‡V‰V*cascade08‰VŠV *cascade08ŠV¬V*cascade08¬V­V *cascade08­V¼V*cascade08¼VóV *cascade08óVôV*cascade08ôVW *cascade08W’W*cascade08’W“W *cascade08“W”W*cascade08”W­W *cascade08­WÁX*cascade08ÁXÄX *cascade08ÄXõ\ *cascade08õ\‹]*cascade08‹]’^ *cascade08’^“^*cascade08“^•^ *cascade08•^—^*cascade08—^ë^ *cascade08ë^ó^*cascade08ó^ô^ *cascade08ô^‘_*cascade08‘_’_ *cascade08’_”_*cascade08”_•_ *cascade08•_œ_*cascade08œ__ *cascade08_©_*cascade08©_ª_ *cascade08ª_Å_ *cascade08Å_Æ_ *cascade08Æ_Ê_*cascade08Ê_Ë_ *cascade08Ë_Ì_ *cascade08Ì_é_*cascade08é_ê_ *cascade08ê_ÿ_ *cascade08ÿ_¢`*cascade08¢`¤` *cascade08¤`ª`*cascade08ª`«`*cascade08«`µ`*cascade08µ`¶` *cascade08¶`ô`*cascade08ô`õ`*cascade08õ`ÿ`*cascade08ÿ`€a *cascade08€aa*cascade08aa *cascade08aµa*cascade08µa¶a *cascade08¶aÙa*cascade08ÙaÚa *cascade08Úaía*cascade08íaîa *cascade08îaïa *cascade08ïağb *cascade08ğb™f*cascade08™fºf *cascade08ºfØf *cascade08ØfŞfŞfßf *cascade08ßfáf*cascade08
+áfãf ãfåf *cascade08åfêf*cascade08êfëf *cascade08ëfôf*cascade08ôfõf *cascade08õfùf*cascade08ùfûf *cascade08ûf‰g*cascade08‰gŠg *cascade08ŠgŒg*cascade08Œgg *cascade08gg*cascade08g¨g *cascade08¨g©g*cascade08©g¯g *cascade08¯g°g*cascade08°g²g *cascade08²g³g *cascade08³g´g*cascade08´gµg *cascade08µgêg *cascade08êgñg*cascade08ñgòg *cascade08ògùg*cascade08ùgúg *cascade08úgûg*cascade08ûgüg *cascade08ügşg*cascade08şgÿg *cascade08ÿgh*cascade08h‚h *cascade08‚hŠh*cascade08Šh‹h *cascade08‹hh*cascade08h’h *cascade08’h“h*cascade08“h”h *cascade08”hŸh*cascade08Ÿh¢h *cascade08¢h¤h*cascade08¤h¥h *cascade08¥h´h*cascade08´h¶h *cascade08¶h¹h*cascade08¹h½h *cascade08½hÇh*cascade08ÇhÈh *cascade08ÈhËh*cascade08ËhÍh *cascade08ÍhÑh*cascade08ÑhÒh *cascade08ÒhÔh*cascade08ÔhÖh *cascade08Öh×h*cascade08×hØh *cascade08ØhÙh*cascade08ÙhÜh *cascade08Ühàh*cascade08àháh *cascade08áhõh*cascade08õhöh *cascade08öhi*cascade08ii *cascade08i¸i*cascade08¸iÔi *cascade08ÔiØi*cascade08ØiÙi *cascade08Ùiİi*cascade08İiŞi *cascade08Şiài*cascade08àiõi *cascade08õi÷i*cascade08÷iøi *cascade08øiùi*cascade08ùißj *cascade08ßj®k*cascade08®k¸k *cascade08¸kèk*cascade08èkék *cascade08ékîk*cascade08îkïk *cascade08ïkˆl*cascade08ˆlŠl *cascade08Šll*cascade08l‘l *cascade08‘l”l*cascade08”l•l *cascade08•l—l*cascade08—l˜l *cascade08˜l l*cascade08 l¡l *cascade08¡l°l*cascade08°l±l *cascade08±l³l*cascade08³l´l *cascade08´lµl*cascade08µl·l *cascade08·lÌl*cascade08Ìlúl *cascade08úl€m*cascade08€mŒm *cascade08Œm‘m *cascade08‘m¡m *cascade08¡m¦m*cascade08¦m§m *cascade08§m¨m*cascade08¨m²m *cascade08²mÈm*cascade08ÈmÉm *cascade08ÉmÒm *cascade08ÒmÓm *cascade08ÓmØm*cascade08ØmÙm *cascade08ÙmÚm*cascade08Úmèm *cascade08èmím*cascade08ímîm *cascade08îmõm*cascade08õmöm*cascade08öm÷m *cascade08÷mùm*cascade08ùm†n *cascade08†nˆn*cascade08ˆn¡n *cascade08¡n¢n*cascade08¢n¤n *cascade08¤n¶n*cascade08¶n¹n *cascade08¹nÊo *cascade08ÊoĞo*cascade08ĞoÑo *cascade08ÑoÕo*cascade08ÕoÖo *cascade08ÖoØo*cascade08ØoÚo *cascade08ÚoÛo*cascade08ÛoÜo *cascade08ÜoŞo*cascade08Şoßo *cascade08ßoào *cascade08àoáo*cascade08áoâo *cascade08âoão*cascade08ãoäo *cascade08äoåo*cascade08åoæo *cascade08æoço *cascade08çoêo*cascade08êop *cascade08p¡p *cascade08¡pÄp*cascade08ÄpÆp *cascade08ÆpÑp*cascade08ÑpÒp *cascade08ÒpŞp*cascade08Şpßp *cascade08ßpèp*cascade08èpép *cascade08ép‰q*cascade08‰qÏq *cascade08ÏqĞq*cascade08Ğqâq *cascade08âqçq*cascade08çqéq *cascade08éqïq*cascade08ïqğq *cascade08ğq÷q*cascade08÷q…r *cascade08…r‰r*cascade08‰rŠr *cascade08Šr‘r*cascade08‘r’r *cascade08’ršr*cascade08šr¡r *cascade08¡rÂr *cascade08Ârûr *cascade08ûr¯s *cascade08¯sÀs*cascade08ÀsÁs *cascade08ÁsÉs*cascade08ÉsËs *cascade08ËsÍs*cascade08ÍsÎs *cascade08Îs×s*cascade08×sØs *cascade08Øsãs*cascade08ãsäs *cascade08äs‚t*cascade08‚tƒt *cascade08ƒtŒt*cascade08Œt’t *cascade08’t•t*cascade08•t–t *cascade08–tt*cascade08t t *cascade08 t«t*cascade08«t¬t *cascade08¬t´t*cascade08´tµt *cascade08µt¹t*cascade08¹t»t *cascade08»t½t*cascade08½t¾t *cascade08¾tÎt*cascade08ÎtÏt *cascade08ÏtÒt*cascade08ÒtÓt *cascade08ÓtØt*cascade08ØtÙt *cascade08Ùtãt*cascade08ãtåt *cascade08åtèt*cascade08ètét *cascade08étÿt*cascade08ÿt€u *cascade08€uu*cascade08u‚u *cascade08‚u›u *cascade08›u´u *cascade08´uµu*cascade08µu¸u *cascade08¸u»u*cascade08»uÏu *cascade08ÏuÑu*cascade08ÑuÒu *cascade08ÒuÓu*cascade08Óuv *cascade08vv*cascade08v v *cascade08 v¦v*cascade08¦v§v *cascade08§v‚w*cascade08‚ww *cascade08w•w*cascade08•w—w *cascade08—ww*cascade08ww *cascade08w¥w*cascade08¥w³w *cascade08³w½w*cascade08½w¾w *cascade08¾w×w*cascade08×wØw *cascade08Øwîw*cascade08îwîw*cascade08îwïw *cascade08ïwòw *cascade08òwŠx *cascade08Šx‹x *cascade08‹xŒx*cascade08Œxx *cascade08x—x*cascade08—x˜x *cascade08˜x¸x*cascade08¸x¿x *cascade08¿xÆx*cascade08ÆxÇx *cascade08Çxöx*cascade08öx÷x *cascade08÷xy*cascade08y¤y *cascade08¤y§y*cascade08§y©y *cascade08©y›z*cascade08›zËz *cascade082Gfile:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Math_Engine.pine

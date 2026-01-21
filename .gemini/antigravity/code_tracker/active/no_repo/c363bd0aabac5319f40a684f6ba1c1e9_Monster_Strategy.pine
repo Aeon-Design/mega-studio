@@ -1,0 +1,1002 @@
+��//@version=6
+indicator("Monster Institutional Strategy [AntiGravity]", shorttitle="MNSTR [AG]", overlay=true, max_bars_back=1000, max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+
+// -----------------------------------------------------------------------------
+// 1. CONSTANTS & THEME
+// -----------------------------------------------------------------------------
+var color COLOR_BULL = #089981 // Institutional Green
+var color COLOR_BEAR = #F23645 // Institutional Red
+var color COLOR_NEUTRAL = #787B86
+var color COLOR_TEXT = #FFFFFF
+var color COLOR_BG_DARK = #131722
+var color COLOR_GOLD = #FFD700
+var color COLOR_SILVER = #C0C0C0
+
+// -----------------------------------------------------------------------------
+// 2. INPUTS
+// -----------------------------------------------------------------------------
+grp_ctx = "1. Context & Bias"
+trade_style = input.string("Day Trader (Balanced)", "Playstyle (Persona)", options=["Scalp Hunter (Aggressive)", "Day Trader (Balanced)", "Swing Emperor (Safe)"], group=grp_ctx, tooltip="Adjusts trend speed & timeframe sensitivity.")
+show_bias = input.bool(true, "Show Bias (VWAP)", group=grp_ctx)
+show_mo = input.bool(true, "Show Monthly Open", group=grp_ctx)
+show_wo = input.bool(true, "Show Weekly Open", group=grp_ctx)
+show_monday = input.bool(true, "Show Monday Range", group=grp_ctx)
+
+grp_vol = "2. Volume & Magnets"
+stdev_mult = input.float(1.0, "Value Area StDev", group=grp_vol)
+show_va = input.bool(true, "Show Value Area (VAH/VAL)", group=grp_vol)
+
+grp_liq = "3. Liquidity"
+liq_len = input.int(10, "Swing Length", group=grp_liq)
+show_swings = input.bool(true, "Show Swings", group=grp_liq)
+
+grp_entry = "5. Snipe Entry"
+show_fibs = input.bool(true, "Auto-Draw Fibs", group=grp_entry)
+
+grp_risk = "6. Risk & Leverage"
+calc_mode = input.string("Risk Based ($)", "Calculation Mode", options=["Risk Based ($)", "Fixed Leverage (x)"], group=grp_risk)
+dist_lev = input.float(20.0, "Target Leverage (x)", minval=1.0, group=grp_risk, tooltip="Used only if Mode is Fixed Leverage")
+use_smart_risk = input.bool(true, "Smart Risk Engine (AI) 🦄", group=grp_risk, tooltip="Automatically adjusts Size/Lev based on Pattern Quality")
+risk_amount = input.float(10.0, "Risk Amount ($)", minval=1.0, group=grp_risk)
+reward_ratio = input.float(3.0, "Target R:R", minval=1.0, step=0.1, group=grp_risk)
+account_bal_manual = input.float(1000.0, "Manual Balance", group=grp_risk)
+max_lev = input.float(100.0, "Max Leverage Cap", minval=1.0, group=grp_risk)
+
+// --- MONSTER SCANNER INPUTS ---
+grp_scan = "🛡️ MONSTER SCANNER 🛡️"
+show_scanner = input.bool(true, "Show Scanner Panel", group=grp_scan)
+u_t01 = input.symbol("BINANCE:BTCUSDT.P", "Symbol 1", group=grp_scan)
+u_t02 = input.symbol("BINANCE:ETHUSDT.P", "Symbol 2", group=grp_scan)
+u_t03 = input.symbol("BINANCE:SOLUSDT.P", "Symbol 3", group=grp_scan)
+u_t04 = input.symbol("BINANCE:XRPUSDT.P", "Symbol 4", group=grp_scan)
+u_t05 = input.symbol("BINANCE:BNBUSDT.P", "Symbol 5", group=grp_scan)
+u_t06 = input.symbol("BINANCE:DOGEUSDT.P", "Symbol 6", group=grp_scan)
+u_t07 = input.symbol("BINANCE:ADAUSDT.P", "Symbol 7", group=grp_scan)
+u_t08 = input.symbol("BINANCE:AVAXUSDT.P", "Symbol 8", group=grp_scan)
+u_t09 = input.symbol("BINANCE:TRXUSDT.P", "Symbol 9", group=grp_scan)
+u_t10 = input.symbol("BINANCE:LTCUSDT.P", "Symbol 10", group=grp_scan)
+u_t11 = input.symbol("BINANCE:LINKUSDT.P", "Symbol 11", group=grp_scan)
+u_t12 = input.symbol("", "Symbol 12 (Empty)", group=grp_scan)
+u_t13 = input.symbol("BINANCE:DOTUSDT.P", "Symbol 13", group=grp_scan)
+u_t14 = input.symbol("", "Symbol 14 (Empty)", group=grp_scan)
+u_t15 = input.symbol("", "Symbol 15 (Empty)", group=grp_scan)
+
+// --- PRECISION & FILTERS (ULTRATHINK) ---
+grp_prec = "🔬 PRECISION MATTERS"
+use_atr_filter = input.bool(true, "Use ATR Volatility Filter", group=grp_prec)
+atr_len = input.int(14, "ATR Length", group=grp_prec)
+atr_mult = input.float(1.0, "Min Impulse (ATR x)", step=0.1, group=grp_prec)
+sl_buffer_atr = input.float(0.1, "Stop Loss Buffer (ATR x)", step=0.1, group=grp_prec)
+
+// -----------------------------------------------------------------------------
+// 3. GLOBAL VARIABLES (STATE MANAGEMENT)
+// -----------------------------------------------------------------------------
+// Use 'var' to keep values across bars (fix for Undeclared Identifier errors)
+var int state = 0 // 0=Wait, 1=Swept, 2=MSB/Ready
+var int dir = 0   // 1=Long, -1=Short
+var float active_sweep_price = na     
+var float active_structure_point = na 
+var float entry_price_global = na // Global storage for entry price
+
+// -----------------------------------------------------------------------------
+// 3.1 VIRTUAL BACKTESTER VARIABLES
+// -----------------------------------------------------------------------------
+var bool in_trade = false
+var bool trade_filled = false // Track if entry limit was filled
+var float trade_entry = na
+var float trade_tp = na
+var float trade_sl = na
+var int trade_dir = 0 // 1=Long, -1=Short
+var int wins = 0
+var int losses = 0
+
+// -----------------------------------------------------------------------------
+// 3.2 SCANNER LOGIC FUNCTION
+// -----------------------------------------------------------------------------
+calc_monster_state(len, rr, atr_l, atr_m, sl_buff, use_filt) =>
+    // 1. Liquidity PIVOTS
+    // Calculate ATR Locally
+    float f_atr = ta.atr(atr_l)
+    
+    ph = ta.pivothigh(high, len, len)
+    pl = ta.pivotlow(low, len, len)
+
+    var float[] pivot_highs = array.new_float(0)
+    var float[] pivot_lows = array.new_float(0)
+    
+    // Manage Arrays
+    if not na(ph)
+        array.unshift(pivot_highs, ph)
+        if array.size(pivot_highs) > 5
+            array.pop(pivot_highs)
+
+    if not na(pl)
+        array.unshift(pivot_lows, pl)
+        if array.size(pivot_lows) > 5
+            array.pop(pivot_lows)
+
+    // 2. Sweep Check
+    bool sweep_bull = false
+    bool sweep_bear = false
+    
+    // Check Lows
+    if array.size(pivot_lows) > 0
+        for i = 0 to array.size(pivot_lows) - 1
+            float p_level = array.get(pivot_lows, i)
+            if low < p_level and close > p_level and low[1] > p_level 
+                sweep_bull := true
+                array.remove(pivot_lows, i) // SINGLE SHOT
+                break 
+
+    // Check Highs
+    if array.size(pivot_highs) > 0
+        for i = 0 to array.size(pivot_highs) - 1
+            float p_level = array.get(pivot_highs, i)
+            if high > p_level and close < p_level and high[1] < p_level
+                sweep_bear := true
+                array.remove(pivot_highs, i) // SINGLE SHOT
+                break
+
+    // 3. State Machine
+    var int f_state = 0 
+    var int f_dir = 0   
+    var float f_active_sweep_price = na     
+    var float f_active_structure_point = na
+    var float f_entry_price = na
+    var float f_target_price = na 
+
+    float f_highest_structure = ta.highest(high, len)
+    float f_lowest_structure = ta.lowest(low, len)
+
+    // FVG Detection (Scanner Logic)
+    bool s_fvg_bull = high[2] < low[0]
+    bool s_fvg_bear = low[2] > high[0]
+
+    // Transition to HUNTING (State 1)
+    if sweep_bull
+        f_state := 1
+        f_dir := 1
+        f_active_sweep_price := low
+        f_active_structure_point := f_highest_structure
+    
+    if sweep_bear
+        f_state := 1
+        f_dir := -1
+        f_active_sweep_price := high
+        f_active_structure_point := f_lowest_structure
+        
+    // Transition to READY (State 2 - MSB) or INVALIDATE
+    if f_state == 1
+        float f_ote = 0.66
+        float f_msb_buff = f_atr * 0.1 // Displacement Buffer
+        
+        // INVALIDATION Logic (Missed Move)
+        if f_dir == 1
+            // FIX: Displacement Check (Body must close +0.1 ATR above structure)
+            if close > (f_active_structure_point + f_msb_buff)
+                float rng = high - f_active_sweep_price
+                
+                // ATR FILTER
+                if use_filt and rng < (f_atr * atr_m)
+                    f_state := 0 // Weak Move
+                else
+                    f_state := 2
+                    f_entry_price := high - (rng * f_ote)
+                    // SL Buffer
+                    f_active_sweep_price := f_active_sweep_price - (f_atr * sl_buff)
+                    f_target_price := f_entry_price + ((f_entry_price - f_active_sweep_price) * rr) 
+
+            else if low < f_active_sweep_price
+                f_state := 0 // Invalidated (Lower Low)
+        
+        if f_dir == -1
+            // FIX: Displacement Check
+            if close < (f_active_structure_point - f_msb_buff)
+                float rng = f_active_sweep_price - low
+                
+                // ATR FILTER
+                if use_filt and rng < (f_atr * atr_m)
+                    f_state := 0 // Weak Move
+                else 
+                    f_state := 2
+                    f_entry_price := low + (rng * f_ote)
+                    // SL Buffer
+                    f_active_sweep_price := f_active_sweep_price + (f_atr * sl_buff)
+                    f_target_price := f_entry_price - ((f_active_sweep_price - f_entry_price) * rr) 
+
+            else if high > f_active_sweep_price
+                f_state := 0 // Invalidated (Higher High)
+    
+    // State 2 Validation (Check for Missed Move OR Trade Completion)
+    if f_state == 2
+        // 1. MISSED MOVE CHECK (Strict Fill Simulation)
+        if f_dir == 1 
+            if high >= f_target_price
+                f_state := 0 // Gone to target, setup over.
+            if low <= f_active_sweep_price
+                f_state := 0 // Stop hit
+        
+        if f_dir == -1
+            if low <= f_target_price
+                f_state := 0 // Gone to target, setup over.
+            if high >= f_active_sweep_price
+                f_state := 0 // Stop hit
+    
+    // Check if current context has FVG (Simplified: Is there FVG now?)
+    // Note: Ideally we want to know if the MSB created it, but checking current bar is a good enough proxy for "Freshness" in scanner
+    float has_fvg = (f_dir == 1 and s_fvg_bull) ? 1.0 : ((f_dir == -1 and s_fvg_bear) ? 1.0 : 0.0)
+
+    // Return Tuple: [state, dir, price, has_fvg]
+    float return_price = (f_state == 1) ? f_active_structure_point : (f_state == 2 ? f_entry_price : na)
+    [f_state, f_dir, return_price, has_fvg]
+
+
+// -----------------------------------------------------------------------------
+// 4. LAYER 1: INSTITUTIONAL CONTEXT (BIAS & LEVELS)
+// -----------------------------------------------------------------------------
+is_monday = dayofweek == dayofweek.monday
+is_new_day = ta.change(time("D")) != 0
+is_new_week = ta.change(time("W")) != 0
+is_new_month = ta.change(time("M")) != 0
+
+// VWAP BIAS
+t_start = request.security(syminfo.tickerid, "D", time, lookahead=barmerge.lookahead_on)
+vwap_daily = ta.vwap(hlc3) 
+vwap_prev_close = request.security(syminfo.tickerid, "D", vwap_daily[1], lookahead=barmerge.lookahead_on)
+
+// FIX: Bias should be Price relative to VWAP (Intraday Trend), not Day-over-Day
+// bias_bullish = vwap_daily > vwap_prev_close // OLD
+bias_bullish = close > vwap_daily // NEW: Reactive Intraday Bias
+bias_color = bias_bullish ? COLOR_BULL : COLOR_BEAR
+
+// INSTITUTIONAL LEVELS
+mo_price = request.security(syminfo.tickerid, "M", open, lookahead=barmerge.lookahead_on)
+wo_price = request.security(syminfo.tickerid, "W", open, lookahead=barmerge.lookahead_on)
+
+var float mh_price = na
+var float ml_price = na
+
+if is_new_week
+    mh_price := na
+    ml_price := na
+
+if is_monday
+    mh_price := math.max(nz(mh_price, high), high)
+    ml_price := math.min(nz(ml_price, low), low)
+
+// -----------------------------------------------------------------------------
+// 4.1 SMART PRICE ACTION (FVG / IMBALANCE)
+// -----------------------------------------------------------------------------
+// Bullish FVG: High[2] < Low[0]
+bool fvg_bull = high[2] < low[0]
+float fvg_bull_top = low[0]
+float fvg_bull_bot = high[2]
+
+// Bearish FVG: Low[2] > High[0]
+bool fvg_bear = low[2] > high[0]
+float fvg_bear_top = low[2]
+float fvg_bear_bot = high[0]
+
+// FVG Visuals (Only show last significant ones to keep chart clean)
+if fvg_bull and show_swings 
+    box.new(bar_index - 2, fvg_bull_top, bar_index, fvg_bull_bot, bgcolor=color.new(COLOR_BULL, 85), border_color=na)
+
+if fvg_bear and show_swings
+    box.new(bar_index - 2, fvg_bear_top, bar_index, fvg_bear_bot, bgcolor=color.new(COLOR_BEAR, 85), border_color=na)
+
+// -----------------------------------------------------------------------------
+// 4.2 MULTI-TIMEFRAME CONTEXT (TIME AWARENESS) ⏳
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// 4.2 MULTI-TIMEFRAME CONTEXT (TIME AWARENESS) ⏳
+// -----------------------------------------------------------------------------
+// Persona-Based Logic
+var string target_htf = "240"
+var int target_ema_len = 50
+
+if trade_style == "Scalp Hunter (Aggressive)"
+    target_htf := "60" // 1 Hour Context
+    target_ema_len := 20 // Fast Trend
+else if trade_style == "Swing Emperor (Safe)"
+    target_htf := "D" // Daily Context
+    target_ema_len := 200 // Slow Trend
+else 
+    // Day Trader (Balanced)
+    target_htf := "240" // 4 Hour Context
+    target_ema_len := 50 // Medium Trend
+
+// Fetch HTF Data
+float htf_trend_ema = request.security(syminfo.tickerid, target_htf, ta.ema(close, target_ema_len))
+float htf_close = request.security(syminfo.tickerid, target_htf, close)
+bool htf_bullish = htf_close > htf_trend_ema
+
+// -----------------------------------------------------------------------------
+// 5. LAYER 2: VOLUME & MAGNETS
+// -----------------------------------------------------------------------------
+var float sum_vol = 0.0
+var float sum_vol_price = 0.0
+var float sum_vol_sq_price = 0.0
+
+// GLOBAL INDICATORS (For consistency)
+float current_atr = ta.atr(atr_len)
+float vol_avg = ta.sma(volume, 20)
+bool vol_spike = volume > vol_avg * 1.5
+
+if is_new_day
+    sum_vol := 0.0
+    sum_vol_price := 0.0
+    sum_vol_sq_price := 0.0
+
+sum_vol += volume
+sum_vol_price += volume * hlc3
+sum_vol_sq_price += volume * math.pow(hlc3, 2)
+
+vwap_intra = sum_vol > 0 ? sum_vol_price / sum_vol : na
+variance = sum_vol > 0 ? (sum_vol_sq_price / sum_vol) - math.pow(vwap_intra, 2) : 0
+stdev = math.sqrt(math.max(variance, 0))
+
+val_price = vwap_intra - (stdev * stdev_mult)
+vah_price = vwap_intra + (stdev * stdev_mult)
+
+// Naked POC Logic
+var float npoc_price = na
+var line npoc_line = na
+
+if is_new_day
+    float prev_day_vwap_close = vwap_intra[1] 
+    npoc_price := prev_day_vwap_close
+    if show_va
+        npoc_line := line.new(bar_index, npoc_price, bar_index + 10, npoc_price, color=color.new(COLOR_GOLD, 30), style=line.style_dashed, width=1)
+
+if not na(npoc_price)
+    if low <= npoc_price and high >= npoc_price
+        line.delete(npoc_line)
+        npoc_price := na
+    else
+        line.set_x2(npoc_line, bar_index + 5)
+
+// -----------------------------------------------------------------------------
+// 6. LAYER 3: LIQUIDITY ENGINE
+// -----------------------------------------------------------------------------
+ph = ta.pivothigh(high, liq_len, liq_len)
+pl = ta.pivotlow(low, liq_len, liq_len)
+
+var float[] pivot_highs = array.new_float(0)
+var float[] pivot_lows = array.new_float(0)
+
+if not na(ph)
+    array.unshift(pivot_highs, ph)
+    if array.size(pivot_highs) > 5
+        array.pop(pivot_highs)
+
+if not na(pl)
+    array.unshift(pivot_lows, pl)
+    if array.size(pivot_lows) > 5
+        array.pop(pivot_lows)
+
+bool sweep_bullish = false
+bool sweep_bearish = false
+
+// Check recent lows for sweep
+if array.size(pivot_lows) > 0
+    for i = 0 to array.size(pivot_lows) - 1
+        float p_level = array.get(pivot_lows, i)
+        // Sweep: Low went below pivot, but Close came back above
+        if low < p_level and close > p_level and low[1] > p_level 
+            sweep_bullish := true
+            label.new(bar_index, low, "⚔️", color=color(na), textcolor=COLOR_BULL, style=label.style_label_up, size=size.tiny)
+            box.new(bar_index - 5, p_level, bar_index, low, border_color=na, bgcolor=color.new(COLOR_BULL, 80))
+            array.remove(pivot_lows, i) // CONSUME PIVOT: Never use this level again
+            break 
+
+// Check recent highs for sweep
+if array.size(pivot_highs) > 0
+    for i = 0 to array.size(pivot_highs) - 1
+        float p_level = array.get(pivot_highs, i)
+        if high > p_level and close < p_level and high[1] < p_level
+            sweep_bearish := true
+            label.new(bar_index, high, "⚔️", color=color(na), textcolor=COLOR_BEAR, style=label.style_label_down, size=size.tiny)
+            box.new(bar_index - 5, high, bar_index, p_level, border_color=na, bgcolor=color.new(COLOR_BEAR, 80))
+            array.remove(pivot_highs, i) // CONSUME PIVOT: Never use this level again
+            break
+
+// -----------------------------------------------------------------------------
+// 7. LAYER 4: MARKET STRUCTURE BREAK (MSB)
+// -----------------------------------------------------------------------------
+// Global calculation for consistency (Fix for ta.highest/lowest warning)
+float highest_structure = ta.highest(high, liq_len)
+float lowest_structure = ta.lowest(low, liq_len)
+
+if sweep_bullish
+    state := 1
+    dir := 1
+    active_sweep_price := low
+    active_structure_point := highest_structure
+
+if sweep_bearish
+    state := 1
+    dir := -1
+    active_sweep_price := high
+    active_structure_point := lowest_structure
+
+bool msb_bullish = false
+bool msb_bearish = false
+
+if state == 1
+    // SMART ANALYSIS: Volume & Momentum (Global)
+    
+    if dir == 1
+        if close > active_structure_point
+            msb_bullish := true
+            state := 2
+            
+            // Smart Labeling
+            string txt_msb = "🚀 MSB"
+            if vol_spike 
+                txt_msb := txt_msb + " 🔥" // High Volume
+            if fvg_bull // Created FVG on break
+                txt_msb := txt_msb + " ⚡" // Imbalance
+                
+            line.new(bar_index - 5, active_structure_point, bar_index, active_structure_point, color=COLOR_BULL, width=2)
+            label.new(bar_index, active_structure_point, txt_msb, color=color(na), textcolor=COLOR_BULL, style=label.style_label_down, size=size.small)
+        else if low < active_sweep_price
+            state := 0 // Invalidated
+            
+    if dir == -1
+        if close < active_structure_point
+            msb_bearish := true
+            state := 2
+            
+            // Smart Labeling
+            string txt_msb = "🚀 MSB"
+            if vol_spike 
+                txt_msb := txt_msb + " 🔥"
+            if fvg_bear 
+                txt_msb := txt_msb + " ⚡"
+
+            line.new(bar_index - 5, active_structure_point, bar_index, active_structure_point, color=COLOR_BEAR, width=2)
+            label.new(bar_index, active_structure_point, txt_msb, color=color(na), textcolor=COLOR_BEAR, style=label.style_label_up, size=size.small)
+        else if high > active_sweep_price
+            state := 0 // Invalidated
+
+// -----------------------------------------------------------------------------
+// 8. LAYER 5: ENTRY & RISK CALCULATOR
+// -----------------------------------------------------------------------------
+var line fib_ote_line = na
+var line line_tp = na
+var label lbl_risk = na
+
+if state == 2 and (msb_bullish or msb_bearish)
+    float impulse_range = na
+    float entry_local = na
+    float ote_level = 0.66 // GOLDEN POCKET AVG (0.618 - 0.705)
+    
+    // Calculate ATR for dynamic buffers
+    // float current_atr = ta.atr(atr_len) // Globale tasindi
+    
+    // Determine Entry Price based on direction
+    if dir == 1
+        impulse_range := high - active_sweep_price
+        
+        // ULTRATHINK: ATR Filter - Impulse must be significant
+        if use_atr_filter and impulse_range < (current_atr * atr_mult)
+            state := 0 // Noise! Reset.
+            label.new(bar_index, high, "🤏 Weak", color=color.gray, style=label.style_label_down, size=size.tiny)
+        else 
+            entry_local := high - (impulse_range * ote_level)
+            // Add buffer to SL (Active sweep price)
+            active_sweep_price := active_sweep_price - (current_atr * sl_buffer_atr)
+
+    else 
+        impulse_range := active_sweep_price - low
+        
+        // ULTRATHINK: ATR Filter
+        if use_atr_filter and impulse_range < (current_atr * atr_mult)
+            state := 0 // Noise! Reset.
+            label.new(bar_index, low, "🤏 Weak", color=color.gray, style=label.style_label_up, size=size.tiny)
+        else
+            entry_local := low + (impulse_range * ote_level)
+            // Add buffer to SL
+            active_sweep_price := active_sweep_price + (current_atr * sl_buffer_atr)
+    
+    // Store in global variable for easier access in next iterations/drawings
+    if state == 2 // Only if not filtered
+        entry_price_global := entry_local
+
+    if show_fibs and state == 2
+        line.delete(fib_ote_line)
+        line.delete(line_tp)
+        label.delete(lbl_risk)
+        
+        color c = dir == 1 ? COLOR_BULL : COLOR_BEAR
+        
+        // Draw Entry Line
+        fib_ote_line := line.new(bar_index, entry_local, bar_index + 20, entry_local, color=c, style=line.style_solid, width=2)
+        
+        // Risk Calculation
+        float risk_dist = math.abs(entry_local - active_sweep_price)
+        // Prevent zero div
+        if risk_dist == 0
+            risk_dist := syminfo.mintick
+
+        float target_price = dir == 1 ? (entry_local + (risk_dist * reward_ratio)) : (entry_local - (risk_dist * reward_ratio))
+        
+        // -------------------------------------------
+        // LEVERAGE CAP LOGIC
+        // -------------------------------------------
+        // -------------------------------------------
+        // 9. PATTERN SCORING (AI SIMULATION) - Moved up for Risk Calculation
+        // -------------------------------------------
+        float score = 50.0 // Base Score
+        
+        // 1. Momentum & Volatility
+        if use_atr_filter // Strong Impulse
+            score := score + 15
+            
+        // 2. Local Structure Quality (FVG)
+        bool has_fvg_now = (dir == 1 and fvg_bull) or (dir == -1 and fvg_bear)
+        if has_fvg_now
+            score := score + 20
+            
+        // 3. Local Trend (VWAP)
+        bool trend_aligned = (dir == 1 and bias_bullish) or (dir == -1 and not bias_bullish)
+        if trend_aligned
+            score := score + 15
+
+        // 4. Global Context (HTF Alignment) ⏳
+        // If 5m setup agrees with 4h trend -> HUGE BOOST
+        bool htf_aligned = (dir == 1 and htf_bullish) or (dir == -1 and not htf_bullish)
+        
+        if htf_aligned
+            score := score + 25 // Tailwind
+        else
+            // STRICT TREND RULE: Never trade against Higher Timeframe flow.
+            // Even if the pattern is perfect, fighting the tide is suicide.
+            score := 0 // Kill the trade instantly.
+
+        if score < 0
+            score := 0
+        if score > 100
+            score := 100
+
+        string score_icon = score >= 90 ? "💎" : (score >= 75 ? "⭐" : "⚠️")
+
+        // SMART RISK ENGINE 🦄
+        float risk_mult = 1.0
+        string risk_tag = ""
+        
+        if use_smart_risk
+            if score >= 90 
+                risk_mult := 1.5
+                risk_tag := " (Boost 🚀)"
+            else if score >= 75
+                risk_mult := 1.0
+                risk_tag := ""
+            else if score >= 50
+                risk_mult := 0.5
+                risk_tag := " (Defensive 🛡️)"
+            else 
+                risk_mult := 0.0
+                risk_tag := " (No Trade ❌)"
+
+        // -------------------------------------------
+        // LEVERAGE & RISK LOGIC
+        // -------------------------------------------
+        float contracts = na
+        float final_lev = na
+        float final_risk = na
+        float lev_raw = na // Declare out of scope
+        string warning_txt = ""
+
+        if calc_mode == "Fixed Leverage (x)"
+            // MODE B: FIXED LEVERAGE (Aggressive)
+            // Position Size = Balance * Target Lev * Multiplier
+            float target_lev_adj = dist_lev * risk_mult
+            
+            float pos_value = account_bal_manual * target_lev_adj
+            contracts := pos_value / entry_local
+            lev_raw := target_lev_adj 
+            final_lev := target_lev_adj
+            final_risk := contracts * risk_dist // Risk varies based on SL distance
+            
+            // Cap check just in case
+            if final_lev > max_lev
+                final_lev := max_lev
+                pos_value := account_bal_manual * max_lev
+                contracts := pos_value / entry_local
+                final_risk := contracts * risk_dist
+                warning_txt := " (CAPPED)"
+        else
+            // MODE A: RISK BASED (Conservative)
+            // Calculate base lots required for fixed $ risk * Multiplier
+            float risk_adj = risk_amount * risk_mult
+            
+            contracts := risk_adj / risk_dist
+            float pos_value_raw = contracts * entry_local
+            lev_raw := pos_value_raw / account_bal_manual
+            
+            final_lev := lev_raw
+            final_risk := risk_adj
+            
+            if lev_raw > max_lev
+                final_lev := max_lev
+                float max_pos_value = account_bal_manual * max_lev
+                contracts := max_pos_value / entry_local
+                final_risk := contracts * risk_dist
+                warning_txt := " (CAPPED)"
+
+        // 3. INVALIDATION LOGIC (Missed Move)
+        // If price hit the target BEFORE we entered, cancel the setup.
+        if dir == 1 and high >= target_price
+            state := 0 
+            label.new(bar_index, high, "⚠️ Missed", style=label.style_label_down, color=COLOR_NEUTRAL, size=size.small)
+        else if dir == -1 and low <= target_price
+            state := 0
+            label.new(bar_index, low, "⚠️ Missed", style=label.style_label_up, color=COLOR_NEUTRAL, size=size.small)
+
+        // Draw TP Line only if still valid
+        if state == 2
+            line_tp := line.new(bar_index, target_price, bar_index + 20, target_price, color=COLOR_GOLD, style=line.style_dashed, width=2)
+        
+        // Entry Label (Call To Action) - FILTERED BY QUALITY
+        if state == 2 and score >= 50 
+            // Contracts to use (Use max if capped, otherwise base)
+            float msg_contracts = (lev_raw > max_lev) ? (account_bal_manual * max_lev / entry_local) : contracts
+            
+            label.new(bar_index + 20, entry_local, 
+                 text="⚡ ENTRY: " + str.tostring(entry_local, format.mintick) + "\n" +
+                      "🎯 TARGET: " + str.tostring(target_price, format.mintick) + "\n" +
+                      "🛡️ STOP: " + str.tostring(active_sweep_price, format.mintick) + "\n" +
+                      "--------------------\n" + 
+                      "QTY: " + str.tostring(msg_contracts, "#.###") + " " + syminfo.root + "\n" +
+                      "LEV: " + str.tostring(final_lev, "#.#") + "x" + warning_txt + "\n" +
+                      "RISK: $" + str.tostring(final_risk, "#.##") + risk_tag + "\n" +
+                      "--------------------\n" +
+                      score_icon + " MATCH: " + str.tostring(score, "#") + "%",
+                 color=COLOR_BG_DARK, 
+                 style=label.style_label_left, 
+                 textcolor=c, 
+                 size=size.normal) 
+
+        // TRIGGER BACKTESTER (Only High Quality Setups)
+        if not in_trade and score >= 50
+            in_trade := true
+            trade_filled := false
+            trade_entry := entry_local
+            trade_tp := target_price
+            trade_sl := active_sweep_price
+            trade_dir := dir
+
+// -----------------------------------------------------------------------------
+// 9. VISUALIZATION (PLOTTING)
+// -----------------------------------------------------------------------------
+// Standard Plots
+plot(show_mo ? mo_price : na, "Monthly Open", color=color.new(COLOR_GOLD, 0), style=plot.style_circles, linewidth=2)
+plot(show_wo ? wo_price : na, "Weekly Open", color=color.new(COLOR_SILVER, 0), style=plot.style_circles, linewidth=1)
+// Value Areas
+plot(show_va ? val_price : na, "VAL", color=color.new(COLOR_NEUTRAL, 50), style=plot.style_circles)
+plot(show_va ? vah_price : na, "VAH", color=color.new(COLOR_NEUTRAL, 50), style=plot.style_circles)
+// Monday Range (Manual plotting via plot/conditional)
+// We use simple plot here for efficiency
+plot(show_monday and not is_monday ? mh_price : na, "Mon High", color=color.new(COLOR_TEXT, 50), style=plot.style_linebr)
+plot(show_monday and not is_monday ? ml_price : na, "Mon Low", color=color.new(COLOR_TEXT, 50), style=plot.style_linebr)
+
+// -----------------------------------------------------------------------------
+// 0. VIRTUAL BACKTESTER LOGIC
+// -----------------------------------------------------------------------------
+// Variables declared globally at top
+
+// Check for Exit specific to current bar
+// Check for Exit specific to current bar
+if in_trade
+    // 1. FILL LOGIC
+    if not trade_filled
+        if trade_dir == 1
+            // Try to Fill (Low touched entry)
+            if low <= trade_entry
+                trade_filled := true
+            // Check Missed (High touched TP before fill)
+            else if high >= trade_tp
+                in_trade := false
+                state := 0
+                label.new(bar_index, high, "⚠️ Missed", style=label.style_label_down, color=COLOR_NEUTRAL, size=size.small)
+        else if trade_dir == -1
+            // Try to Fill (High touched entry)
+            if high >= trade_entry
+                trade_filled := true
+            // Check Missed (Low touched TP before fill)
+            else if low <= trade_tp
+                in_trade := false
+                state := 0
+                label.new(bar_index, low, "⚠️ Missed", style=label.style_label_up, color=COLOR_NEUTRAL, size=size.small)
+
+    // 2. OUTCOME LOGIC (Only if Filled)
+    if trade_filled
+        bool open_is_win = false
+        bool open_is_loss = false
+        
+        // Check Long Exit
+        if trade_dir == 1
+            // PRIORITY 1: Check STOP LOSS First (Conservative Logic)
+            if low <= trade_sl
+                losses += 1
+                in_trade := false
+                state := 0 // FORCE RESET: Kill the setup instantly
+                label.new(bar_index, low, "❌ LOSS", color=color(na), textcolor=COLOR_BEAR, style=label.style_label_up, size=size.small)
+            // PRIORITY 2: Check TP only if SL was NOT hit
+        // Check Short Exit
+        else if trade_dir == -1
+            // PRIORITY 1: Check STOP LOSS First
+            if high >= trade_sl
+                losses += 1
+                in_trade := false
+                state := 0 // FORCE RESET
+                label.new(bar_index, high, "❌ LOSS", color=color(na), textcolor=COLOR_BEAR, style=label.style_label_down, size=size.small)
+            // PRIORITY 2: Check TP only if SL was NOT hit
+            else if low <= trade_tp
+                wins += 1
+                in_trade := false
+                state := 0 // FORCE RESET
+                label.new(bar_index, low, "✅ WIN", color=color(na), textcolor=COLOR_BULL, style=label.style_label_up, size=size.small)
+
+if state == 1
+    // SMART ANALYSIS: Volume & Momentum (Global)
+    
+    // MSB Displacment Threshold (0.1 ATR) to avoid wick fakeouts
+    float msb_buffer = current_atr * 0.1
+
+    if dir == 1
+        // FIX: Require Displacement (Body Close significantly above structure)
+        if close > (active_structure_point + msb_buffer)
+            msb_bullish := true 
+            // Only paint if volume supports it or FVG exists (Quality Control)
+            string icon = vol_spike ? "🔥" : ""
+            if fvg_bull 
+                icon := icon + "⚡"
+            
+            label.new(bar_index, high, "🚀 BREAK" + icon, color=color(na), textcolor=COLOR_BULL, style=label.style_label_down, size=size.small)
+    
+    if dir == -1
+        // FIX: Require Displacement
+        if close < (active_structure_point - msb_buffer)
+            msb_bearish := true 
+            string icon = vol_spike ? "🔥" : ""
+            if fvg_bear
+                icon := icon + "⚡"
+
+            label.new(bar_index, low, "🚀 BREAK" + icon, color=color(na), textcolor=COLOR_BEAR, style=label.style_label_up, size=size.small)
+
+
+// -----------------------------------------------------------------------------
+// 10. DASHBOARD
+// -----------------------------------------------------------------------------
+// Dashboard Panel
+var table dashboard = table.new(position.top_right, 4, 10, bgcolor=color.new(#131722, 10), border_width=3, border_color=color.new(color.white, 85))
+
+if barstate.islast
+    // Header
+    table.cell(dashboard, 0, 0, "MONSTER DASHBOARD", text_color=color.white, bgcolor=color.black, text_size=size.normal)
+    table.merge_cells(dashboard, 0, 0, 3, 0)
+    
+    // 1. HTF Context Row (New)
+    color htf_c = htf_bullish ? COLOR_BULL : COLOR_BEAR
+    string htf_txt = htf_bullish ? "🟢 BULLISH" : "🔴 BEARISH"
+    string htf_tf_txt = "(" + target_htf + ")"
+    
+    // Use darker label bg for contrast
+    table.cell(dashboard, 0, 1, "HTF FLOW " + htf_tf_txt, text_color=color.silver, bgcolor=color.new(color.black, 50), text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 2, 1, htf_txt, text_color=htf_c, bgcolor=color.new(htf_c, 90), text_size=size.small, text_halign=text.align_center)
+    table.merge_cells(dashboard, 0, 1, 1, 1) // Label merge
+    table.merge_cells(dashboard, 2, 1, 3, 1) // Value merge
+
+    // 2. Bias (Local)
+    string bias_txt = bias_bullish ? "BULLISH" : "BEARISH"
+    color bias_col = bias_bullish ? COLOR_BULL : COLOR_BEAR
+    
+    table.cell(dashboard, 0, 2, "LOCAL BIAS", text_color=color.silver, bgcolor=color.new(color.black, 50), text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 2, 2, bias_txt, text_color=bias_col, bgcolor=color.new(bias_col, 90), text_size=size.small, text_halign=text.align_center)
+    table.merge_cells(dashboard, 0, 2, 1, 2)
+    table.merge_cells(dashboard, 2, 2, 3, 2)
+    
+    // Liquidity Status
+    string liq_txt = sweep_bullish ? "SWEEP (L)" : (sweep_bearish ? "SWEEP (S)" : "WAIT")
+    color liq_c = sweep_bullish ? COLOR_BULL : (sweep_bearish ? COLOR_BEAR : COLOR_NEUTRAL)
+    table.cell(dashboard, 0, 3, "LIQUIDITY", text_color=COLOR_TEXT, text_size=size.small)
+    table.cell(dashboard, 1, 3, liq_txt, bgcolor=liq_c, text_color=color.black, text_size=size.small)
+    
+    // Setup Status
+    string st_txt = state == 0 ? "SCANNING" : (state == 1 ? "HUNTING" : "READY")
+    color st_c = state == 0 ? COLOR_NEUTRAL : (state == 1 ? COLOR_GOLD : (dir==1 ? COLOR_BULL : COLOR_BEAR))
+    table.cell(dashboard, 0, 4, "SETUP", text_color=COLOR_TEXT, text_size=size.small)
+    
+    // Prediction Logic
+    string pred_msg = "Waiting..."
+    string act_msg = "Monitor"
+    
+    if state == 0
+        pred_msg := bias_bullish ? "Look for Longs" : "Look for Shorts"
+        act_msg := "Wait for Sweep"
+    else if state == 1
+        // IMPROVED: Show Direction and Trigger Price
+        pred_msg := dir == 1 ? "PREP LONG ↗" : "PREP SHORT ↘"
+        act_msg := "BREAK > " + str.tostring(active_structure_point, format.mintick)
+    else if state == 2
+        pred_msg := "Setup Confirmed"
+        act_msg := "ENTER NOW"
+
+    table.cell(dashboard, 1, 4, st_txt, bgcolor=st_c, text_color=color.black, text_size=size.small)
+    
+    // Prediction Row
+    table.cell(dashboard, 0, 5, "GUIDE", text_color=COLOR_GOLD, text_size=size.small)
+    table.cell(dashboard, 1, 5, pred_msg, bgcolor=COLOR_BG_DARK, text_color=COLOR_TEXT, text_size=size.small)
+    
+    // Action Row
+    table.cell(dashboard, 0, 6, "ACTION", text_color=COLOR_GOLD, text_size=size.small)
+    table.cell(dashboard, 1, 6, act_msg, bgcolor=st_c, text_color=color.black, text_size=size.small)
+
+    // -------------------------------------------
+    // STATE 1: PROJECTED METRICS (Mental Prep)
+    // -------------------------------------------
+    if state == 1
+        float proj_range = math.abs(active_structure_point - active_sweep_price)
+        // Assume Breakout happens exactly at structure point (Conservative)
+        float proj_entry = na
+        float proj_tp = na
+        float ote = 0.705
+        
+        if dir == 1 // Bullish Prep
+            proj_entry := active_structure_point - (proj_range * ote) 
+            proj_tp := proj_entry + (proj_range * reward_ratio)
+        else // Bearish Prep
+            proj_entry := active_structure_point + (proj_range * ote)
+            proj_tp := proj_entry - (proj_range * reward_ratio)
+            
+        // Display Projected Stats
+        table.cell(dashboard, 0, 7, "PROJ. ENT", text_color=COLOR_SILVER, text_size=size.small)
+        table.cell(dashboard, 1, 7, str.tostring(proj_entry, format.mintick), bgcolor=COLOR_BG_DARK, text_color=COLOR_SILVER, text_size=size.small)
+        
+        table.cell(dashboard, 0, 8, "PROJ. TP", text_color=COLOR_GOLD, text_size=size.small)
+        table.cell(dashboard, 1, 8, str.tostring(proj_tp, format.mintick), bgcolor=COLOR_BG_DARK, text_color=COLOR_GOLD, text_size=size.small)
+
+    // -------------------------------------------
+    // STATE 2: CONFIRMED METRICS (Active Trade)
+    // -------------------------------------------
+    else if state == 2 and not na(entry_price_global)
+        table.cell(dashboard, 0, 7, "ENTRY", text_color=COLOR_TEXT, text_size=size.small)
+        table.cell(dashboard, 1, 7, str.tostring(entry_price_global, format.mintick), bgcolor=COLOR_BG_DARK, text_color=COLOR_TEXT, text_size=size.small)
+
+        // Win Rate Stats (Only show in State 2 or 0 to save space)
+        table.cell(dashboard, 0, 8, "STATS", text_color=COLOR_GOLD, text_size=size.small)
+        float wr = (wins + losses) > 0 ? (wins / (wins + losses)) * 100 : 0
+        table.cell(dashboard, 1, 8, "W:" + str.tostring(wins) + " | L:" + str.tostring(losses) + " (" + str.tostring(wr, "#") + "%)", bgcolor=COLOR_BG_DARK, text_color=COLOR_TEXT, text_size=size.small)
+    
+    // -------------------------------------------
+    // STATE 0: WAITING
+    // -------------------------------------------
+    else 
+        table.cell(dashboard, 0, 7, "ENTRY", text_color=COLOR_TEXT, text_size=size.small)
+        table.cell(dashboard, 1, 7, "-", bgcolor=COLOR_BG_DARK, text_color=COLOR_NEUTRAL, text_size=size.small)
+        
+        table.cell(dashboard, 0, 8, "STATS", text_color=COLOR_GOLD, text_size=size.small)
+        float wr = (wins + losses) > 0 ? (wins / (wins + losses)) * 100 : 0
+        table.cell(dashboard, 1, 8, "W:" + str.tostring(wins) + " | L:" + str.tostring(losses) + " (" + str.tostring(wr, "#") + "%)", bgcolor=COLOR_BG_DARK, text_color=COLOR_TEXT, text_size=size.small)
+
+
+// -----------------------------------------------------------------------------
+// 11. SCANNER DASHBOARD (Bottom Right)
+// -----------------------------------------------------------------------------
+f_get_data(sym) =>
+    if sym == "" 
+        [0, 0, 0.0, 0.0]
+    else
+        request.security(sym, timeframe.period, calc_monster_state(liq_len, reward_ratio, atr_len, atr_mult, sl_buffer_atr, use_atr_filter))
+
+f_fill_row(tbl, r, sym, st, dr, pr, has_fvg) =>
+    if sym != ""
+        // Symbol Name Cleaning
+        string d_sym = str.replace_all(sym, "BINANCE:", "")
+        d_sym := str.replace_all(d_sym, "OKX:", "")
+        d_sym := str.replace_all(d_sym, "BYBIT:", "")
+        d_sym := str.replace_all(d_sym, "USDT", "")
+        d_sym := str.replace_all(d_sym, ".P", "") 
+        
+        // Define Colors & Texts
+        color c_bg = color.new(color.black, 100)
+        color c_tx = color.white
+        string t_st = "WAIT"
+        string t_dr = "-"
+        string t_pr = "-"
+        
+        // FVG Icon
+        string icon_fvg = (has_fvg > 0) ? "⚡" : ""
+
+        // Check for NaN (Invalid Symbol or No Data)
+        if na(st)
+            t_st := "NaN"
+            t_pr := "Check Sym"
+            c_bg := color.new(color.gray, 50)
+        else
+            if st == 1 // HUNTING
+                t_st := "HUNTING " + icon_fvg
+                c_bg := color.new(color.yellow, 20)
+                c_tx := color.black
+                t_dr := dr == 1 ? "PREP LONG" : "PREP SHORT"
+                t_pr := "Break > " + str.tostring(pr, format.mintick)
+                
+            if st == 2 // READY
+                t_st := "READY " + icon_fvg
+                c_bg := (dr == 1) ? color.new(#089981, 20) : color.new(#F23645, 20)
+                c_tx := color.white
+                t_dr := dr == 1 ? "BUY NOW" : "SELL NOW"
+                t_pr := "Entry: " + str.tostring(pr, format.mintick)
+
+        table.cell(tbl, 0, r, d_sym, text_color=color.white, text_size=size.small, bgcolor=#131722)
+        table.cell(tbl, 1, r, t_st, text_color=c_tx, text_size=size.small, bgcolor=c_bg)
+        table.cell(tbl, 2, r, t_dr, text_color=color.white, text_size=size.small, bgcolor=c_bg)
+        table.cell(tbl, 3, r, t_pr, text_color=color.yellow, text_size=size.small, bgcolor=#131722)
+
+// Initialize Global Variables for Scanner data to ensure visibility for Alerts
+// Initialize Global Variables for Scanner data to ensure visibility for Alerts
+int s01_st=0, int s01_dr=0, float s01_pr=0.0, float s01_fvg=0.0
+int s02_st=0, int s02_dr=0, float s02_pr=0.0, float s02_fvg=0.0
+int s03_st=0, int s03_dr=0, float s03_pr=0.0, float s03_fvg=0.0
+int s04_st=0, int s04_dr=0, float s04_pr=0.0, float s04_fvg=0.0
+int s05_st=0, int s05_dr=0, float s05_pr=0.0, float s05_fvg=0.0
+int s06_st=0, int s06_dr=0, float s06_pr=0.0, float s06_fvg=0.0
+int s07_st=0, int s07_dr=0, float s07_pr=0.0, float s07_fvg=0.0
+int s08_st=0, int s08_dr=0, float s08_pr=0.0, float s08_fvg=0.0
+int s09_st=0, int s09_dr=0, float s09_pr=0.0, float s09_fvg=0.0
+int s10_st=0, int s10_dr=0, float s10_pr=0.0, float s10_fvg=0.0
+int s11_st=0, int s11_dr=0, float s11_pr=0.0, float s11_fvg=0.0
+int s12_st=0, int s12_dr=0, float s12_pr=0.0, float s12_fvg=0.0
+int s13_st=0, int s13_dr=0, float s13_pr=0.0, float s13_fvg=0.0
+int s14_st=0, int s14_dr=0, float s14_pr=0.0, float s14_fvg=0.0
+int s15_st=0, int s15_dr=0, float s15_pr=0.0, float s15_fvg=0.0
+
+if show_scanner
+    // Fetch Data (Reassign to globals)
+    [t01_s, t01_d, t01_p, t01_f] = f_get_data(u_t01), s01_st:=t01_s, s01_dr:=t01_d, s01_pr:=t01_p, s01_fvg:=t01_f
+    [t02_s, t02_d, t02_p, t02_f] = f_get_data(u_t02), s02_st:=t02_s, s02_dr:=t02_d, s02_pr:=t02_p, s02_fvg:=t02_f
+    [t03_s, t03_d, t03_p, t03_f] = f_get_data(u_t03), s03_st:=t03_s, s03_dr:=t03_d, s03_pr:=t03_p, s03_fvg:=t03_f
+    [t04_s, t04_d, t04_p, t04_f] = f_get_data(u_t04), s04_st:=t04_s, s04_dr:=t04_d, s04_pr:=t04_p, s04_fvg:=t04_f
+    [t05_s, t05_d, t05_p, t05_f] = f_get_data(u_t05), s05_st:=t05_s, s05_dr:=t05_d, s05_pr:=t05_p, s05_fvg:=t05_f
+    [t06_s, t06_d, t06_p, t06_f] = f_get_data(u_t06), s06_st:=t06_s, s06_dr:=t06_d, s06_pr:=t06_p, s06_fvg:=t06_f
+    [t07_s, t07_d, t07_p, t07_f] = f_get_data(u_t07), s07_st:=t07_s, s07_dr:=t07_d, s07_pr:=t07_p, s07_fvg:=t07_f
+    [t08_s, t08_d, t08_p, t08_f] = f_get_data(u_t08), s08_st:=t08_s, s08_dr:=t08_d, s08_pr:=t08_p, s08_fvg:=t08_f
+    [t09_s, t09_d, t09_p, t09_f] = f_get_data(u_t09), s09_st:=t09_s, s09_dr:=t09_d, s09_pr:=t09_p, s09_fvg:=t09_f
+    [t10_s, t10_d, t10_p, t10_f] = f_get_data(u_t10), s10_st:=t10_s, s10_dr:=t10_d, s10_pr:=t10_p, s10_fvg:=t10_f
+    [t11_s, t11_d, t11_p, t11_f] = f_get_data(u_t11), s11_st:=t11_s, s11_dr:=t11_d, s11_pr:=t11_p, s11_fvg:=t11_f
+    [t12_s, t12_d, t12_p, t12_f] = f_get_data(u_t12), s12_st:=t12_s, s12_dr:=t12_d, s12_pr:=t12_p, s12_fvg:=t12_f
+    [t13_s, t13_d, t13_p, t13_f] = f_get_data(u_t13), s13_st:=t13_s, s13_dr:=t13_d, s13_pr:=t13_p, s13_fvg:=t13_f
+    [t14_s, t14_d, t14_p, t14_f] = f_get_data(u_t14), s14_st:=t14_s, s14_dr:=t14_d, s14_pr:=t14_p, s14_fvg:=t14_f
+    [t15_s, t15_d, t15_p, t15_f] = f_get_data(u_t15), s15_st:=t15_s, s15_dr:=t15_d, s15_pr:=t15_p, s15_fvg:=t15_f
+
+    // Render Table
+    var table tbl_scan = table.new(position.bottom_right, 4, 16, bgcolor=color.new(#131722, 10), border_width=1, border_color=color.gray)
+    
+    if barstate.islast
+        table.cell(tbl_scan, 0, 0, "SYMBOL", bgcolor=color.black, text_color=color.white)
+        table.cell(tbl_scan, 1, 0, "STATUS", bgcolor=color.black, text_color=color.white)
+        table.cell(tbl_scan, 2, 0, "ACTION", bgcolor=color.black, text_color=color.white)
+        table.cell(tbl_scan, 3, 0, "LEVEL", bgcolor=color.black, text_color=color.white)
+        
+        f_fill_row(tbl_scan, 1, u_t01, s01_st, s01_dr, s01_pr, s01_fvg)
+        f_fill_row(tbl_scan, 2, u_t02, s02_st, s02_dr, s02_pr, s02_fvg)
+        f_fill_row(tbl_scan, 3, u_t03, s03_st, s03_dr, s03_pr, s03_fvg)
+        f_fill_row(tbl_scan, 4, u_t04, s04_st, s04_dr, s04_pr, s04_fvg)
+        f_fill_row(tbl_scan, 5, u_t05, s05_st, s05_dr, s05_pr, s05_fvg)
+        f_fill_row(tbl_scan, 6, u_t06, s06_st, s06_dr, s06_pr, s06_fvg)
+        f_fill_row(tbl_scan, 7, u_t07, s07_st, s07_dr, s07_pr, s07_fvg)
+        f_fill_row(tbl_scan, 8, u_t08, s08_st, s08_dr, s08_pr, s08_fvg)
+        f_fill_row(tbl_scan, 9, u_t09, s09_st, s09_dr, s09_pr, s09_fvg)
+        f_fill_row(tbl_scan, 10, u_t10, s10_st, s10_dr, s10_pr, s10_fvg)
+        f_fill_row(tbl_scan, 11, u_t11, s11_st, s11_dr, s11_pr, s11_fvg)
+        f_fill_row(tbl_scan, 12, u_t12, s12_st, s12_dr, s12_pr, s12_fvg)
+        f_fill_row(tbl_scan, 13, u_t13, s13_st, s13_dr, s13_pr, s13_fvg)
+        f_fill_row(tbl_scan, 14, u_t14, s14_st, s14_dr, s14_pr, s14_fvg)
+        f_fill_row(tbl_scan, 15, u_t15, s15_st, s15_dr, s15_pr, s15_fvg)
+
+// Alert Logic (Scanner)
+any_scan_signal = (s01_st > 0) or (s02_st > 0) or (s03_st > 0) or (s04_st > 0) or (s05_st > 0)
+alertcondition(any_scan_signal, "Scanner Alert", "New setup found in scanner!")
+��2Ffile:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Strategy.pine

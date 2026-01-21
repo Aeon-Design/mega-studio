@@ -1,0 +1,244 @@
+ØQ//@version=6
+indicator("Monster Scanner [AG]", shorttitle="MNSTR SCAN", overlay=true)
+
+// -----------------------------------------------------------------------------
+// 1. INPUTS
+// -----------------------------------------------------------------------------
+grp_sym = "Symbols to Monitor"
+u_t01 = input.symbol("BINANCE:BTCUSDT", "Symbol 1", group=grp_sym)
+u_t02 = input.symbol("BINANCE:ETHUSDT", "Symbol 2", group=grp_sym)
+u_t03 = input.symbol("BINANCE:SOLUSDT", "Symbol 3", group=grp_sym)
+u_t04 = input.symbol("BINANCE:XRPUSDT", "Symbol 4", group=grp_sym)
+u_t05 = input.symbol("BINANCE:BNBUSDT", "Symbol 5", group=grp_sym)
+u_t06 = input.symbol("BINANCE:DOGEUSDT", "Symbol 6", group=grp_sym)
+u_t07 = input.symbol("BINANCE:ADAUSDT", "Symbol 7", group=grp_sym)
+u_t08 = input.symbol("BINANCE:AVAXUSDT", "Symbol 8", group=grp_sym)
+u_t09 = input.symbol("BINANCE:MATICUSDT", "Symbol 9", group=grp_sym)
+u_t10 = input.symbol("BINANCE:LTCUSDT", "Symbol 10", group=grp_sym)
+u_t11 = input.symbol("", "Symbol 11", group=grp_sym)
+u_t12 = input.symbol("", "Symbol 12", group=grp_sym)
+u_t13 = input.symbol("", "Symbol 13", group=grp_sym)
+u_t14 = input.symbol("", "Symbol 14", group=grp_sym)
+u_t15 = input.symbol("", "Symbol 15", group=grp_sym)
+
+grp_st = "Strategy Settings"
+liq_len = input.int(10, "Liquidity Length", group=grp_st)
+rr_ratio = input.float(3.0, "Reward Ratio", group=grp_st)
+
+// -----------------------------------------------------------------------------
+// 2. CORE LOGIC FUNCTION
+// -----------------------------------------------------------------------------
+// This function runs the entire strategy logic and returns the Key States
+// Returns: [state, dir, action_price]
+// State: 0=Wait, 1=Hunting, 2=Ready
+// Dir: 1=Bull, -1=Bear
+// Action Price: Sweep Price (if State 1) or Entry Price (if State 2)
+calc_monster_state(len, rr) =>
+    // --- Logic Copied & Simplified from Monster_Strategy.pine ---
+    
+    // 1. Liquidity PIVOTS
+    ph = ta.pivothigh(high, len, len)
+    pl = ta.pivotlow(low, len, len)
+
+    var float[] pivot_highs = array.new_float(0)
+    var float[] pivot_lows = array.new_float(0)
+    
+    // Manage Arrays
+    if not na(ph)
+        array.unshift(pivot_highs, ph)
+        if array.size(pivot_highs) > 5
+            array.pop(pivot_highs)
+
+    if not na(pl)
+        array.unshift(pivot_lows, pl)
+        if array.size(pivot_lows) > 5
+            array.pop(pivot_lows)
+
+    // 2. Sweep Check
+    bool sweep_bull = false
+    bool sweep_bear = false
+    
+    // Check Lows
+    if array.size(pivot_lows) > 0
+        for i = 0 to array.size(pivot_lows) - 1
+            float p_level = array.get(pivot_lows, i)
+            if low < p_level and close > p_level and low[1] > p_level 
+                sweep_bull := true
+                array.remove(pivot_lows, i) // SINGLE SHOT: Consume Pivot
+                break 
+
+    // Check Highs
+    if array.size(pivot_highs) > 0
+        for i = 0 to array.size(pivot_highs) - 1
+            float p_level = array.get(pivot_highs, i)
+            if high > p_level and close < p_level and high[1] < p_level
+                sweep_bear := true
+                array.remove(pivot_highs, i) // SINGLE SHOT: Consume Pivot
+                break
+
+    // 3. State Machine
+    var int state = 0 
+    var int dir = 0   
+    var float active_sweep_price = na     
+    var float active_structure_point = na
+    var float entry_price = na
+    var float target_price = na // Needed for Invalidation
+
+    float highest_structure = ta.highest(high, len)
+    float lowest_structure = ta.lowest(low, len)
+
+    // Transition to HUNTING (State 1)
+    if sweep_bull
+        state := 1
+        dir := 1
+        active_sweep_price := low
+        active_structure_point := highest_structure
+    
+    if sweep_bear
+        state := 1
+        dir := -1
+        active_sweep_price := high
+        active_structure_point := lowest_structure
+        
+    // Transition to READY (State 2 - MSB) or INVALIDATE
+    if state == 1
+        // INVALIDATION Logic (Missed Move)
+        // Calculating potential target to check if we missed it
+        float proj_rng = math.abs(active_structure_point - active_sweep_price)
+        // Very rough projection for scanner invalidation check
+        
+        if dir == 1
+            if close > active_structure_point
+                state := 2
+                // Calc Entry (OTE)
+                float rng = high - active_sweep_price
+                entry_price := high - (rng * 0.705)
+                target_price := entry_price + (rng * rr) // Use user defined Reward Ratio
+            else if low < active_sweep_price
+                state := 0 // Invalidated (Lower Low)
+        
+        if dir == -1
+            if close < active_structure_point
+                state := 2
+                // Calc Entry (OTE)
+                float rng = active_sweep_price - low
+                entry_price := low + (rng * 0.705)
+                target_price := entry_price - (rng * rr) // Use user defined Reward Ratio
+            else if high > active_sweep_price
+                state := 0 // Invalidated (Higher High)
+    
+    // State 2 Validation (Check for Missed Move OR Trade Completion)
+    if state == 2
+        // 1. Check if Target Hit (Win Simulation) - Reset
+        if dir == 1 and high >= target_price
+            state := 0 
+        if dir == -1 and low <= target_price
+            state := 0 
+            
+        // 2. Check if Stop Hit (Loss Simulation) - Reset
+        if dir == 1 and low <= active_sweep_price
+            state := 0
+        if dir == -1 and high >= active_sweep_price
+            state := 0
+    
+    // Return Tuple
+    float return_price = (state == 1) ? active_structure_point : (state == 2 ? entry_price : na)
+    [state, dir, return_price]
+
+
+// -----------------------------------------------------------------------------
+// 3. DATA REQUESTS
+// -----------------------------------------------------------------------------
+// Helper to get data safely
+f_get_data(sym) =>
+    if sym == "" 
+        [0, 0, 0.0]
+    else
+        request.security(sym, timeframe.period, calc_monster_state(liq_len, rr_ratio))
+
+[s01_st, s01_dr, s01_pr] = f_get_data(u_t01)
+[s02_st, s02_dr, s02_pr] = f_get_data(u_t02)
+[s03_st, s03_dr, s03_pr] = f_get_data(u_t03)
+[s04_st, s04_dr, s04_pr] = f_get_data(u_t04)
+[s05_st, s05_dr, s05_pr] = f_get_data(u_t05)
+[s06_st, s06_dr, s06_pr] = f_get_data(u_t06)
+[s07_st, s07_dr, s07_pr] = f_get_data(u_t07)
+[s08_st, s08_dr, s08_pr] = f_get_data(u_t08)
+[s09_st, s09_dr, s09_pr] = f_get_data(u_t09)
+[s10_st, s10_dr, s10_pr] = f_get_data(u_t10)
+[s11_st, s11_dr, s11_pr] = f_get_data(u_t11)
+[s12_st, s12_dr, s12_pr] = f_get_data(u_t12)
+[s13_st, s13_dr, s13_pr] = f_get_data(u_t13)
+[s14_st, s14_dr, s14_pr] = f_get_data(u_t14)
+[s15_st, s15_dr, s15_pr] = f_get_data(u_t15)
+
+// -----------------------------------------------------------------------------
+// 4. DASHBOARD RENDER
+// -----------------------------------------------------------------------------
+var table tbl = table.new(position.bottom_right, 4, 16, bgcolor=color.new(#131722, 10), border_width=1, border_color=color.gray)
+
+f_fill_row(r, sym, st, dr, pr) =>
+    if sym != ""
+        // Symbol Name (Clean up Exchange prefixes for display)
+        string d_sym = str.replace_all(sym, "BINANCE:", "")
+        d_sym := str.replace_all(d_sym, "OKX:", "")
+        d_sym := str.replace_all(d_sym, "BYBIT:", "")
+        d_sym := str.replace_all(d_sym, "USDT", "")
+        d_sym := str.replace_all(d_sym, ".P", "") // Remove Perp extension
+        
+        // Status Text & Color
+        string t_st = "WAIT"
+        color c_bg = color.new(color.gray, 80)
+        string t_dr = "-"
+        color c_tx = color.white
+        string t_pr = "-"
+        
+        if st == 1 // HUNTING
+            t_st := "HUNTING"
+            c_bg := color.new(color.yellow, 20)
+            c_tx := color.black
+            t_dr := dr == 1 ? "PREP LONG" : "PREP SHORT"
+            t_pr := "Break > " + str.tostring(pr, format.mintick)
+            
+        if st == 2 // READY
+            t_st := "READY"
+            c_bg := (dr == 1) ? color.new(#089981, 20) : color.new(#F23645, 20) // Green/Red
+            c_tx := color.white
+            t_dr := dr == 1 ? "BUY NOW" : "SELL NOW"
+            t_pr := "Entry: " + str.tostring(pr, format.mintick)
+
+        table.cell(tbl, 0, r, d_sym, text_color=color.white, text_size=size.small, bgcolor=#131722)
+        table.cell(tbl, 1, r, t_st, text_color=c_tx, bgcolor=c_bg, text_size=size.small)
+        table.cell(tbl, 2, r, t_dr, text_color=color.white, text_size=size.small)
+        table.cell(tbl, 3, r, t_pr, text_color=color.yellow, text_size=size.small)
+
+if barstate.islast
+    // Header
+    table.cell(tbl, 0, 0, "SYMBOL", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 1, 0, "STATUS", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 2, 0, "ACTION", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 3, 0, "LEVEL", bgcolor=color.black, text_color=color.white)
+    
+    // Rows
+    f_fill_row(1, u_t01, s01_st, s01_dr, s01_pr)
+    f_fill_row(2, u_t02, s02_st, s02_dr, s02_pr)
+    f_fill_row(3, u_t03, s03_st, s03_dr, s03_pr)
+    f_fill_row(4, u_t04, s04_st, s04_dr, s04_pr)
+    f_fill_row(5, u_t05, s05_st, s05_dr, s05_pr)
+    f_fill_row(6, u_t06, s06_st, s06_dr, s06_pr)
+    f_fill_row(7, u_t07, s07_st, s07_dr, s07_pr)
+    f_fill_row(8, u_t08, s08_st, s08_dr, s08_pr)
+    f_fill_row(9, u_t09, s09_st, s09_dr, s09_pr)
+    f_fill_row(10, u_t10, s10_st, s10_dr, s10_pr)
+    f_fill_row(11, u_t11, s11_st, s11_dr, s11_pr)
+    f_fill_row(12, u_t12, s12_st, s12_dr, s12_pr)
+    f_fill_row(13, u_t13, s13_st, s13_dr, s13_pr)
+    f_fill_row(14, u_t14, s14_st, s14_dr, s14_pr)
+    f_fill_row(15, u_t15, s15_st, s15_dr, s15_pr)
+
+// -----------------------------------------------------------------------------
+// 5. GLOBAL ALERT
+// -----------------------------------------------------------------------------
+any_signal = (s01_st > 0) or (s02_st > 0) or (s03_st > 0) or (s04_st > 0) or (s05_st > 0) or (s06_st > 0) or (s07_st > 0) or (s08_st > 0) or (s09_st > 0) or (s10_st > 0)
+alertcondition(any_signal, "Monster Scanner Alert", "One of your watched symbols has a setup!")
+ØQ2Efile:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Monster_Scanner.pine

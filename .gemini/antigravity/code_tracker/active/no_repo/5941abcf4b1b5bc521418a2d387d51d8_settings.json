@@ -1,0 +1,15 @@
+Ñ{
+    "workbench.colorTheme": "Default Dark+",
+    "json.schemaDownload.enable": true,
+    "python.languageServer": "Default",
+    "explorer.confirmDelete": false,
+    "clangd.path": "c:\\Users\\Abdullah\\AppData\\Roaming\\Antigravity\\User\\globalStorage\\llvm-vs-code-extensions.vscode-clangd\\install\\21.1.0\\clangd_21.1.0\\bin\\clangd.exe",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "vs-kubernetes": {
+        "vscode-kubernetes.helm-path-windows": "C:\\Users\\Abdullah\\.vs-kubernetes\\tools\\helm\\windows-amd64\\helm.exe",
+        "vscode-kubernetes.minikube-path-windows": "C:\\Users\\Abdullah\\.vs-kubernetes\\tools\\minikube\\windows-amd64\\minikube.exe"
+    },
+    "explorer.confirmDragAndDrop": false,
+    "agent.global_path": "C:\\Users\\Abdullah\\.agent",
+    "agent.workspace_fallback": true
+}Ñ*cascade082Hfile:///C:/Users/Abdullah/AppData/Roaming/Antigravity/User/settings.json

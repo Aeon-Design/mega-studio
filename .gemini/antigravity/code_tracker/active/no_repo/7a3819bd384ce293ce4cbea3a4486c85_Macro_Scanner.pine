@@ -1,0 +1,140 @@
+×3//@version=6
+indicator("Macro Scanner [Titan]", shorttitle="MACRO SCAN", overlay=true)
+
+// -----------------------------------------------------------------------------
+// 1. INPUTS
+// -----------------------------------------------------------------------------
+grp_sym = "Symbols to Monitor"
+u_t01 = input.symbol("BINANCE:BTCUSDT", "Symbol 1", group=grp_sym)
+u_t02 = input.symbol("BINANCE:ETHUSDT", "Symbol 2", group=grp_sym)
+u_t03 = input.symbol("BINANCE:SOLUSDT", "Symbol 3", group=grp_sym)
+u_t04 = input.symbol("BINANCE:BNBUSDT", "Symbol 4", group=grp_sym)
+u_t05 = input.symbol("BINANCE:XRPUSDT", "Symbol 5", group=grp_sym)
+u_t06 = input.symbol("BINANCE:DOGEUSDT", "Symbol 6", group=grp_sym)
+u_t07 = input.symbol("BINANCE:ADAUSDT", "Symbol 7", group=grp_sym)
+u_t08 = input.symbol("BINANCE:AVAXUSDT", "Symbol 8", group=grp_sym)
+u_t09 = input.symbol("BINANCE:TRXUSDT", "Symbol 9", group=grp_sym)
+u_t10 = input.symbol("BINANCE:DOTUSDT", "Symbol 10", group=grp_sym)
+u_t11 = input.symbol("NASDAQ:NVDA", "Symbol 11", group=grp_sym)
+u_t12 = input.symbol("NASDAQ:TSLA", "Symbol 12", group=grp_sym)
+u_t13 = input.symbol("NASDAQ:AAPL", "Symbol 13", group=grp_sym)
+u_t14 = input.symbol("NASDAQ:MSFT", "Symbol 14", group=grp_sym)
+u_t15 = input.symbol("TVC:GOLD", "Symbol 15", group=grp_sym)
+
+grp_logic = "ðŸ§  MACRO LOGIC"
+len_d200 = input.int(200, "Daily Baseline", group=grp_logic)
+len_w50 = input.int(50, "Weekly Bull Support", group=grp_logic)
+
+// -----------------------------------------------------------------------------
+// 2. CORE LOGIC FUNCTION
+// -----------------------------------------------------------------------------
+// Returns: [TrendScore, MondayState, Price]
+// TrendScore: 2 (Bull), 1 (Accumulation), 0 (Bear)
+// MondayState: 1 (Above EQ), -1 (Below EQ)
+calc_macro_state() =>
+    // 1. Trend Logic
+    d200 = ta.sma(close, len_d200)
+    
+    // We can't request 'W' inside a function called by security in a loop easily without limitations in some versions
+    // But since we are calling this whole function via security request per symbol, it works fine if simple.
+    // However, calling 'request.security' INSIDE a function that is already called by 'request.security' is NOT allowed.
+    // So we must calculate everything on the "Chart's Timeframe" inside this function, OR pass data.
+    // TRICK: We will request this function from the Weekly Timeframe context for the W50!
+    // No, that makes D200 hard.
+    
+    // BETTER APPROACH: Simple separate requests.
+    // Pine Script scanner pattern:
+    [0, 0, 0.0] // Dummy return for type inference
+
+// REVISED ARCHITECTURE FOR SCANNER
+// We must request the TUPLE of data for each symbol.
+f_get_data(sym) =>
+    if sym == "" 
+        [0.0, 0.0, 0.0, 0.0] // [Close, D200, W50, Mon_High]
+    else
+        // We need 1 request for Daily data covering Close + D200
+        // And 1 request for Weekly data covering W50
+        // This consumes 2 requests per symbol. 15 symbols = 30 requests. Limit is 40. Safe.
+        
+        [c, d2] = request.security(sym, "D", [close, ta.sma(close, len_d200)])
+        [w5] = request.security(sym, "W", [ta.sma(close, len_w50)])
+        
+        // Monday High? Hard to fetch safely across timeframes without complex logic.
+        // Simplified Scanner: Focus on Trend River.
+        [c, d2, w5, 0.0]
+
+[c01, d01, w01, m01] = f_get_data(u_t01)
+[c02, d02, w02, m02] = f_get_data(u_t02)
+[c03, d03, w03, m03] = f_get_data(u_t03)
+[c04, d04, w04, m04] = f_get_data(u_t04)
+[c05, d05, w05, m05] = f_get_data(u_t05)
+[c06, d06, w06, m06] = f_get_data(u_t06)
+[c07, d07, w07, m07] = f_get_data(u_t07)
+[c08, d08, w08, m08] = f_get_data(u_t08)
+[c09, d09, w09, m09] = f_get_data(u_t09)
+[c10, d10, w10, m10] = f_get_data(u_t10)
+[c11, d11, w11, m11] = f_get_data(u_t11)
+[c12, d12, w12, m12] = f_get_data(u_t12)
+[c13, d13, w13, m13] = f_get_data(u_t13)
+[c14, d14, w14, m14] = f_get_data(u_t14)
+[c15, d15, w15, m15] = f_get_data(u_t15)
+
+// -----------------------------------------------------------------------------
+// 3. DASHBOARD RENDER
+// -----------------------------------------------------------------------------
+var table tbl = table.new(position.bottom_right, 4, 16, bgcolor=color.new(#131722, 10), border_width=1, border_color=color.gray)
+
+f_fill_row(r, sym, c, d2, w5) =>
+    if sym != ""
+        string d_sym = str.replace_all(sym, "BINANCE:", "")
+        d_sym := str.replace_all(d_sym, "NASDAQ:", "")
+        d_sym := str.replace_all(d_sym, "USDT", "")
+        
+        string status = "NEUTRAL"
+        color bg_c = color.gray
+        
+        // Logic: Titan Trend
+        if c > d2 and c > w5
+            status := "BULLISH ðŸš€"
+            bg_c := #089981 // Green
+        else if c < d2 and c < w5
+            status := "BEARISH ðŸ»"
+            bg_c := #F23645 // Red
+        else if c < w5 // Below Bull Support
+            status := "VALUE?"
+            bg_c := #FFD700 // Gold
+            
+        // Distance to D200
+        float dist = ((c - d2) / d2) * 100
+        string d_txt = str.tostring(dist, "#.1") + "%"
+        
+        // Fill
+        table.cell(tbl, 0, r, d_sym, text_color=color.white, text_size=size.small, bgcolor=#131722)
+        table.cell(tbl, 1, r, status, text_color=color.white, bgcolor=color.new(bg_c, 30), text_size=size.small)
+        table.cell(tbl, 2, r, str.tostring(c, format.mintick), text_color=color.white, text_size=size.small)
+        table.cell(tbl, 3, r, d_txt, text_color=dist > 0 ? #089981 : #F23645, text_size=size.small)
+
+if barstate.islast
+    // Header
+    table.cell(tbl, 0, 0, "TITAN TICKER", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 1, 0, "MACRO STATE", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 2, 0, "PRICE", bgcolor=color.black, text_color=color.white)
+    table.cell(tbl, 3, 0, "vs D200", bgcolor=color.black, text_color=color.white)
+    
+    // Rows
+    f_fill_row(1, u_t01, c01, d01, w01)
+    f_fill_row(2, u_t02, c02, d02, w02)
+    f_fill_row(3, u_t03, c03, d03, w03)
+    f_fill_row(4, u_t04, c04, d04, w04)
+    f_fill_row(5, u_t05, c05, d05, w05)
+    f_fill_row(6, u_t06, c06, d06, w06)
+    f_fill_row(7, u_t07, c07, d07, w07)
+    f_fill_row(8, u_t08, c08, d08, w08)
+    f_fill_row(9, u_t09, c09, d09, w09)
+    f_fill_row(10, u_t10, c10, d10, w10)
+    f_fill_row(11, u_t11, c11, d11, w11)
+    f_fill_row(12, u_t12, c12, d12, w12)
+    f_fill_row(13, u_t13, c13, d13, w13)
+    f_fill_row(14, u_t14, c14, d14, w14)
+    f_fill_row(15, u_t15, c15, d15, w15)
+×3*cascade082Cfile:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Scanner.pine

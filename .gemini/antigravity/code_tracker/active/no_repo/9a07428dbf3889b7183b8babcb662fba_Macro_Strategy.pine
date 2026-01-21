@@ -1,0 +1,162 @@
+Ñ?//@version=6
+strategy("Macro Strategy [AG]", shorttitle="MACRO STRAT", overlay=true, initial_capital=1000, default_qty_type=strategy.cash, default_qty_value=1000, currency=currency.USD, commission_type=strategy.commission.percent, commission_value=0.04)
+
+// -----------------------------------------------------------------------------
+// 1. CONSTANTS & THEME
+// -----------------------------------------------------------------------------
+var color COLOR_BULL = #089981 // Institutional Green
+var color COLOR_BEAR = #F23645 // Institutional Red
+var color COLOR_NEUTRAL = #787B86
+var color COLOR_TEXT = #FFFFFF
+var color COLOR_BG_DARK = #131722
+var color COLOR_GOLD = #FFD700
+
+// -----------------------------------------------------------------------------
+// 2. INPUTS
+// -----------------------------------------------------------------------------
+grp_strat = "ðŸ¤– STRATEGY SETTINGS"
+start_date = input.time(timestamp("1 Jan 2024"), "Backtest Start Date", group=grp_strat)
+risk_per_trade = input.float(1.0, "Risk Per Trade (%)", minval=0.1, step=0.1, group=grp_strat)
+reward_ratio = input.float(2.0, "Target R:R", minval=1.0, step=0.1, group=grp_strat)
+
+grp_logic = "ðŸ§  MACRO LOGIC"
+// MA Filter: Only Long if > 200 SMA?
+use_trend_filter = input.bool(true, "Trade Only With Trend (200 SMA)", group=grp_logic)
+// Entry Mode
+entry_mode = input.string("Monday Operations", "Entry Mode", options=["Monday Operations", "Cycle Reversal"], group=grp_logic)
+
+grp_ma = "1. High Timeframe Ribbons"
+ma_daily_len = input.int(200, "Daily Baseline (SMA)", group=grp_ma)
+ma_weekly_1 = input.int(50, "Weekly Bull Support (SMA)", group=grp_ma)
+
+grp_op = "3. Weekly Operating Release"
+show_monday = input.bool(true, "Show Monday Range", group=grp_op)
+monday_ext_mult = input.float(1.0, "Monday Extension Factor", step=0.1, group=grp_op)
+
+// -----------------------------------------------------------------------------
+// 3. CORE LOGIC: INDICATORS
+// -----------------------------------------------------------------------------
+// 1. Moving Averages (Trend Filter)
+// IMPORTANT: No lookahead=on to prevent repainting in strategy
+d_200 = request.security(syminfo.tickerid, "D", ta.sma(close, ma_daily_len))
+w_50 = request.security(syminfo.tickerid, "W", ta.sma(close, ma_weekly_1))
+
+// Plotting MAs
+plot(d_200, "Daily 200", color=color.orange, linewidth=2)
+plot(w_50, "Weekly 50", color=COLOR_BULL, linewidth=2)
+
+// 2. Monday Range Logic
+is_monday = dayofweek == dayofweek.monday
+var float mon_h = na
+var float mon_l = na
+var bool mon_closed = false
+
+if ta.change(time("W"))
+    mon_h := na
+    mon_l := na
+    mon_closed := false
+
+if is_monday
+    mon_h := math.max(nz(mon_h, high), high)
+    mon_l := math.min(nz(mon_l, low), low)
+
+if dayofweek == dayofweek.tuesday and not mon_closed
+    mon_closed := true
+
+// Plot Monday Levels
+if show_monday and not na(mon_h)
+    line.new(bar_index, mon_h, bar_index + 1, mon_h, color=color.blue, width=1)
+    line.new(bar_index, mon_l, bar_index + 1, mon_l, color=color.blue, width=1)
+
+// -----------------------------------------------------------------------------
+// 4. STRATEGY EXECUTION ENGINE
+// -----------------------------------------------------------------------------
+
+// Conditions
+bool trend_bull = close > d_200 and close > w_50
+bool trend_bear = close < d_200 and close < w_50
+
+// Mode A: Monday Operations (Breakout/Rejection)
+bool buy_signal = false
+bool sell_signal = false
+float stop_price = na
+float target_price = na
+
+if entry_mode == "Monday Operations" and mon_closed
+    // BULLISH BREAKOUT: Price Breaks Monday High
+    // Logic: If trend is bull AND price crosses over Monday High
+    if (not use_trend_filter or trend_bull) and ta.crossover(close, mon_h)
+        buy_signal := true
+        stop_price := mon_l // Stop at Monday Low (Conservative)
+        // Alternative Stop: Midpoint? let's stick to simple first.
+        float risk = close - stop_price
+        target_price := close + (risk * reward_ratio)
+
+    // BEARISH BREAKOUT: Price Breaks Monday Low
+    if (not use_trend_filter or trend_bear) and ta.crossunder(close, mon_l)
+        sell_signal := true
+        stop_price := mon_h // Stop at Monday High
+        float risk = stop_price - close
+        target_price := close - (risk * reward_ratio)
+
+// Mode B: Cycle Reversal (Simplistic implementation for v1)
+// Add logic here if user requests specifically
+
+// -----------------------------------------------------------------------------
+// 5. ORDER MANAGEMENT
+// -----------------------------------------------------------------------------
+// Time Filter
+if time >= start_date
+    if buy_signal and strategy.position_size == 0
+        // Calculate Quantity based on Risk %
+        // Risk Amount = Equity * (Risk% / 100)
+        // Contracts = Risk Amount / (Entry - Stop)
+        float risk_amt = strategy.equity * (risk_per_trade / 100)
+        float risk_dist = math.abs(close - stop_price)
+        if risk_dist > 0
+            float qty_l = risk_amt / risk_dist
+            strategy.entry("Long", strategy.long, qty=qty_l, alert_message='{"action": "buy", "symbol": "' + syminfo.tickerid + '", "price": "' + str.tostring(close) + '"}')
+            strategy.exit("Exit Long", "Long", stop=stop_price, limit=target_price, comment_loss="SL", comment_profit="TP", alert_message='{"action": "close", "symbol": "' + syminfo.tickerid + '"}')
+
+    if sell_signal and strategy.position_size == 0
+        float risk_amt = strategy.equity * (risk_per_trade / 100)
+        float risk_dist = math.abs(stop_price - close)
+        if risk_dist > 0
+            float qty_s = risk_amt / risk_dist
+            strategy.entry("Short", strategy.short, qty=qty_s, alert_message='{"action": "sell", "symbol": "' + syminfo.tickerid + '", "price": "' + str.tostring(close) + '"}')
+            strategy.exit("Exit Short", "Short", stop=stop_price, limit=target_price, comment_loss="SL", comment_profit="TP", alert_message='{"action": "close", "symbol": "' + syminfo.tickerid + '"}')
+
+// -----------------------------------------------------------------------------
+// 6. DASHBOARD (PERFORMANCE)
+// -----------------------------------------------------------------------------
+var table perf = table.new(position.bottom_right, 2, 8, bgcolor=color.new(COLOR_BG_DARK, 10), border_width=1, border_color=color.gray)
+
+if barstate.islast
+    // Header
+    table.cell(perf, 0, 0, "MACRO STRAT", bgcolor=color.black, text_color=color.white)
+    table.cell(perf, 1, 0, "STATS", bgcolor=color.black, text_color=color.white)
+    
+    // Win Rate
+    int wins = strategy.wintrades
+    int losses = strategy.losstrades
+    int total = wins + losses
+    float wr = total > 0 ? ((wins * 1.0) / total * 100) : 0.0
+    
+    table.cell(perf, 0, 1, "Win Rate", text_color=color.silver, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(perf, 1, 1, str.tostring(wr, "#.##") + "%", text_color=wr > 50 ? COLOR_BULL : COLOR_BEAR, bgcolor=COLOR_BG_DARK, text_size=size.small)
+
+    // Net Profit
+    float net = strategy.netprofit
+    table.cell(perf, 0, 2, "Net Profit", text_color=color.silver, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(perf, 1, 2, "$" + str.tostring(net, "#.##"), text_color=net >= 0 ? COLOR_BULL : COLOR_BEAR, bgcolor=COLOR_BG_DARK, text_size=size.small)
+
+    // Open Trades
+    table.cell(perf, 0, 3, "Open PnL", text_color=color.silver, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(perf, 1, 3, "$" + str.tostring(strategy.openprofit, "#.##"), text_color=strategy.openprofit >= 0 ? COLOR_BULL : COLOR_BEAR, bgcolor=COLOR_BG_DARK, text_size=size.small)
+
+    // Trend Status
+    string t_stat = trend_bull ? "BULL" : (trend_bear ? "BEAR" : "NEUTRAL")
+    color t_col = trend_bull ? COLOR_BULL : (trend_bear ? COLOR_BEAR : color.gray)
+    table.cell(perf, 0, 4, "Trend Filter", text_color=color.silver, bgcolor=COLOR_BG_DARK, text_size=size.small)
+    table.cell(perf, 1, 4, t_stat, text_color=t_col, bgcolor=COLOR_BG_DARK, text_size=size.small)
+­( *cascade08­(ž)*cascade08ž)›* *cascade08›*æ**cascade08æ*¡- *cascade08¡-“.*cascade08“.’/ *cascade08’/Ý/*cascade08Ý/ö2 *cascade08ö2÷2*cascade08÷2¿3 *cascade08¿3À3*cascade08À3Å3 *cascade08Å3á3*cascade08á3ã3 *cascade08ã3ù3*cascade08ù3¯4 *cascade08¯4´4*cascade08´4Õ4 *cascade08Õ4Ú4*cascade08Ú4—5 *cascade08—5£5 *cascade08£5±5 *cascade08±5²5*cascade08²5µ5 *cascade08µ5·5*cascade08·5Ñ? *cascade082Dfile:///c:/Users/Abdullah/Projects/g%C3%B6sterge/Macro_Strategy.pine
