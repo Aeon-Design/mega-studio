@@ -1,87 +1,151 @@
-# Master Prompt Integration Plan
+# 🏛️ CEO Strategic Audit: Agent Completeness Analysis
 
-> **Goal:** Integrate 6 critical operational prompts into the Mega Studio agent system.
-
----
-
-## 📋 Prompt Inventory & Agent Mapping
-
-| # | Prompt Name | Primary Agent | Secondary Agent | Status |
-|---|------------|---------------|-----------------|--------|
-| 1 | Xiaomi Notification Fix | `/mobile` | `/android` | 🔴 Missing |
-| 2 | AppConfig System | `/tech-lead` | `/mobile` | 🔴 Missing |
-| 3 | Policy Generation | `/policy` | `/ceo` | 🟡 Partial |
-| 4 | Master Release Audit | `/qa` | `/policy` | 🔴 Missing |
-| 5 | Version Release Prompt | `/qa` | `/tech-lead` | 🔴 Missing |
-| 6 | Store-Ready Workflow | `/policy` | `/qa` | 🔴 Missing |
+> **Board Meeting:** Mega Studio Capability Review
+> **Participants:** CEO, HR Director, Deep Researcher
+> **Objective:** Ensure 100% coverage for ALL app types, platforms, and phases
 
 ---
 
-## 🎯 Gap Analysis
+## 📊 Current Inventory
 
-### Missing Grimoires (Knowledge Base)
-1. `release_engineering.md` - Master release audit protocols
-2. `store_compliance.md` - Policy generation templates + Data Safety answers
-3. `flutter_production.md` - AppConfig, versioning, cross-platform patterns
-4. `platform_quirks.md` - Xiaomi, Samsung, Huawei-specific fixes
+### Agents (28)
+| Department | Agents | Count |
+|------------|--------|-------|
+| **C-Suite** | CEO, CTO, HR Director, Product Strategist | 4 |
+| **Design** | Head of UX, Asset Hunter | 2 |
+| **Growth** | ASO Specialist, YouTube Strategist | 2 |
+| **Engineering** | Tech Lead, Mobile Dev, Backend, Frontend, DevOps, DB Architect, Game Dev, Android Specialist, Perf Optimizer | 9 |
+| **Security** | Security Auditor | 1 |
+| **QA & Policy** | QA Lead, Store Policy Expert, App Auditor | 3 |
+| **Special Ops** | AlgoTrade Specialist, Deep Researcher, Localizer | 3 |
+| **Cognitive** | UltraThink, Brainstorm, Debugger, Knowledge Keeper | 4 |
 
-### Agent Updates Required
-| Agent | Update Type | Content |
-|-------|------------|---------|
-| `qa-lead.md` | Add Protocol | "Pre-Release Audit Protocol" |
-| `store-policy-expert.md` | Add Protocol | "Policy Generation Protocol" |
-| `mobile-developer.md` | Add Skill | `platform_quirks.md` |
-| `tech-lead.md` | Add Protocol | "AppConfig Enforcement Protocol" |
-
-### New Workflows Required
-| Workflow | Description |
-|----------|-------------|
-| `/release` | Triggers QA Lead for Master Release Audit |
-| `/store-ready` | Triggers Policy Expert + QA for full store prep |
+### Grimoires (19)
+- Flutter: 9 (Widgets, Animations, Architecture, Performance, Testing, Accessibility, State, Platform Channels, Production)
+- Operations: 4 (Release Engineering, Store Compliance, Prompt Engineering, Debug)
+- Domain: 6 (ASO, Backend, Mobile Engine, Platform Quirks, Trading, Viral)
 
 ---
 
-## 📦 Deliverables
+## 🔍 Gap Analysis by App Type
 
-### Phase 1: Create Grimoires
-1. `release_engineering.md` - Contains:
-   - Master Release Prompt
-   - Version Release Prompt
-   - Release Checklist Template
+### ✅ Covered
+| App Type | Agents Available |
+|----------|------------------|
+| Productivity/Todo | Mobile Dev, Backend, QA |
+| Finance/Trading | AlgoTrade, Security, Backend |
+| Social/Content | YouTube, ASO, Backend |
+| Utility | Mobile Dev, Android Specialist |
 
-2. `store_compliance.md` - Contains:
-   - Policy Generation Prompt
-   - Data Safety Form answers
-   - App Store Privacy answers
-   - Store Policies Checklist
+### ⚠️ Partial Coverage
+| App Type | Gap | Missing Capability |
+|----------|-----|-------------------|
+| **Games** | Game Dev exists but... | No Monetization Specialist (IAP/Ads strategy), No Sound Designer references |
+| **Kids Apps** | Head of UX has reference but... | No dedicated COPPA compliance, no child psychology patterns |
+| **Health/Fitness** | Basic coverage | No HIPAA/Health data compliance, no HealthKit/Google Fit integration patterns |
 
-3. `flutter_production.md` - Contains:
-   - AppConfig pattern (full code)
-   - Versioning best practices
-   - Cross-platform parity rules
-
-4. `platform_quirks.md` - Contains:
-   - Xiaomi/MIUI notification fix
-   - Samsung-specific issues
-   - Huawei HMS considerations
-
-### Phase 2: Update Agents
-- Add `release_engineering` skill to `/qa`
-- Add `store_compliance` skill to `/policy`
-- Add `flutter_production` skill to `/tech-lead`
-- Add `platform_quirks` skill to `/mobile` and `/android`
-
-### Phase 3: Create Workflows
-- `/release` → QA Lead + Release Engineering
-- `/store-ready` → Policy Expert + QA Lead
-
-### Phase 4: Sync to GitHub
-- Push all changes to `agent-flutters` repo
+### ❌ Not Covered
+| App Type | Missing Agents/Skills |
+|----------|----------------------|
+| **E-Commerce** | No Stripe/Payment integration patterns, no inventory management |
+| **IoT/Hardware** | No Bluetooth/BLE patterns, no smart device integration |
+| **AR/VR** | No ARCore/ARKit patterns, no 3D rendering expertise |
 
 ---
 
-## ✅ Success Criteria
-- [ ] All 6 prompts are accessible via agents
-- [ ] New grimoires created and linked
-- [ ] Workflows for `/release` and `/store-ready` work
-- [ ] Changes synced to `agent-flutters` repo
+## 🔍 Gap Analysis by Platform
+
+### Android
+| Aspect | Status | Notes |
+|--------|--------|-------|
+| Modern APIs (14/15) | ✅ | Platform Quirks Grimoire covers |
+| OEM Quirks (Xiaomi, Samsung) | ✅ | Platform Quirks Grimoire covers |
+| Widgets | ⚠️ | Basic, needs Home Screen Widget patterns |
+| Wear OS | ❌ | **MISSING** |
+| Android TV | ❌ | **MISSING** |
+| Android Automotive | ❌ | **MISSING** |
+
+### iOS
+| Aspect | Status | Notes |
+|--------|--------|-------|
+| Modern APIs (iOS 17/18) | ⚠️ | Need Live Activities, Dynamic Island patterns |
+| Widgets | ⚠️ | Need WidgetKit patterns |
+| watchOS | ❌ | **MISSING** |
+| tvOS | ❌ | **MISSING** |
+| CarPlay | ❌ | **MISSING** |
+
+### Cross-Platform
+| Aspect | Status |
+|--------|--------|
+| Web (Flutter Web) | ✅ Frontend Specialist |
+| Desktop (macOS/Windows/Linux) | ❌ **MISSING** |
+
+---
+
+## 🔍 Gap Analysis by Development Phase
+
+| Phase | Coverage | Notes |
+|-------|----------|-------|
+| **Ideation** | ✅ | CEO, Brainstorm, Product Strategist |
+| **Design** | ✅ | Head of UX, Asset Hunter |
+| **Development** | ✅ | Tech Lead, Mobile Dev, Backend |
+| **Testing** | ✅ | QA Lead, Debugger |
+| **Release** | ✅ | Release Engineering Grimoire |
+| **Growth** | ✅ | ASO, YouTube |
+| **Monetization** | ⚠️ | **Partial** - Need dedicated IAP/Subscription expertise |
+| **Analytics** | ❌ | **MISSING** - No Firebase Analytics, Mixpanel patterns |
+| **Maintenance** | ⚠️ | **Partial** - Need Crash Reporting, User Feedback patterns |
+
+---
+
+## 🎯 HR Recommendation: New Hires
+
+### Priority 1 (Critical Gaps)
+| Agent | Role | Justification |
+|-------|------|---------------|
+| **Monetization Specialist** | IAP, Subscriptions, Ad Strategy | Every app needs revenue. No dedicated expert for RevenueCat, AdMob optimization, paywall design |
+| **Analytics Engineer** | Firebase, Mixpanel, Amplitude | Data-driven decisions. No funnel analysis, user behavior tracking patterns |
+| **iOS Specialist** | WidgetKit, Live Activities, watchOS | Android Specialist exists, iOS needs parity |
+
+### Priority 2 (App Type Expansion)
+| Agent | Role | Justification |
+|-------|------|---------------|
+| **Health Tech Specialist** | HealthKit, Google Fit, HIPAA | Fitness apps are huge market. No health data integration patterns |
+| **E-Commerce Specialist** | Stripe, PayPal, Inventory | Shopping apps need payment and catalog patterns |
+
+### Priority 3 (Platform Expansion)
+| Agent | Role | Justification |
+|-------|------|---------------|
+| **Desktop Specialist** | macOS, Windows, Linux Flutter | Desktop apps growing. No Flutter desktop patterns |
+| **IoT Specialist** | BLE, MQTT, Smart Devices | IoT market expanding. No hardware integration patterns |
+
+---
+
+## 📚 HR Recommendation: New Grimoires
+
+| Grimoire | Content |
+|----------|---------|
+| `monetization_patterns.md` | RevenueCat setup, Paywall design, AdMob optimization, Subscription best practices |
+| `analytics_engineering.md` | Firebase setup, Event tracking, Funnel analysis, A/B testing |
+| `ios_advanced.md` | WidgetKit, Live Activities, Dynamic Island, App Intents |
+| `health_fitness.md` | HealthKit, Google Fit, step tracking, workout sessions |
+
+---
+
+## ✅ CEO Verdict
+
+**Current Readiness:** 85%
+The studio can build most productivity, utility, and content apps effectively.
+
+**Critical Gaps:**
+1. **Monetization** - No IAP/Subscription specialist
+2. **Analytics** - No data engineering patterns
+3. **iOS Parity** - No iOS Specialist matching Android Specialist
+
+**Recommended Action:**
+Hire **Monetization Specialist** and **iOS Specialist** immediately.
+Create `monetization_patterns.md` and `ios_advanced.md` Grimoires.
+
+---
+
+> **Board Decision:** APPROVED for hiring. Proceed with Priority 1 agents.
