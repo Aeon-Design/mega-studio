@@ -1,9 +1,0 @@
-# Task: FocusFlow MVP Implementation
-
-- [/] **Phase 1: Foundation** <!-- id: 0 -->
-    - [x] Initialize Flutter Project (`FocusFlow`) <!-- id: 1 -->
-    - [x] Install Dependencies (Fixed Versions) <!-- id: 2 -->
-    - [x] Setup "Feature-First" Folder Structure <!-- id: 3 -->
-- [x] ~~**Phase 2: Core Features**~~ (Deleted) <!-- id: 4 -->
-- [x] ~~**Phase 3: UI Implementation**~~ (Deleted) <!-- id: 8 -->
-- [x] ~~**Phase 4: Polish & Delivery**~~ (Deleted) <!-- id: 12 -->

@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
-  "summary": "Deep analysis report of WaterLife Android app compatibility across different Android versions (9+), OEM manufacturers (Xiaomi, Samsung, Huawei, OPPO), and features (notifications, widgets, Wear OS). Includes technical configuration review, notification system architecture, OEM-specific handling, and test matrix recommendations.",
-  "updatedAt": "2026-01-16T08:25:50.150161900Z"
-}

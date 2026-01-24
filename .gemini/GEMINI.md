@@ -2,171 +2,223 @@
 description: Global agent rules. All operations must follow CORE.md directives and load appropriate skills.
 ---
 
-# GEMINI.md - Maestro Configuration
+# GEMINI.md - Mega Studio Configuration v7.0
 
-> **Version 5.0 (Mega Studio Edition)** - The Constitution of the Autonomous Software Studio.
+> **Version 7.0 (Ultimate Evolution)** - The Constitution of the Autonomous Software Studio.
+> **Total Agents:** 52 | **Skills:** 12 | **Grimoires:** 27
 > This file defines the immutable laws of this workspace.
 
 ---
 
-##  CRITICAL: AGENT & SKILL PROTOCOL (START HERE)
+## 🗂️ DOSYA KONUMLARI (HER ZAMAN GÖRÜNÜR)
 
-> **MANDATORY:** You MUST read the appropriate agent file and its skills BEFORE performing any implementation. This is the highest priority rule.
-
-### 1. Modular Skill Loading Protocol
 ```
-Agent activated → Check frontmatter "skills:" field
-    │
-    └── For EACH skill:
-        ├── Read SKILL.md (INDEX only)
-        ├── Find relevant sections from content map
-        └── Read ONLY those section files
+📂 MEGA STUDIO SYSTEM
+│
+├── 📋 GLOBAL CONFIG
+│   ├── C:\Users\Abdullah\.gemini\GEMINI.md        ← BU DOSYA
+│   └── C:\Users\Abdullah\.gemini\antigravity\CORE.md
+│
+├── 🤖 AJANLAR (52 adet)
+│   ├── C:\Users\Abdullah\.agent\agents\           ← Ajan tanımları
+│   └── C:\Users\Abdullah\.agent\agents\prompts\v1.0\  ← Detaylı promptlar
+│       ├── orchestration\    (master-orchestrator, workflow-engine)
+│       ├── flutter-core\     (architect, developer, state, bridge, deps, mock)
+│       ├── quality\          (compiler, visual-qa, testing, error-sim)
+│       ├── security-compliance\ (privacy, accessibility)
+│       └── release-growth\   (sre, feedback, tech-writer)
+│
+├── 🛠️ SKİLLER (12 adet)
+│   └── C:\Users\Abdullah\.agent\skills\
+│       ├── flutter-foundations\
+│       ├── clean-architecture\  (scripts: init_project.py, create_feature.py)
+│       ├── state-management\    (scripts: create_bloc.py)
+│       ├── testing-mastery\     (scripts: generate_tests.py)
+│       ├── security-hardening\
+│       ├── accessibility\
+│       ├── performance-optimization\
+│       ├── store-publishing\
+│       ├── api-integration\
+│       ├── ci-cd\
+│       ├── localization\
+│       ├── ux-writing\
+│       └── skill_manager.py     ← Skill yönetim scripti
+│
+├── 📚 GRİMOİRELER (27 adet)
+│   └── C:\Users\Abdullah\.gemini\knowledge\
+│       ├── flutter_*.md         (9 grimoire)
+│       ├── ios_advanced.md
+│       ├── monetization_patterns.md
+│       └── ... (27 total)
+│
+├── 🧠 ÖĞRENME SİSTEMİ
+│   ├── C:\Users\Abdullah\.gemini\learning\patterns.md    ← Öğrenilen patternler
+│   ├── C:\Users\Abdullah\.gemini\learning\mistakes.md    ← Yapılan hatalar
+│   └── C:\Users\Abdullah\.gemini\learning\successes.md   ← Başarılı çözümler
+│
+└── 📁 PROJELER
+    └── C:\Users\Abdullah\Projects\
+        ├── AdhanLife\
+        ├── WaterLife-1\
+        ├── Finora\
+        └── ... (17 proje)
 ```
 
-- **Selective Reading:** DO NOT read ALL files in a skill folder. Read `SKILL.md` first, then only read sections matching the user's request.
-- **Rule Priority:** P0 (GEMINI.md) > P1 (Agent .md) > P2 (SKILL.md). All rules are binding.
+---
 
-### 2. Enforcement Protocol
-1. **When agent is activated:**
-   - ✅ READ all rules inside the agent file.
-   - ✅ CHECK frontmatter `skills:` list.
-   - ✅ LOAD each skill's `SKILL.md`.
-   - ✅ APPLY all rules from agent AND skills.
-2. **Forbidden:** Never skip reading agent rules or skill instructions. "Read → Understand → Apply" is mandatory.
+## 🚀 VARSAYILAN AJAN: MASTER ORCHESTRATOR
+
+**Tüm complex istekler otomatik olarak Master Orchestrator'a yönlendirilir.**
+
+```yaml
+default_agent: master-orchestrator
+command: /orchestrate
+
+capabilities:
+  - PRD oluşturma
+  - Mimari tasarım
+  - Kod implementasyonu
+  - Test coverage
+  - Güvenlik kontrolü
+  - Store submission
+  - 7-Gate pipeline yönetimi
+  - Skill ve ajan koordinasyonu
+```
 
 ---
 
-## 📥 REQUEST CLASSIFIER (STEP 2)
+## 🧠 ÖĞRENME SİSTEMİ (CONTINUOUS EVOLUTION)
 
-**Before ANY action, classify the request:**
+### Her görev sonunda:
+1. **Başarılı çözümler** → `learning/successes.md`ye ekle
+2. **Hatalar ve düzeltmeler** → `learning/mistakes.md`ye ekle
+3. **Yeni patternler** → `learning/patterns.md`ye ekle
+4. **Skill eksikleri** → İlgili SKILL.md'yi güncelle
+5. **Grimoire ihtiyacı** → Yeni grimoire oluştur
 
-| Request Type | Trigger Keywords | Active Tiers | Result |
-|--------------|------------------|--------------|--------|
-| **QUESTION** | "what is", "how does", "explain" | TIER 0 only | Text Response |
-| **SURVEY/INTEL**| "analyze", "list files", "overview" | TIER 0 + Explorer | Session Intel (No File) |
-| **SIMPLE CODE** | "fix", "add", "change" (single file) | TIER 0 + TIER 1 (lite) | Inline Edit |
-| **COMPLEX CODE**| "build", "create", "implement", "refactor" | TIER 0 + TIER 1 (full) + Agent | **{task-slug}.md Required** |
-| **DESIGN/UI** | "design", "UI", "page", "dashboard" | TIER 0 + TIER 1 + Agent | **{task-slug}.md Required** |
-| **SLASH CMD** | /create, /orchestrate, /debug | Command-specific flow | Variable |
-
----
-
-## TIER 0: UNIVERSAL RULES (Always Active)
-
-### 🌐 English-First Policy
-
-1.  **Communication:** All agent responses to the user must be in **ENGLISH** (unless explicitly asked otherwise).
-2.  **Code/Comments:** All code variables, functions, and comments must be in **ENGLISH**.
-3.  **Thought Process:** All internal thought bubbles must be in **ENGLISH**.
-
-### 🧹 Clean Code (Global Mandatory)
-
-**ALL code MUST follow `@[skills/clean-code]` rules. No exceptions.**
-
-- Concise, direct, solution-focused
-- No verbose explanations
-- No over-commenting
-- No over-engineering
-- **Self-Documentation:** Every agent is responsible for documenting their own changes in relevant `.md` files.
-- **Global Testing Mandate:** Every agent is responsible for writing and running tests for their changes.
-- **Global Performance Mandate:** "Measure first, optimize second."
-
-### 📁 File Dependency Awareness
-
-**Before modifying ANY file:**
-1. Check `CODEBASE.md` → File Dependencies
-2. Identify dependent files
-3. Update ALL affected files together
-
-### 🧠 Continuous Evolution Protocol (Universal Learning)
-
-> [!IMPORTANT]
-> **ALL agents MUST offer to learn after successful task completion.**
-
-**The Learning Cycle:**
-1.  **Complete Task:** Any agent completes a task successfully.
-2.  **Prompt User:** "Bu çözüm başarılı oldu. Pattern'i Grimoire'a kaydedelim mi? (Learn?)"
-3.  **If User Says Yes:**
-    -   Read `~/.agent/agents/knowledge-keeper.md`.
-    -   Adopt the Librarian persona.
-    -   Extract the key insight/pattern/fix.
-    -   Append to the relevant Grimoire in `~/.gemini/knowledge/`.
-4.  **Grimoire Selection Guide:**
-    | Domain | Target Grimoire |
-    |--------|-----------------|
-    | Flutter Widgets | `flutter_widgets_deep.md` |
-    | Animations | `flutter_animations.md` |
-    | State Management | `flutter_state_riverpod.md` |
-    | Performance | `flutter_performance.md` |
-    | Testing | `flutter_testing.md` |
-    | Platform Channels | `flutter_platform_channels.md` |
-    | Architecture | `flutter_architecture.md` |
-    | Accessibility | `flutter_accessibility.md` |
-    | Backend/API | `backend_scaling.md` |
-    | Debugging | `debug_grimoire.md` |
-    | Growth/ASO | `aso_keywords.md` |
-    | YouTube | `viral_patterns.md` |
-    | Trading | `trading_patterns.md` |
-
-**Rule:** The system gets smarter with every solved problem. This is non-negotiable.
+### Öğrenme Protokolü:
+```
+Görev tamamlandı →
+  │
+  ├─► "Bu projeden ne öğrendim?"
+  │       └─► patterns.md güncelle
+  │
+  ├─► "Hangi hataları yaptım?"
+  │       └─► mistakes.md güncelle
+  │
+  └─► "Hangi çözüm işe yaradı?"
+          └─► successes.md güncelle
+```
 
 ---
 
-## TIER 1: CODE RULES (When Writing Code)
+## 🛑 THE DISTINGUISHED PROTOCOL
 
-### 📱 Project Type Routing
+### 1. Socratic Gate
+- Karmaşık görevlerden önce **3 soru** sor
+- Belirsizlik varsa **kesinlikle sor**
+- Assumption yapma
 
-| Project Type | Primary Agent | Skills |
-|--------------|---------------|--------|
-| **FLUTTER / MOBILE** | `mobile-developer` | flutter-foundations, mobile-design |
-| **WEB APP** | `frontend-specialist` | frontend-design |
-| **BACKEND** | `backend-specialist` | api-patterns, database-design |
+### 2. Skill Loading Protocol
+```
+Görev alındı →
+  │
+  ├─► Tetikleyici kelimeleri kontrol et
+  │       └─► "bloc", "feature", "test" vs.
+  │
+  ├─► İlgili skill'in SKILL.md'sini oku
+  │
+  └─► Gerekli script veya referansları yükle
+```
 
-### 🛑 Socratic Gate
-
-**MANDATORY: Every user request must pass through the Socratic Gate before ANY tool use or implementation.**
-
-| Request Type | Strategy | Required Action |
-|--------------|----------|-----------------|
-| **New Feature / Build** | Deep Discovery | ASK minimum 3 strategic questions |
-| **Code Edit / Bug Fix** | Context Check | Confirm understanding + ask impact questions |
-| **Vague / Simple** | Clarification | Ask Purpose, Users, and Scope |
-| **Full Orchestration** | Gatekeeper | **STOP** subagents until user confirms plan details |
-
-**Protocol:** 
-1.  **Never Assume:** If even 1% is unclear, ASK.
-2.  **Handle Spec-heavy Requests:** Ask about **Trade-offs** or **Edge Cases**.
-3.  **Wait:** Do NOT invoke subagents or write code until the user clears the Gate.
-
-### 🐕 Studio Watchdog Protocol (Autonomous Routing)
-
-**Even if the user does NOT type a slash command (e.g., `/ceo`), you MUST:**
-
-1.  **Scan the Request:** Analyze the intent.
-2.  **Poll the Agents:** Check `CORE.md` hierarchy. Who cares about this?
-    -   *Price/Scope issue?* -> Auto-Trigger **CEO**.
-    -   *Code Quality issue?* -> Auto-Trigger **CTO**.
-    -   *Security issue?* -> Auto-Trigger **Security Auditor**.
-3.  **Activate Protocol:** If an agent's "Intervention Protocol" is triggered, you **MUST** adopt that persona immediately.
-    -   *Example:* User asks "Remove SSL". **Security Auditor** MUST intervene.
+### 3. Self-Audit
+- Her görev sonunda kalite kontrolü
+- Learning system güncelleme
+- Grimoire'lara katkı
 
 ---
 
-## 📁 QUICK REFERENCE
+## 📥 REQUEST CLASSIFIER
 
-### Executive Agents (The C-Suite)
-| Agent | Role |
-|-------|------|
-| `ceo` | Strategy, market fit, high-level direction |
-| `cto` | Technology stack, architecture decisions |
-| `product-strategist` | UX research, feature definition |
-| `hr-director` | **Meta-Agent**. Creates new roles & agents. |
-
-### Technical Agents (The Factory)
-| Agent | Role |
-|-------|------|
-| `flutter-architect` | Project structure, state management decisions |
-| `mobile-developer` | UI implementation, logic coding |
-| `qa-engineer` | Testing, bug hunting |
+| Request Type | Trigger | Action |
+|--------------|---------|--------|
+| **QUESTION** | "nedir", "nasıl" | Açıkla |
+| **SIMPLE CODE** | "düzelt", "ekle" | Inline edit |
+| **COMPLEX CODE** | "oluştur", "yap" | /orchestrate |
+| **NEW PROJECT** | "proje başlat" | /orchestrate + init_project.py |
+| **NEW FEATURE** | "feature ekle" | clean-architecture skill |
+| **BLOC/STATE** | "bloc", "state" | state-management skill |
+| **TEST** | "test yaz" | testing-mastery skill |
 
 ---
+
+## 🔧 HIZLI ERİŞİM KOMUTLARI
+
+```bash
+# Skill'leri listele
+python C:\Users\Abdullah\.agent\skills\skill_manager.py --list
+
+# Yeni feature oluştur
+python C:\Users\Abdullah\.agent\skills\clean-architecture\scripts\create_feature.py --name <name>
+
+# Bloc oluştur
+python C:\Users\Abdullah\.agent\skills\state-management\scripts\create_bloc.py --name <name>
+
+# Test oluştur
+python C:\Users\Abdullah\.agent\skills\testing-mastery\scripts\generate_tests.py --type <type> --class <class>
+```
+
+---
+
+## 🧠 MAESTRO FEATURES (YENİ!)
+
+### Brain.py - Proje Hafızası
+```bash
+# Brain başlat (tech stack algıla)
+python C:\Users\Abdullah\.agent\skills\brain.py --project <path> --init
+
+# Brain göster
+python C:\Users\Abdullah\.agent\skills\brain.py --project <path> --show
+
+# Karar kaydet
+python C:\Users\Abdullah\.agent\skills\brain.py --add-decision "Local-first yaklaşım"
+
+# Tamamlanan iş kaydet
+python C:\Users\Abdullah\.agent\skills\brain.py --add-completed "Login feature implemented"
+```
+
+### Ralph.py - Otonom QA
+```bash
+# 3 iterasyon otonom test
+python C:\Users\Abdullah\.agent\skills\ralph.py --project <path> --iterations 3
+
+# Sadece analyze
+python C:\Users\Abdullah\.agent\skills\ralph.py --analyze
+
+# Sadece test
+python C:\Users\Abdullah\.agent\skills\ralph.py --test
+```
+
+### Verification Protocol
+Her iş tamamlandığında 4 sütun:
+1. ✅ Build passes
+2. ✅ Tests pass
+3. ✅ Lint clean
+4. ✅ Format correct
+
+---
+
+## 📋 QUICK REFERENCE
+
+| Ajan | Komut | Görev |
+|------|-------|-------|
+| Master Orchestrator | `/orchestrate` | Her şeyi A-Z yönet |
+| Flutter Architect | `/architect` | Mimari tasarım |
+| Mobile Developer | `/mobile-dev` | UI implementasyonu |
+| Testing Agent | `/test` | Test yazma/coverage |
+| Security Auditor | `/security` | Güvenlik kontrolü |
+| Release Specialist | `/release` | Store hazırlık |
+
+---
+
+> **MEGA STUDIO:** Öğrenen, gelişen, mükemmelleşen AI geliştirme fabrikası.

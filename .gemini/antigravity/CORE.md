@@ -1,212 +1,172 @@
 ---
-description: Central Orchestrator & Agent Hierarchy. Mega Studio 5.0 (31 Agents, 8 Levels).
+description: Central Orchestrator & Agent Hierarchy. Mega Studio 7.0 (52 Agents, Pipeline Architecture).
 ---
 
 # CORE.md - Mega Studio Hierarchy 🏢
 
-> **Version:** 5.0 (Titan Edition)
-> **Total Agents:** 31
+> **Version:** 7.0 (Ultimate Evolution)
+> **Total Agents:** 52
+> **Architecture:** 7-Gate Pipeline + State Machine
 > **Last Updated:** January 2026
 
 ---
 
-## 🔗 Chain of Command (Delegation Flow)
+## 🔗 Pipeline Architecture
 
 ```
-CEO ─┬─► CTO ─┬─► Tech Lead ─┬─► Mobile Developer
-     │        │              ├─► Backend Specialist
-     │        │              ├─► Frontend Specialist
-     │        │              ├─► Database Architect
-     │        │              ├─► Game Developer
-     │        │              ├─► Performance Optimizer
-     │        │              ├─► Android Specialist
-     │        │              ├─► iOS Specialist ⭐NEW
-     │        │              └─► DevOps Engineer
-     │        │
-     │        ├─► Security Auditor
-     │        └─► QA Lead ─────► App Auditor
-     │
-     ├─► Product Strategist ─┬─► Monetization Specialist ⭐NEW
-     │                       ├─► Analytics Engineer ⭐NEW
-     │                       └─► ASO Specialist
-     │
-     ├─► HR Director ──────► (Creates new agents)
-     │
-     └─► Head of UX ───────┬─► Asset Hunter
-                           └─► Localizer
+┌─────────────────────────────────────────────────────────────────────┐
+│                    MEGA STUDIO 7.0 PIPELINE                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  [IDEA] ──► GATE 1 ──► GATE 2 ──► GATE 3 ──► GATE 4 ──►             │
+│             (Spec)    (Design)   (Arch)    (Build)                  │
+│                                                                      │
+│             ──► GATE 5 ──► GATE 6 ──► GATE 7 ──► 🎉 [PUBLISHED]     │
+│                (Test)     (Security)  (Store)                        │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🎭 New Orchestration Layer (Level 0)
+
+| Agent | Command | Role |
+|-------|---------|------|
+| **Master Orchestrator** | `/orchestrate` | Project lifecycle coordinator |
+| **Workflow Engine** | `/workflow` | State machine, gate transitions |
 
 ---
 
 ## 📋 Level 1: Executive C-Suite
 
-> **Who:** Strategic decision makers. Set vision, approve major changes.
-
 | Agent | Command | Reports To | Manages |
 |-------|---------|------------|---------|
-| **CEO** | `/ceo` | Board | CTO, Product, HR, Design |
+| **CEO** | `/ceo` | Board | CTO, Product, HR, Design, R&D |
 | **CTO** | `/cto` | CEO | Tech Lead, Security, QA |
-| **HR Director** | `/hr` | CEO | Agent creation |
-| **Product Strategist** | `/product` | CEO | Monetization, Analytics, ASO |
-
-### CEO Delegation Table
-| Task Type | Delegate To |
-|-----------|-------------|
-| Technical Architecture | CTO |
-| New Feature Design | Product Strategist |
-| UI/UX Issues | Head of UX |
-| Hiring New Agents | HR Director |
-| Revenue Strategy | Product → Monetization |
+| **HR Director** | `/hr` | CEO | Recruitment & Culture |
+| **Product Strategist** | `/product` | CEO | Growth & Revenue Squad |
 
 ---
 
-## 📋 Level 2: Design Department
-
-| Agent | Command | Reports To | Manages |
-|-------|---------|------------|---------|
-| **Head of UX** | `/design` | CEO | Asset Hunter, Localizer |
-| **Asset Hunter** | `/assets` | Head of UX | - |
-
-### Head of UX Delegation Table
-| Task Type | Delegate To |
-|-----------|-------------|
-| Find Images/Icons/Fonts | Asset Hunter |
-| Translation/Localization | Localizer |
-
----
-
-## 📋 Level 3: Growth & Revenue
-
-| Agent | Command | Reports To | Manages |
-|-------|---------|------------|---------|
-| **Monetization Specialist** | `/monetize` | Product | - |
-| **Analytics Engineer** | `/analytics` | Product | - |
-| **ASO Specialist** | `/aso` | Product | - |
-| **YouTube Strategist** | `/youtube` | Product | - |
-
----
-
-## 📋 Level 4: Development (Tech Lead Control)
-
-> **Who:** Tech Lead controls ALL development work.
-
-| Agent | Command | Reports To | Specialization |
-|-------|---------|------------|----------------|
-| **Tech Lead** | `/tech-lead` | CTO | Code quality, PR review |
-| **Mobile Developer** | `/mobile` | Tech Lead | Flutter, cross-platform |
-| **Backend Specialist** | `/backend` | Tech Lead | API, Firebase, Supabase |
-| **Frontend Specialist** | `/frontend` | Tech Lead | Web, React, Next.js |
-| **Database Architect** | `/db` | Tech Lead | Schema, queries |
-| **Game Developer** | `/game` | Tech Lead | Flame, Unity |
-| **Performance Optimizer** | `/performance-optimizer` | Tech Lead | 60 FPS, profiling |
-| **Android Specialist** | `/android` | Tech Lead | Native Android, OEM quirks |
-| **iOS Specialist** | `/ios` | Tech Lead | WidgetKit, StoreKit |
-| **DevOps Engineer** | `/devops` | Tech Lead | CI/CD, infrastructure |
-
-### Tech Lead Delegation Table
-| Task Type | Delegate To |
-|-----------|-------------|
-| Flutter UI/Logic | Mobile Developer |
-| API/Database | Backend Specialist |
-| Web Development | Frontend Specialist |
-| Performance Issues | Performance Optimizer |
-| Android Native | Android Specialist |
-| iOS Native (Widgets, Live Activities) | iOS Specialist |
-| CI/CD Pipeline | DevOps Engineer |
-| Game Features | Game Developer |
-
----
-
-## 📋 Level 5: Security Division
+## 📋 Level 2-3: Technical Leadership
 
 | Agent | Command | Reports To |
 |-------|---------|------------|
-| **Security Auditor** | `/security` | CTO |
+| **Tech Lead** | `/tech` | CTO |
+| **Lead Mobile Developer** | `/lead-mobile` | Tech Lead |
+| **Lead Backend & Infra** | `/lead-backend` | Tech Lead |
+| **Head of UX** | `/ux` | CEO |
 
 ---
 
-## 📋 Level 6: QA & Policy
+## 📋 NEW: Quality & Execution Squad
 
-| Agent | Command | Reports To | Manages |
-|-------|---------|------------|---------|
-| **QA Lead** | `/qa` | CTO | App Auditor |
-| **Store Policy Expert** | `/policy` | QA Lead | - |
-| **App Auditor** | `/audit` | QA Lead | - |
-
-### QA Lead Delegation Table
-| Task Type | Delegate To |
-|-----------|-------------|
-| Store Compliance | Store Policy Expert |
-| Code Health Check | App Auditor |
-| Release Approval | (Self - Final Authority) |
+| Agent | Command | Role | Gate |
+|-------|---------|------|------|
+| **Compiler Agent** | `/compile` | Sandbox build validation | GATE 4 |
+| **Visual QA** | `/visual-qa` | UI/Figma comparison | GATE 4 |
+| **Flutter Testing Agent** | `/test` | Unit/Widget/Golden tests | GATE 5 |
+| **Error Simulator** | `/chaos` | Edge case stress testing | GATE 5 |
 
 ---
 
-## 📋 Level 7: Special Operations
-
-| Agent | Command | Reports To |
-|-------|---------|------------|
-| **AlgoTrade Specialist** | `/algotrade` | CTO |
-| **Deep Researcher** | `/research` | CEO |
-| **Localizer** | `/localize` | Head of UX |
-
----
-
-## 📋 Level 8: Cognitive Division
-
-> **Who:** Independent thinkers. Can be called by anyone.
+## 📋 NEW: Flutter Specialization Squad
 
 | Agent | Command | Role |
 |-------|---------|------|
-| **UltraThink** | `/ultrathink` | Deep reasoning, complex problems |
-| **Brainstorm** | `/brainstorm` | Ideation, naming, creative solutions |
-| **Debugger** | `/debugger` | Root cause analysis, crash fixing |
-| **Knowledge Keeper** | `/learn` | Updates Grimoires with new patterns |
+| **Dependency Resolver** | `/deps` | pubspec.yaml management |
+| **Mock Data Generator** | `/mock` | Dummy data for development |
+| **Flutter Architect** | `/architect` | Project structure & patterns |
+| **State Manager** | `/state` | Bloc/Riverpod implementation |
+| **Platform Bridge** | `/bridge` | Native iOS/Android integration |
 
 ---
 
-## ⚠️ Critical Rules
+## 📋 NEW: Security & Compliance Squad
 
-> [!IMPORTANT]
-> **Delegation is Mandatory:**
-> - CEO does NOT code. Delegates to CTO → Tech Lead → Developers.
-> - CTO does NOT design. Delegates to Head of UX.
-> - Tech Lead does NOT write production code. Reviews and delegates.
-
-> [!CAUTION]
-> **Cross-Level Communication:**
-> - Junior agents can ESCALATE to their manager.
-> - Senior agents can DELEGATE down.
-> - **No skipping levels** (Mobile Dev cannot directly ask CEO).
+| Agent | Command | Role | Gate |
+|-------|---------|------|------|
+| **Security Auditor** | `/security` | OWASP, vulnerability scanning | GATE 6 |
+| **Privacy Officer** | `/privacy` | GDPR/KVKK, data safety | GATE 6 |
+| **Accessibility Specialist** | `/a11y` | WCAG compliance | GATE 6 |
 
 ---
 
-## 🚀 Workflow Quick Reference
+## 📋 NEW: Release & Post-Release Squad
 
-| Goal | Command | What Happens |
-|------|---------|--------------|
-| **New App Strategy** | `/ceo` | CEO → Product → Tech architecture |
-| **Build Feature** | `/mobile` | Tech Lead assigns Mobile Dev |
-| **Fix Performance** | `/performance-optimizer` | Profile and optimize |
-| **Add Monetization** | `/monetize` | RevenueCat, AdMob setup |
-| **iOS Widget** | `/ios` | WidgetKit implementation |
-| **Prepare for Store** | `/store-ready` | Policy + QA + Release audit |
-| **Final Release Check** | `/release` | QA Lead Master Audit |
-| **Deep Research** | `/research` | Deep Researcher investigation |
-| **Learn New Pattern** | `/learn` | Knowledge Keeper updates Grimoire |
+| Agent | Command | Role | Gate |
+|-------|---------|------|------|
+| **Mobile Release Specialist** | `/release` | Store submission | GATE 7 |
+| **Store Policy Expert** | `/policy` | App review guidelines | GATE 7 |
+| **Tech Writer** | `/copy` | Store metadata, microcopy | GATE 7 |
+| **SRE / Observability** | `/sre` | Post-release monitoring | POST |
+| **User Feedback Analyst** | `/feedback` | Review analysis | POST |
 
 ---
 
 ## 📊 Agent Count by Department
 
-| Department | Count | New in v5.0 |
-|------------|-------|-------------|
-| Executive | 4 | - |
-| Design | 2 | - |
-| Growth/Revenue | 4 | +2 (Monetization, Analytics) |
-| Development | 10 | +1 (iOS Specialist) |
-| Security | 1 | - |
-| QA & Policy | 3 | - |
-| Special Ops | 3 | - |
-| Cognitive | 4 | - |
-| **TOTAL** | **31** | **+3** |
+| Department | Count | Status |
+|------------|-------|--------|
+| Orchestration (NEW) | 2 | **Active** |
+| Executive | 4 | Active |
+| Technical Leadership | 4 | Active |
+| Quality & Execution (NEW) | 4 | **Active** |
+| Flutter Specialization (NEW) | 5 | **Active** |
+| Security & Compliance (NEW) | 3 | **Active** |
+| Release & Post-Release (NEW) | 5 | **Active** |
+| Interaction Squad | 8 | Active |
+| Foundation Squad | 7 | Active |
+| Cognitive | 4 | Active |
+| R&D & Innovation | 3 | Active |
+| Growth/Revenue | 3 | Active |
+| **TOTAL** | **52** | **Synchronized** |
+
+---
+
+## 🚦 7-Gate System
+
+| Gate | Name | Controllers | Criteria |
+|------|------|-------------|----------|
+| 1 | Spec | Product Strategist + CEO | PRD complete |
+| 2 | Design | Head of UX | Figma approved |
+| 3 | Architecture | CTO + Flutter Architect | ADR written |
+| 4 | Build | Compiler Agent + Tech Lead | 0 build errors |
+| 5 | Test | QA Lead + Testing Agent | Coverage ≥95% |
+| 6 | Security | Security Auditor + Privacy Officer | 0 vulnerabilities |
+| 7 | Store | Store Policy Expert + Release Specialist | Policy compliant |
+
+---
+
+## 📁 Prompt Directory Structure
+
+```
+.agent/agents/prompts/v1.0/
+├── orchestration/
+│   ├── master-orchestrator.md
+│   └── workflow-engine.md
+├── flutter-core/
+│   ├── flutter-architect.md
+│   ├── mobile-developer.md
+│   ├── state-manager.md
+│   ├── platform-bridge.md
+│   ├── dependency-resolver.md
+│   └── mock-data-generator.md
+├── quality/
+│   ├── compiler-agent.md
+│   ├── visual-qa.md
+│   ├── flutter-testing-agent.md
+│   └── error-simulator.md
+├── security-compliance/
+│   ├── privacy-officer.md
+│   └── accessibility-specialist.md
+└── release-growth/
+    ├── sre-observability.md
+    ├── user-feedback-analyst.md
+    └── tech-writer.md
+```
+
+---
+
+> **MEGA STUDIO 7.0:** Sıfırdan hatasız Flutter uygulaması üreten fabrika.
