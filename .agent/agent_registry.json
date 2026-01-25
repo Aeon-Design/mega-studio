@@ -1,0 +1,957 @@
+{
+    "version": "1.0.0",
+    "last_updated": "2026-01-25",
+    "agents": [
+        {
+            "id": "ceo",
+            "name": "CEO",
+            "file": "ceo.md",
+            "capabilities": [
+                "strategy",
+                "vision",
+                "delegation",
+                "decision-making",
+                "resource-allocation"
+            ],
+            "domains": [
+                "business",
+                "leadership",
+                "startup"
+            ],
+            "keywords": [
+                "strateji",
+                "vizyon",
+                "karar",
+                "yönetim",
+                "startup",
+                "PMF",
+                "moat"
+            ]
+        },
+        {
+            "id": "cto",
+            "name": "CTO",
+            "file": "cto.md",
+            "capabilities": [
+                "architecture",
+                "tech-stack",
+                "system-design",
+                "technical-leadership"
+            ],
+            "domains": [
+                "engineering",
+                "architecture",
+                "infrastructure"
+            ],
+            "keywords": [
+                "mimari",
+                "architecture",
+                "tech stack",
+                "sistem tasarımı",
+                "scalability"
+            ]
+        },
+        {
+            "id": "mobile-developer",
+            "name": "Mobile Developer",
+            "file": "mobile-developer.md",
+            "capabilities": [
+                "flutter-ui",
+                "widgets",
+                "animations",
+                "state-management",
+                "performance"
+            ],
+            "domains": [
+                "flutter",
+                "mobile",
+                "ui",
+                "dart"
+            ],
+            "keywords": [
+                "flutter",
+                "widget",
+                "ui",
+                "ekran",
+                "sayfa",
+                "animasyon",
+                "bloc",
+                "riverpod"
+            ]
+        },
+        {
+            "id": "ios-platform-specialist",
+            "name": "iOS Platform Specialist",
+            "file": "ios-platform-specialist.md",
+            "capabilities": [
+                "ios-native",
+                "swift",
+                "widgetkit",
+                "app-store",
+                "apple-guidelines"
+            ],
+            "domains": [
+                "ios",
+                "apple",
+                "swift"
+            ],
+            "keywords": [
+                "ios",
+                "iphone",
+                "ipad",
+                "swift",
+                "apple",
+                "app store",
+                "widgetkit",
+                "dynamic island"
+            ]
+        },
+        {
+            "id": "android-platform-specialist",
+            "name": "Android Platform Specialist",
+            "file": "android-platform-specialist.md",
+            "capabilities": [
+                "android-native",
+                "kotlin",
+                "play-store",
+                "google-guidelines"
+            ],
+            "domains": [
+                "android",
+                "google",
+                "kotlin"
+            ],
+            "keywords": [
+                "android",
+                "kotlin",
+                "play store",
+                "google",
+                "firebase"
+            ]
+        },
+        {
+            "id": "backend-specialist",
+            "name": "Backend Specialist",
+            "file": "backend-specialist.md",
+            "capabilities": [
+                "api-design",
+                "rest",
+                "graphql",
+                "server-side"
+            ],
+            "domains": [
+                "backend",
+                "api",
+                "server"
+            ],
+            "keywords": [
+                "api",
+                "backend",
+                "rest",
+                "graphql",
+                "server",
+                "endpoint",
+                "firebase",
+                "supabase"
+            ]
+        },
+        {
+            "id": "database-architect",
+            "name": "Database Architect",
+            "file": "database-architect.md",
+            "capabilities": [
+                "data-modeling",
+                "sql",
+                "nosql",
+                "local-storage",
+                "sync"
+            ],
+            "domains": [
+                "database",
+                "storage",
+                "data"
+            ],
+            "keywords": [
+                "database",
+                "veritabanı",
+                "sql",
+                "hive",
+                "drift",
+                "sqlite",
+                "firestore"
+            ]
+        },
+        {
+            "id": "security-auditor",
+            "name": "Security Auditor",
+            "file": "security-auditor.md",
+            "capabilities": [
+                "security-audit",
+                "owasp",
+                "encryption",
+                "penetration-testing"
+            ],
+            "domains": [
+                "security",
+                "privacy",
+                "compliance"
+            ],
+            "keywords": [
+                "güvenlik",
+                "security",
+                "owasp",
+                "encryption",
+                "şifreleme",
+                "hack",
+                "vulnerability"
+            ]
+        },
+        {
+            "id": "qa-lead",
+            "name": "QA Lead",
+            "file": "qa-lead.md",
+            "capabilities": [
+                "testing",
+                "test-strategy",
+                "coverage",
+                "quality-assurance"
+            ],
+            "domains": [
+                "testing",
+                "quality"
+            ],
+            "keywords": [
+                "test",
+                "qa",
+                "kalite",
+                "coverage",
+                "unit test",
+                "widget test",
+                "integration"
+            ]
+        },
+        {
+            "id": "performance-optimizer",
+            "name": "Performance Optimizer",
+            "file": "performance-optimizer.md",
+            "capabilities": [
+                "profiling",
+                "optimization",
+                "memory-management",
+                "fps"
+            ],
+            "domains": [
+                "performance",
+                "optimization"
+            ],
+            "keywords": [
+                "performans",
+                "hız",
+                "fps",
+                "memory",
+                "jank",
+                "yavaş",
+                "optimize"
+            ]
+        },
+        {
+            "id": "devops-engineer",
+            "name": "DevOps Engineer",
+            "file": "devops-engineer.md",
+            "capabilities": [
+                "ci-cd",
+                "automation",
+                "deployment",
+                "infrastructure"
+            ],
+            "domains": [
+                "devops",
+                "ci-cd",
+                "automation"
+            ],
+            "keywords": [
+                "ci",
+                "cd",
+                "pipeline",
+                "github actions",
+                "codemagic",
+                "deploy",
+                "release"
+            ]
+        },
+        {
+            "id": "head-of-ux",
+            "name": "Head of UX",
+            "file": "head-of-ux.md",
+            "capabilities": [
+                "ux-design",
+                "user-research",
+                "accessibility",
+                "design-system"
+            ],
+            "domains": [
+                "ux",
+                "design",
+                "accessibility"
+            ],
+            "keywords": [
+                "ux",
+                "tasarım",
+                "kullanıcı deneyimi",
+                "accessibility",
+                "erişilebilirlik",
+                "wcag"
+            ]
+        },
+        {
+            "id": "product-strategist",
+            "name": "Product Strategist",
+            "file": "product-strategist.md",
+            "capabilities": [
+                "product-management",
+                "roadmap",
+                "prd",
+                "user-research"
+            ],
+            "domains": [
+                "product",
+                "strategy"
+            ],
+            "keywords": [
+                "ürün",
+                "product",
+                "prd",
+                "roadmap",
+                "feature",
+                "önceliklendirme"
+            ]
+        },
+        {
+            "id": "monetization-specialist",
+            "name": "Monetization Specialist",
+            "file": "monetization-specialist.md",
+            "capabilities": [
+                "iap",
+                "subscriptions",
+                "ads",
+                "paywall",
+                "pricing"
+            ],
+            "domains": [
+                "monetization",
+                "revenue"
+            ],
+            "keywords": [
+                "para",
+                "gelir",
+                "iap",
+                "subscription",
+                "abonelik",
+                "reklam",
+                "paywall",
+                "fiyat"
+            ]
+        },
+        {
+            "id": "aso-specialist",
+            "name": "ASO Specialist",
+            "file": "aso-specialist.md",
+            "capabilities": [
+                "keyword-optimization",
+                "store-listing",
+                "conversion"
+            ],
+            "domains": [
+                "aso",
+                "marketing"
+            ],
+            "keywords": [
+                "aso",
+                "keyword",
+                "store listing",
+                "indirme",
+                "görünürlük",
+                "sıralama"
+            ]
+        },
+        {
+            "id": "analytics-engineer",
+            "name": "Analytics Engineer",
+            "file": "analytics-engineer.md",
+            "capabilities": [
+                "event-tracking",
+                "funnels",
+                "cohorts",
+                "dashboards"
+            ],
+            "domains": [
+                "analytics",
+                "data"
+            ],
+            "keywords": [
+                "analytics",
+                "event",
+                "tracking",
+                "funnel",
+                "metrik",
+                "kpi"
+            ]
+        },
+        {
+            "id": "localizer",
+            "name": "Localizer",
+            "file": "localizer.md",
+            "capabilities": [
+                "i18n",
+                "l10n",
+                "translation",
+                "rtl"
+            ],
+            "domains": [
+                "localization",
+                "translation"
+            ],
+            "keywords": [
+                "çeviri",
+                "dil",
+                "localization",
+                "i18n",
+                "arb",
+                "rtl",
+                "türkçe",
+                "ingilizce"
+            ]
+        },
+        {
+            "id": "mobile-release-specialist",
+            "name": "Mobile Release Specialist",
+            "file": "mobile-release-specialist.md",
+            "capabilities": [
+                "store-submission",
+                "release-management",
+                "metadata"
+            ],
+            "domains": [
+                "release",
+                "store"
+            ],
+            "keywords": [
+                "release",
+                "yayınla",
+                "store",
+                "submission",
+                "app store",
+                "play store"
+            ]
+        },
+        {
+            "id": "store-policy-expert",
+            "name": "Store Policy Expert",
+            "file": "store-policy-expert.md",
+            "capabilities": [
+                "policy-compliance",
+                "rejection-handling",
+                "appeals"
+            ],
+            "domains": [
+                "policy",
+                "compliance"
+            ],
+            "keywords": [
+                "policy",
+                "rejection",
+                "red",
+                "kuralllar",
+                "guideline",
+                "appeal"
+            ]
+        },
+        {
+            "id": "debugger",
+            "name": "Debugger",
+            "file": "debugger.md",
+            "capabilities": [
+                "debugging",
+                "crash-analysis",
+                "root-cause"
+            ],
+            "domains": [
+                "debugging",
+                "troubleshooting"
+            ],
+            "keywords": [
+                "bug",
+                "hata",
+                "crash",
+                "debug",
+                "çöküyor",
+                "çalışmıyor",
+                "sorun"
+            ]
+        },
+        {
+            "id": "ultrathink",
+            "name": "UltraThink",
+            "file": "ultrathink.md",
+            "capabilities": [
+                "deep-analysis",
+                "problem-decomposition",
+                "decision-making"
+            ],
+            "domains": [
+                "analysis",
+                "thinking"
+            ],
+            "keywords": [
+                "analiz",
+                "düşün",
+                "karmaşık",
+                "zor",
+                "karar",
+                "trade-off"
+            ]
+        },
+        {
+            "id": "brainstorm",
+            "name": "Brainstorm",
+            "file": "brainstorm.md",
+            "capabilities": [
+                "ideation",
+                "naming",
+                "creativity"
+            ],
+            "domains": [
+                "creativity",
+                "ideation"
+            ],
+            "keywords": [
+                "fikir",
+                "isim",
+                "brainstorm",
+                "yaratıcı",
+                "öneri"
+            ]
+        },
+        {
+            "id": "deep-researcher",
+            "name": "Deep Researcher",
+            "file": "deep-researcher.md",
+            "capabilities": [
+                "research",
+                "comparison",
+                "documentation"
+            ],
+            "domains": [
+                "research"
+            ],
+            "keywords": [
+                "araştır",
+                "karşılaştır",
+                "research",
+                "incele",
+                "dokümantasyon"
+            ]
+        },
+        {
+            "id": "tech-lead",
+            "name": "Tech Lead",
+            "file": "tech-lead.md",
+            "capabilities": [
+                "code-review",
+                "mentoring",
+                "standards"
+            ],
+            "domains": [
+                "leadership",
+                "code-quality"
+            ],
+            "keywords": [
+                "review",
+                "kod kalitesi",
+                "standart",
+                "mentoring"
+            ]
+        },
+        {
+            "id": "hr-director",
+            "name": "HR Director",
+            "file": "hr-director.md",
+            "capabilities": [
+                "agent-creation",
+                "role-definition",
+                "organization"
+            ],
+            "domains": [
+                "organization",
+                "agents"
+            ],
+            "keywords": [
+                "ajan",
+                "agent",
+                "yeni rol",
+                "ekip",
+                "organizasyon"
+            ]
+        },
+        {
+            "id": "iot-specialist",
+            "name": "IoT Specialist",
+            "file": "iot-specialist.md",
+            "capabilities": [
+                "bluetooth",
+                "wifi",
+                "iot-devices",
+                "sensors"
+            ],
+            "domains": [
+                "iot",
+                "hardware",
+                "connectivity"
+            ],
+            "keywords": [
+                "bluetooth",
+                "ble",
+                "wifi",
+                "iot",
+                "sensor",
+                "cihaz",
+                "bağlantı"
+            ]
+        },
+        {
+            "id": "game-developer",
+            "name": "Game Developer",
+            "file": "game-developer.md",
+            "capabilities": [
+                "game-logic",
+                "flame",
+                "physics",
+                "sprites"
+            ],
+            "domains": [
+                "games",
+                "graphics"
+            ],
+            "keywords": [
+                "oyun",
+                "game",
+                "flame",
+                "sprite",
+                "physics",
+                "2d",
+                "3d"
+            ]
+        },
+        {
+            "id": "desktop-architect",
+            "name": "Desktop Architect",
+            "file": "desktop-architect.md",
+            "capabilities": [
+                "windows",
+                "macos",
+                "linux",
+                "desktop-ui"
+            ],
+            "domains": [
+                "desktop",
+                "native"
+            ],
+            "keywords": [
+                "windows",
+                "macos",
+                "linux",
+                "desktop",
+                "masaüstü"
+            ]
+        },
+        {
+            "id": "frontend-specialist",
+            "name": "Frontend Specialist",
+            "file": "frontend-specialist.md",
+            "capabilities": [
+                "web-ui",
+                "react",
+                "css",
+                "responsive"
+            ],
+            "domains": [
+                "web",
+                "frontend"
+            ],
+            "keywords": [
+                "web",
+                "react",
+                "css",
+                "html",
+                "responsive",
+                "website"
+            ]
+        },
+        {
+            "id": "infrastructure-architect",
+            "name": "Infrastructure Architect",
+            "file": "infrastructure-architect.md",
+            "capabilities": [
+                "cloud",
+                "aws",
+                "gcp",
+                "serverless"
+            ],
+            "domains": [
+                "cloud",
+                "infrastructure"
+            ],
+            "keywords": [
+                "cloud",
+                "aws",
+                "gcp",
+                "azure",
+                "serverless",
+                "lambda"
+            ]
+        },
+        {
+            "id": "ai-systems-engineer",
+            "name": "AI Systems Engineer",
+            "file": "ai-systems-engineer.md",
+            "capabilities": [
+                "ml-integration",
+                "tflite",
+                "ai-models"
+            ],
+            "domains": [
+                "ai",
+                "ml"
+            ],
+            "keywords": [
+                "ai",
+                "ml",
+                "yapay zeka",
+                "model",
+                "tensorflow",
+                "tflite",
+                "gemini"
+            ]
+        },
+        {
+            "id": "youtube-strategist",
+            "name": "YouTube Strategist",
+            "file": "youtube-strategist.md",
+            "capabilities": [
+                "video-content",
+                "seo",
+                "viral"
+            ],
+            "domains": [
+                "marketing",
+                "video"
+            ],
+            "keywords": [
+                "youtube",
+                "video",
+                "viral",
+                "içerik",
+                "content"
+            ]
+        },
+        {
+            "id": "market-analyst",
+            "name": "Market Analyst",
+            "file": "market-analyst.md",
+            "capabilities": [
+                "market-research",
+                "competitor-analysis",
+                "trends"
+            ],
+            "domains": [
+                "market",
+                "analysis"
+            ],
+            "keywords": [
+                "pazar",
+                "market",
+                "rakip",
+                "competitor",
+                "trend",
+                "analiz"
+            ]
+        },
+        {
+            "id": "niche-hunter",
+            "name": "Niche Hunter",
+            "file": "niche-hunter.md",
+            "capabilities": [
+                "opportunity-finding",
+                "gap-analysis",
+                "market-gaps"
+            ],
+            "domains": [
+                "market",
+                "opportunity"
+            ],
+            "keywords": [
+                "niş",
+                "fırsat",
+                "opportunity",
+                "boşluk",
+                "gap"
+            ]
+        },
+        {
+            "id": "algotrade-specialist",
+            "name": "AlgoTrade Specialist",
+            "file": "algotrade-specialist.md",
+            "capabilities": [
+                "trading-algorithms",
+                "pine-script",
+                "backtesting"
+            ],
+            "domains": [
+                "trading",
+                "finance"
+            ],
+            "keywords": [
+                "trading",
+                "algo",
+                "pine script",
+                "tradingview",
+                "strateji",
+                "backtest"
+            ]
+        },
+        {
+            "id": "app-auditor",
+            "name": "App Auditor",
+            "file": "app-auditor.md",
+            "capabilities": [
+                "full-review",
+                "feature-mapping",
+                "quality-audit"
+            ],
+            "domains": [
+                "audit",
+                "review"
+            ],
+            "keywords": [
+                "audit",
+                "review",
+                "kontrol",
+                "inceleme",
+                "değerlendirme"
+            ]
+        },
+        {
+            "id": "asset-hunter",
+            "name": "Asset Hunter",
+            "file": "asset-hunter.md",
+            "capabilities": [
+                "icons",
+                "images",
+                "fonts",
+                "free-resources"
+            ],
+            "domains": [
+                "assets",
+                "resources"
+            ],
+            "keywords": [
+                "ikon",
+                "resim",
+                "font",
+                "asset",
+                "kaynak",
+                "ücretsiz",
+                "free"
+            ]
+        },
+        {
+            "id": "knowledge-keeper",
+            "name": "Knowledge Keeper",
+            "file": "knowledge-keeper.md",
+            "capabilities": [
+                "documentation",
+                "knowledge-base",
+                "grimoires"
+            ],
+            "domains": [
+                "documentation"
+            ],
+            "keywords": [
+                "dokümantasyon",
+                "bilgi",
+                "knowledge",
+                "grimoire"
+            ]
+        },
+        {
+            "id": "lead-mobile-developer",
+            "name": "Lead Mobile Developer",
+            "file": "lead-mobile-developer.md",
+            "capabilities": [
+                "team-coordination",
+                "mobile-leadership"
+            ],
+            "domains": [
+                "leadership",
+                "mobile"
+            ],
+            "keywords": [
+                "lead",
+                "takım",
+                "koordinasyon",
+                "mobile team"
+            ]
+        },
+        {
+            "id": "lead-backend-infra",
+            "name": "Lead Backend Infra",
+            "file": "lead-backend-infra.md",
+            "capabilities": [
+                "team-coordination",
+                "backend-leadership"
+            ],
+            "domains": [
+                "leadership",
+                "backend"
+            ],
+            "keywords": [
+                "lead",
+                "takım",
+                "koordinasyon",
+                "backend team"
+            ]
+        },
+        {
+            "id": "prompt-engineer",
+            "name": "Prompt Engineer",
+            "file": "prompt-engineer.md",
+            "capabilities": [
+                "prompt-optimization",
+                "ptcf",
+                "ai-prompts"
+            ],
+            "domains": [
+                "ai",
+                "prompts"
+            ],
+            "keywords": [
+                "prompt",
+                "ptcf",
+                "ai",
+                "optimize"
+            ]
+        }
+    ],
+    "uncovered_domains": [
+        "ar-vr",
+        "wearables",
+        "watch",
+        "tv",
+        "automotive",
+        "payment-integration",
+        "social-features",
+        "push-notifications-advanced",
+        "deep-linking",
+        "app-clips"
+    ]
+}
