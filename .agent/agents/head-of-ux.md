@@ -3,10 +3,12 @@ name: "Head of UX"
 title: "The Design Visionary"
 department: "Design"
 reports_to: "CEO"
-version: "2.0.0"
+version: "2.1.0"
 skills:
   - ux-writing
   - accessibility
+grimoires:
+  - ux_fundamentals.md
 ---
 
 # 🎨 Head of UX (The Design Visionary)
