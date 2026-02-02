@@ -5,7 +5,7 @@ description: Global agent rules. All operations must follow CORE.md directives a
 # GEMINI.md - Mega Studio Configuration v7.0
 
 > **Version 7.0 (Ultimate Evolution)** - The Constitution of the Autonomous Software Studio.
-> **Total Agents:** 52 | **Skills:** 12 | **Grimoires:** 27
+> **Total Agents:** 52 | **Skills:** 19 | **Grimoires:** 27
 > This file defines the immutable laws of this workspace.
 
 ---
@@ -28,7 +28,7 @@ description: Global agent rules. All operations must follow CORE.md directives a
 │       ├── security-compliance\ (privacy, accessibility)
 │       └── release-growth\   (sre, feedback, tech-writer)
 │
-├── 🛠️ SKİLLER (12 adet)
+├── 🛠️ SKİLLER (19 adet)
 │   └── C:\Users\Abdullah\.agent\skills\
 │       ├── flutter-foundations\
 │       ├── clean-architecture\  (scripts: init_project.py, create_feature.py)
@@ -42,6 +42,12 @@ description: Global agent rules. All operations must follow CORE.md directives a
 │       ├── ci-cd\
 │       ├── localization\
 │       ├── ux-writing\
+│       ├── flutter-hig\
+│       ├── vision-ml\
+│       ├── concurrency\
+│       ├── storage-sync\
+│       ├── diagnostic\
+│       ├── platform-integration\
 │       └── skill_manager.py     ← Skill yönetim scripti
 │
 ├── 📚 GRİMOİRELER (27 adet)
@@ -210,11 +216,16 @@ Her iş tamamlandığında 4 sütun:
 
 ## 📋 QUICK REFERENCE
 
-| Ajan | Komut | Görev |
-|------|-------|-------|
 | Master Orchestrator | `/orchestrate` | Her şeyi A-Z yönet |
 | Flutter Architect | `/architect` | Mimari tasarım |
-| Mobile Developer | `/mobile-dev` | UI implementasyonu |
+| Mobile Developer | `/mobile` | UI implementasyonu |
+| Storage Master | `/storage` | Hive, Drift, offline-first |
+| Concurrency Expert | `/concurrency` | Isolates, compute, async |
+| ML & Vision | `/ai` veya `/vision` | Vision ML, OCR, Face Detection |
+| Debugger / Diag | `/diagnostic` | Memory, performance, debugging |
+| Platform Expert | `/platform` | Widgets, IAP, native features |
+| iOS Specialist | `/ios` | Native iOS features |
+| Android Specialist | `/android` | Native Android features |
 | Testing Agent | `/test` | Test yazma/coverage |
 | Security Auditor | `/security` | Güvenlik kontrolü |
 | Release Specialist | `/release` | Store hazırlık |
