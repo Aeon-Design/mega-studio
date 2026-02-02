@@ -1,7 +1,7 @@
 # 🏭 Mega Studio v7.0
 
 > **Flutter için AI-Powered Geliştirme Stüdyosu**
-> 52 Ajan • 13 Skill • 50+ Workflow • Maestro Features
+> 52 Ajan • 19 Skill • 50+ Workflow • Maestro Features
 
 Mega Studio, Antigravity (Gemini CLI) için tasarlanmış kapsamlı bir Flutter geliştirme sistemidir. A'dan Z'ye proje yönetimi, otonom kalite kontrolü ve modüler skill sistemi sunar.
 
@@ -242,7 +242,7 @@ Ralph'ın 4 Sütunu:
 
 ---
 
-## 🛠️ Skills (13 Adet)
+## 🛠️ Skills (19 Adet)
 
 | Skill | Açıklama |
 |-------|----------|
@@ -259,6 +259,12 @@ Ralph'ın 4 Sütunu:
 | `localization` | i18n, ARB dosyaları, RTL desteği |
 | `ux-writing` | Microcopy, hata mesajları, onboarding |
 | `verification-mastery` | Kanıt-tabanlı tamamlanma protokolü |
+| **`flutter-hig`** | Apple HIG + Material Design platform-aware guidelines |
+| **`vision-ml`** | ML Kit, TFLite, on-device AI |
+| **`concurrency`** | Isolates, compute, async patterns |
+| **`storage-sync`** | Hive, Drift, offline-first, cloud sync |
+| **`diagnostic`** | Memory leaks, profiling, crash debugging |
+| **`platform-integration`** | Widgets, IAP, push notifications, background tasks |
 
 ---
 
