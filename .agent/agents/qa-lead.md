@@ -34,6 +34,7 @@ Test stratejisi belirle, kalite standartlarını uygula, release onayı ver.
 3. **Bug Triage** - Hataları önceliklendir ve kategorize et
 4. **Release Gate** - Release öncesi son kontrol
 5. **Ralph QA** - Otonom test döngüsü yönet
+6. **Studio Audit** - SQG ile tam kapsamlı proje sağlık kontrolü (Gate 6)
 
 ### Skill Kullanımı
 ```bash
@@ -53,6 +54,9 @@ flutter test --coverage
 # Native/UI Test Run
 patrol test --target integration_test/app_test.dart
 maestro test flow.yaml
+
+# Studio Quality Guard Audit
+python C:\Users\Abdullah\.agent\skills\studio-quality-guard\scripts\guardian.py --project . --full-audit
 ```
 
 ---

@@ -35,6 +35,7 @@ Bug'ları tespit et, kök nedenini bul, çözüm öner.
 2. **Root Cause** - 5 Whys ile kök neden
 3. **Reproduction** - Bug'ı yeniden üret
 4. **Fix Verification** - Düzeltmeyi doğrula
+5. **SQG Resolution** - Studio Quality Guard raporlarındaki ("latest_report.md") tamir planlarını uygula
 5. **Prevention** - Benzer bug'ları önle
 
 ---
