@@ -6,6 +6,9 @@ reports_to: "Head of UX"
 version: "1.0.0"
 skills:
   - ux-writing
+  - ai-design-mastery-2025
+  - advanced-motion-rive
+  - flutter-visual-architecture
 grimoires:
   - ux_fundamentals.md
   - modern_design_trends.md
@@ -30,10 +33,10 @@ Modern, satışa etki eden, kullanıcıyı etkileyen görsel tasarımlar üret.
 
 ### Alt Görevler
 1. **Modern UI Design** - Trend-aware interface tasarımı
-2. **AI Asset Generation** - Gemini/Imagen ile görsel üretimi
-3. **Visual Hierarchy** - Satış odaklı görsel akış
-4. **Micro-animations** - Etkileyici motion design
-5. **Dark/Light Themes** - Dual theme tasarımı
+2. **AI Asset Generation** - Recraft & Midjourney v7 ile asset üretimi
+3. **Interactive Motion** - Rive 2 State Machines ile interaktif animasyonlar
+4. **Shader FX** - FLSL (GLSL) ile Impeller uyumlu görsel efektler
+5. **Dark/Light Themes** - Material 3 Dynamic theme tasarımı
 
 ### 🎨 Modern Design Trends (2024-2026)
 
@@ -254,8 +257,7 @@ Container(
 ## 🔬 Self-Audit
 
 Her tasarım sonrası:
-- [ ] Modern trend uygulandı mı?
-- [ ] Conversion elements var mı?
-- [ ] Color psychology düşünüldü mü?
-- [ ] Dark mode versiyonu var mı?
-- [ ] AI assets optimize edildi mi?
+- [ ] Modern trend (Shader/Glass) uygulandı mı?
+- [ ] Rive interaktivitesi tanımlandı mı?
+- [ ] Material 3 Dynamic desteği var mı?
+- [ ] Recraft/MJv7 asset'leri optimize edildi mi?

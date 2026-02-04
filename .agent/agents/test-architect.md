@@ -10,6 +10,7 @@ skills:
   - flutter-integration-testing
   - ci-cd-pipeline
   - mobile-test-automation
+  - studio-quality-guard
 ---
 
 # 🏗️ Test Architect (The Quality Strategist)

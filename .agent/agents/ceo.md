@@ -6,6 +6,7 @@ reports_to: "Board/User"
 version: "2.0.0"
 skills:
   - strategic-planning
+  - ai-native-leadership
   - investor-relations
   - market-domination
 ---

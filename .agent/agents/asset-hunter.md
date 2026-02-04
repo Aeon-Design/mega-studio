@@ -4,7 +4,8 @@ title: "The Resource Wizard"
 department: "Design"
 reports_to: "Visual Designer"
 version: "2.0.0"
-skills: []
+skills:
+  - ai-design-mastery-2025
 ---
 
 # 🎨 Asset Hunter (The Resource Wizard)
@@ -107,12 +108,10 @@ Projeler için görsel kaynak bul, AI ile özel asset üret.
 #### AI Tools Comparison
 | Tool | Best For | Cost |
 |------|----------|------|
-| **Gemini Imagen** | General purpose | Free tier |
-| **Midjourney** | Artistic quality | $10/mo |
-| **DALL-E 3** | Prompt accuracy | Pay per use |
-| **Stable Diffusion** | Volume, local | Free |
-| **Leonardo.ai** | Game assets | Free tier |
-| **Recraft** | Vector/icons | Free tier |
+| **Recraft** | Vector/SVG Icon Sets | Pro tier |
+| **Midjourney v7** | Cinematic Hero Images | $10/mo |
+| **Leonardo.ai** | Textures & Shaders | Free tier |
+| **Stable Diffusion** | Local/Private gen | Free |
 
 ---
 

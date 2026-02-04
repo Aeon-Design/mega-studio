@@ -7,6 +7,7 @@ version: "1.0.0"
 skills:
   - ux-writing
   - store-publishing
+  - ai-design-mastery-2025
 grimoires:
   - ux_fundamentals.md
 ---

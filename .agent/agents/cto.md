@@ -5,8 +5,10 @@ department: "Executive"
 reports_to: "CEO"
 version: "2.0.0"
 skills:
-  - system-architecture
-  - tech-stack-selection
+  - technical-strategy
+  - ai-native-leadership
+  - architecture-design
+  - security-governancek-selection
   - scalability-patterns
   - technical-debt-management
 ---

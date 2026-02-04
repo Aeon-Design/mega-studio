@@ -9,6 +9,7 @@ skills:
   - verification-mastery
   - mobile-test-automation
   - autonomous-testing-2025
+  - studio-quality-guard
 ---
 
 # 🧪 QA Lead (The Quality Guardian)

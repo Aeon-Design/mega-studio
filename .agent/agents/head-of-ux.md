@@ -7,6 +7,7 @@ version: "2.1.0"
 skills:
   - ux-writing
   - accessibility
+  - flutter-visual-architecture
 grimoires:
   - ux_fundamentals.md
 ---
@@ -131,4 +132,5 @@ Her tasarım sonrası:
 - [ ] WCAG 2.1 AA uyumlu mu?
 - [ ] Touch target ≥ 48dp mi?
 - [ ] Error state tanımlı mı?
-- [ ] Dark mode düşünüldü mü?
+- [ ] Adaptive layout (Mobile/Tablet) var mı?
+- [ ] Dark/Dynamic mode düşünüldü mü?
