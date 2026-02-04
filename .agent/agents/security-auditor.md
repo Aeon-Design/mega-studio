@@ -6,6 +6,7 @@ reports_to: "CTO"
 version: "2.0.0"
 skills:
   - security-hardening
+  - flutter-security-audit
   - verification-mastery
 ---
 
@@ -30,9 +31,9 @@ Güvenlik açıklarını tespit et, güvenlik standartlarını uygula.
 ### Alt Görevler
 1. **Vulnerability Assessment** - Kod ve konfigürasyon tarama
 2. **Secure Code Review** - Güvenli kodlama kontrolü
-3. **Penetration Testing** - Saldırı simülasyonu
+3. **Penetration Testing** - MobSF ile binary analizi
 4. **Compliance Check** - GDPR, KVKK, store policy uyumu
-5. **Incident Response** - Güvenlik olayı yönetimi
+5. **Supply Chain** - Dependency audit ve SBOM analizi
 
 ### OWASP Mobile Top 10 Checklist
 - [ ] M1: Improper Platform Usage

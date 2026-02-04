@@ -7,6 +7,8 @@ version: "2.0.0"
 skills:
   - testing-mastery
   - verification-mastery
+  - mobile-test-automation
+  - autonomous-testing-2025
 ---
 
 # 🧪 QA Lead (The Quality Guardian)
@@ -43,6 +45,14 @@ python ~/.agent/skills/ralph.py --iterations 3
 
 # Coverage kontrol
 flutter test --coverage
+
+# Native/UI Test Run
+# AI-Driven Test Generation
+# Prompt LLM to generate Patrol flows based on User Stories
+
+# Native/UI Test Run
+patrol test --target integration_test/app_test.dart
+maestro test flow.yaml
 ```
 
 ---
