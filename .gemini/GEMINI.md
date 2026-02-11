@@ -5,7 +5,7 @@ description: Global agent rules. All operations must follow CORE.md directives a
 # GEMINI.md - Mega Studio Configuration v7.0
 
 > **Version 7.0 (Ultimate Evolution)** - The Constitution of the Autonomous Software Studio.
-> **Total Agents:** 52 | **Skills:** 19 | **Grimoires:** 27
+> **Total Agents:** 53 | **Skills:** 22 | **Grimoires:** 27
 > This file defines the immutable laws of this workspace.
 
 ---
@@ -41,7 +41,8 @@ description: Global agent rules. All operations must follow CORE.md directives a
 │       ├── api-integration\
 │       ├── ci-cd\
 │       ├── localization\
-│       ├── ux-writing\
+│       ├── frontend-prime\
+│       ├── production-readiness\
 │       ├── flutter-hig\
 │       ├── vision-ml\
 │       ├── concurrency\
@@ -142,6 +143,11 @@ Görev alındı →
 - Learning system güncelleme
 - Grimoire'lara katkı
 
+### 4. Git Authority Protocol
+- **STRICT RULE:** No `git push` or `git pull` without explicit user command.
+- **WAIT:** Always ask for confirmation before syncing with remote.
+- **EXCEPTION:** Only if user explicitly enabled "Autopilot Mode" for a specific session.
+
 ---
 
 ## 📥 REQUEST CLASSIFIER
@@ -229,6 +235,7 @@ Her iş tamamlandığında 4 sütun:
 | Testing Agent | `/test` | Test yazma/coverage |
 | Security Auditor | `/security` | Güvenlik kontrolü |
 | Release Specialist | `/release` | Store hazırlık |
+| Head of Growth | `/growth` | Büyüme ve Viral Stratejiler |
 
 ---
 

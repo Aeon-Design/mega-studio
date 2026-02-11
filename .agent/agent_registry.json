@@ -429,19 +429,24 @@
                        "capabilities":  [
                                             "store-submission",
                                             "release-management",
-                                            "metadata"
+                                            "rejection-handling",
+                                            "production-readiness",
+                                            "app-config",
+                                            "release-notes"
                                         ],
                        "domains":  [
                                        "release",
-                                       "store"
+                                       "store",
+                                       "operations"
                                    ],
                        "keywords":  [
                                         "release",
-                                        "yayÄ±nla",
                                         "store",
+                                        "yayÄ±n",
                                         "submission",
-                                        "app store",
-                                        "play store"
+                                        "metadata",
+                                        "app config",
+                                        "versioning"
                                     ]
                    },
                    {
@@ -672,7 +677,8 @@
                                             "web-ui",
                                             "react",
                                             "css",
-                                            "responsive"
+                                            "responsive",
+                                            "prime-frontend"
                                         ],
                        "domains":  [
                                        "web",

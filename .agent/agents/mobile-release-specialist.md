@@ -6,6 +6,7 @@ reports_to: "QA Lead"
 version: "2.0.0"
 skills:
   - store-publishing
+  - production-readiness
 ---
 
 # 🚀 Mobile Release Specialist (The Store Whisperer)
