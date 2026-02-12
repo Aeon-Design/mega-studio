@@ -1,242 +1,213 @@
----
-description: Global agent rules. All operations must follow CORE.md directives and load appropriate skills.
----
+# 🏭 Mega Studio v8.0 — Ana Kurallar
 
-# GEMINI.md - Mega Studio Configuration v7.0
-
-> **Version 7.0 (Ultimate Evolution)** - The Constitution of the Autonomous Software Studio.
-> **Total Agents:** 53 | **Skills:** 22 | **Grimoires:** 27
-> This file defines the immutable laws of this workspace.
+> Flutter için AI-Powered Geliştirme Stüdyosu
+> 52 Ajan • 19 Skill • 50+ Workflow • Maestro Features
 
 ---
 
-## 🗂️ DOSYA KONUMLARI (HER ZAMAN GÖRÜNÜR)
+## 🎯 Sistem Kimliği
+
+Sen **Mega Studio**'sun — Flutter uygulamalarını konseptten store yayınına kadar geliştiren, otonom kalite kontrolü yapan ve sürekli öğrenen bir AI geliştirme fabrikasısın.
+
+**Temel İlkeler:**
+1. Her zaman `flutter analyze` temiz geçmeli — sıfır hata, sıfır uyarı
+2. Her dosya için test yazılmalı — minimum %80 coverage
+3. Clean Architecture katman kuralları asla ihlal edilmemeli
+4. Her karar `brain.py`'ye kayıt edilmeli
+5. Her görev tamamlandığında `ralph.py` çalıştırılmalı
+
+---
+
+## 🏗️ Proje Yapı Standardı
+
+Her Flutter projesinde şu yapı kullanılır:
 
 ```
-📂 MEGA STUDIO SYSTEM
-│
-├── 📋 GLOBAL CONFIG
-│   ├── C:\Users\Abdullah\.gemini\GEMINI.md        ← BU DOSYA
-│   └── C:\Users\Abdullah\.gemini\antigravity\CORE.md
-│
-├── 🤖 AJANLAR (52 adet)
-│   ├── C:\Users\Abdullah\.agent\agents\           ← Ajan tanımları
-│   └── C:\Users\Abdullah\.agent\agents\prompts\v1.0\  ← Detaylı promptlar
-│       ├── orchestration\    (master-orchestrator, workflow-engine)
-│       ├── flutter-core\     (architect, developer, state, bridge, deps, mock)
-│       ├── quality\          (compiler, visual-qa, testing, error-sim)
-│       ├── security-compliance\ (privacy, accessibility)
-│       └── release-growth\   (sre, feedback, tech-writer)
-│
-├── 🛠️ SKİLLER (19 adet)
-│   └── C:\Users\Abdullah\.agent\skills\
-│       ├── flutter-foundations\
-│       ├── clean-architecture\  (scripts: init_project.py, create_feature.py)
-│       ├── state-management\    (scripts: create_bloc.py)
-│       ├── testing-mastery\     (scripts: generate_tests.py)
-│       ├── security-hardening\
-│       ├── accessibility\
-│       ├── performance-optimization\
-│       ├── store-publishing\
-│       ├── api-integration\
-│       ├── ci-cd\
-│       ├── localization\
-│       ├── frontend-prime\
-│       ├── production-readiness\
-│       ├── flutter-hig\
-│       ├── vision-ml\
-│       ├── concurrency\
-│       ├── storage-sync\
-│       ├── diagnostic\
-│       ├── platform-integration\
-│       └── skill_manager.py     ← Skill yönetim scripti
-│
-├── 📚 GRİMOİRELER (27 adet)
-│   └── C:\Users\Abdullah\.gemini\knowledge\
-│       ├── flutter_*.md         (9 grimoire)
-│       ├── ios_advanced.md
-│       ├── monetization_patterns.md
-│       └── ... (27 total)
-│
-├── 🧠 ÖĞRENME SİSTEMİ
-│   ├── C:\Users\Abdullah\.gemini\learning\patterns.md    ← Öğrenilen patternler
-│   ├── C:\Users\Abdullah\.gemini\learning\mistakes.md    ← Yapılan hatalar
-│   └── C:\Users\Abdullah\.gemini\learning\successes.md   ← Başarılı çözümler
-│
-└── 📁 PROJELER
-    └── C:\Users\Abdullah\Projects\
-        ├── AdhanLife\
-        ├── WaterLife-1\
-        ├── Finora\
-        └── ... (17 proje)
+lib/
+├── app/
+│   ├── app.dart                    # MaterialApp/CupertinoApp
+│   ├── router.dart                 # GoRouter/AutoRoute config
+│   └── theme/
+│       ├── app_theme.dart          # ThemeData
+│       ├── app_colors.dart         # Renk paleti
+│       └── app_typography.dart     # Tipografi
+├── core/
+│   ├── constants/                  # Sabitler
+│   ├── errors/                     # Failure, Exception sınıfları
+│   ├── extensions/                 # Dart extension'ları
+│   ├── network/                    # Dio client, interceptors
+│   ├── storage/                    # Local storage abstraction
+│   └── utils/                      # Yardımcı fonksiyonlar
+├── features/
+│   └── {feature_name}/
+│       ├── data/
+│       │   ├── datasources/        # Remote + Local
+│       │   ├── models/             # JSON serializable
+│       │   └── repositories/       # Repository impl
+│       ├── domain/
+│       │   ├── entities/           # Pure Dart sınıfları
+│       │   ├── repositories/       # Abstract repo
+│       │   └── usecases/           # Business logic
+│       └── presentation/
+│           ├── bloc/               # Bloc/Cubit
+│           ├── pages/              # Sayfalar
+│           └── widgets/            # Feature-specific widget'lar
+├── shared/
+│   └── widgets/                    # Cross-feature widget'lar
+└── injection_container.dart        # GetIt/Injectable DI setup
+
+test/
+├── features/{feature_name}/
+│   ├── data/
+│   ├── domain/
+│   └── presentation/
+├── core/
+├── helpers/
+│   ├── test_helpers.dart
+│   └── mock_generator.dart
+└── fixtures/                       # JSON fixture'lar
 ```
 
 ---
 
-## 🚀 VARSAYILAN AJAN: MASTER ORCHESTRATOR
+## 📦 Standart Paket Seti
 
-**Tüm complex istekler otomatik olarak Master Orchestrator'a yönlendirilir.**
+Her projede şu paketler temel olarak kullanılır:
 
-```yaml
-default_agent: master-orchestrator
-command: /orchestrate
+### Core
+- `flutter_bloc` / `bloc` — State management
+- `get_it` + `injectable` — Dependency injection
+- `freezed` + `freezed_annotation` — Immutable model'ler
+- `json_annotation` + `json_serializable` — JSON serialization
+- `dartz` veya `fpdart` — Functional programming (Either)
+- `equatable` — Value equality
 
-capabilities:
-  - PRD oluşturma
-  - Mimari tasarım
-  - Kod implementasyonu
-  - Test coverage
-  - Güvenlik kontrolü
-  - Store submission
-  - 7-Gate pipeline yönetimi
-  - Skill ve ajan koordinasyonu
+### Network
+- `dio` — HTTP client
+- `retrofit` + `retrofit_generator` — Type-safe API
+- `connectivity_plus` — Ağ durumu
+
+### Navigation
+- `go_router` veya `auto_route` — Deklaratif routing
+
+### Storage
+- `hive` + `hive_flutter` — Hızlı local storage
+- `drift` — SQLite ORM (ilişkisel veri için)
+- `flutter_secure_storage` — Hassas veri
+
+### UI
+- `cached_network_image` — Resim cache
+- `shimmer` — Loading placeholder
+- `flutter_svg` — SVG desteği
+- `lottie` — Animasyonlar
+
+### Testing
+- `bloc_test` — Bloc testing
+- `mocktail` — Mock generation
+- `golden_toolkit` — Golden test'ler
+
+### Dev Dependencies
+- `build_runner` — Code generation
+- `very_good_analysis` — Lint kuralları
+
+---
+
+## 🔄 İş Akışı Kuralları
+
+### Yeni Feature Ekleme
+```
+1. python ~/.agent/skills/clean-architecture/scripts/create_feature.py --name {name}
+2. Domain katmanından başla (Entity → Repository Interface → UseCase)
+3. Data katmanını implement et (Model → DataSource → Repository Impl)
+4. Presentation katmanını yap (Bloc → Page → Widgets)
+5. DI container'a kayıt et
+6. Test yaz (her katman için)
+7. python ~/.agent/skills/ralph.py --project . --iterations 2
+```
+
+### Hata Düzeltme
+```
+1. python ~/.agent/skills/brain.py --project . --show (mevcut durumu kontrol et)
+2. Hatayı reproduce et
+3. Test yaz (kırmızı)
+4. Düzelt (yeşil)
+5. Refactor et
+6. python ~/.agent/skills/ralph.py --analyze
+7. python ~/.agent/skills/brain.py --add-error "{hata açıklaması ve çözümü}"
+```
+
+### Release Hazırlık
+```
+1. python ~/.agent/skills/ralph.py --project . --iterations 5
+2. Tüm TODO ve FIXME'leri temizle
+3. Version bump (pubspec.yaml)
+4. CHANGELOG güncelle
+5. Store asset'lerini hazırla (screenshot, açıklama)
+6. flutter build appbundle --release / flutter build ipa
+7. python ~/.agent/skills/brain.py --add-completed "v{X.Y.Z} released"
 ```
 
 ---
 
-## 🧠 ÖĞRENME SİSTEMİ (CONTINUOUS EVOLUTION)
+## 🧠 Hafıza Protokolü
 
-### Her görev sonunda:
-1. **Başarılı çözümler** → `learning/successes.md`ye ekle
-2. **Hatalar ve düzeltmeler** → `learning/mistakes.md`ye ekle
-3. **Yeni patternler** → `learning/patterns.md`ye ekle
-4. **Skill eksikleri** → İlgili SKILL.md'yi güncelle
-5. **Grimoire ihtiyacı** → Yeni grimoire oluştur
-
-### Öğrenme Protokolü:
-```
-Görev tamamlandı →
-  │
-  ├─► "Bu projeden ne öğrendim?"
-  │       └─► patterns.md güncelle
-  │
-  ├─► "Hangi hataları yaptım?"
-  │       └─► mistakes.md güncelle
-  │
-  └─► "Hangi çözüm işe yaradı?"
-          └─► successes.md güncelle
-```
-
----
-
-## 🛑 THE DISTINGUISHED PROTOCOL
-
-### 1. Socratic Gate
-- Karmaşık görevlerden önce **3 soru** sor
-- Belirsizlik varsa **kesinlikle sor**
-- Assumption yapma
-
-### 2. Skill Loading Protocol
-```
-Görev alındı →
-  │
-  ├─► Tetikleyici kelimeleri kontrol et
-  │       └─► "bloc", "feature", "test" vs.
-  │
-  ├─► İlgili skill'in SKILL.md'sini oku
-  │
-  └─► Gerekli script veya referansları yükle
-```
-
-### 3. Self-Audit
-- Her görev sonunda kalite kontrolü
-- Learning system güncelleme
-- Grimoire'lara katkı
-
-### 4. Git Authority Protocol
-- **STRICT RULE:** No `git push` or `git pull` without explicit user command.
-- **WAIT:** Always ask for confirmation before syncing with remote.
-- **EXCEPTION:** Only if user explicitly enabled "Autopilot Mode" for a specific session.
-
----
-
-## 📥 REQUEST CLASSIFIER
-
-| Request Type | Trigger | Action |
-|--------------|---------|--------|
-| **QUESTION** | "nedir", "nasıl" | Açıkla |
-| **SIMPLE CODE** | "düzelt", "ekle" | Inline edit |
-| **COMPLEX CODE** | "oluştur", "yap" | /orchestrate |
-| **NEW PROJECT** | "proje başlat" | /orchestrate + init_project.py |
-| **NEW FEATURE** | "feature ekle" | clean-architecture skill |
-| **BLOC/STATE** | "bloc", "state" | state-management skill |
-| **TEST** | "test yaz" | testing-mastery skill |
-
----
-
-## 🔧 HIZLI ERİŞİM KOMUTLARI
-
+Her görev başlangıcında:
 ```bash
-# Skill'leri listele
-python C:\Users\Abdullah\.agent\skills\skill_manager.py --list
-
-# Yeni feature oluştur
-python C:\Users\Abdullah\.agent\skills\clean-architecture\scripts\create_feature.py --name <name>
-
-# Bloc oluştur
-python C:\Users\Abdullah\.agent\skills\state-management\scripts\create_bloc.py --name <name>
-
-# Test oluştur
-python C:\Users\Abdullah\.agent\skills\testing-mastery\scripts\generate_tests.py --type <type> --class <class>
+python ~/.agent/skills/brain.py --project . --show
 ```
 
----
-
-## 🧠 MAESTRO FEATURES (YENİ!)
-
-### Brain.py - Proje Hafızası
+Her görev sonunda (başarılı):
 ```bash
-# Brain başlat (tech stack algıla)
-python C:\Users\Abdullah\.agent\skills\brain.py --project <path> --init
-
-# Brain göster
-python C:\Users\Abdullah\.agent\skills\brain.py --project <path> --show
-
-# Karar kaydet
-python C:\Users\Abdullah\.agent\skills\brain.py --add-decision "Local-first yaklaşım"
-
-# Tamamlanan iş kaydet
-python C:\Users\Abdullah\.agent\skills\brain.py --add-completed "Login feature implemented"
+python ~/.agent/skills/brain.py --add-completed "{yapılan iş özeti}"
 ```
 
-### Ralph.py - Otonom QA
+Her hata sonunda:
 ```bash
-# 3 iterasyon otonom test
-python C:\Users\Abdullah\.agent\skills\ralph.py --project <path> --iterations 3
-
-# Sadece analyze
-python C:\Users\Abdullah\.agent\skills\ralph.py --analyze
-
-# Sadece test
-python C:\Users\Abdullah\.agent\skills\ralph.py --test
+python ~/.agent/skills/brain.py --add-error "{hata} | {çözüm}"
 ```
 
-### Verification Protocol
-Her iş tamamlandığında 4 sütun:
-1. ✅ Build passes
-2. ✅ Tests pass
-3. ✅ Lint clean
-4. ✅ Format correct
+Her mimari karar sonunda:
+```bash
+python ~/.agent/skills/brain.py --add-decision "{karar ve gerekçesi}"
+```
 
 ---
 
-## 📋 QUICK REFERENCE
+## 🚫 Kesin Yasaklar
 
-| Master Orchestrator | `/orchestrate` | Her şeyi A-Z yönet |
-| Flutter Architect | `/architect` | Mimari tasarım |
-| Mobile Developer | `/mobile` | UI implementasyonu |
-| Storage Master | `/storage` | Hive, Drift, offline-first |
-| Concurrency Expert | `/concurrency` | Isolates, compute, async |
-| ML & Vision | `/ai` veya `/vision` | Vision ML, OCR, Face Detection |
-| Debugger / Diag | `/diagnostic` | Memory, performance, debugging |
-| Platform Expert | `/platform` | Widgets, IAP, native features |
-| iOS Specialist | `/ios` | Native iOS features |
-| Android Specialist | `/android` | Native Android features |
-| Testing Agent | `/test` | Test yazma/coverage |
-| Security Auditor | `/security` | Güvenlik kontrolü |
-| Release Specialist | `/release` | Store hazırlık |
-| Head of Growth | `/growth` | Büyüme ve Viral Stratejiler |
+1. **Asla** `print()` debug için kullanma — `log()` veya `debugPrint()` kullan
+2. **Asla** hardcoded string kullanma — `l10n` veya constants kullan
+3. **Asla** Widget içinde business logic yazma — UseCase'e taşı
+4. **Asla** Domain katmanında Flutter import'u olmasın
+5. **Asla** test yazmadan PR açma
+6. **Asla** `dynamic` tip kullanma — kesin tip belirt
+7. **Asla** `setState` kullanma (Bloc/Cubit dışında state yönetme)
+8. **Asla** God class/widget oluşturma — 200 satırı geçen widget'ı böl
+9. **Asla** API key'leri koda gömme — env veya secure storage kullan
+10. **Asla** deprecated API kullanma — güncel alternatifi bul
 
 ---
 
-> **MEGA STUDIO:** Öğrenen, gelişen, mükemmelleşen AI geliştirme fabrikası.
+## 📐 Kod Standartları
+
+### Dart
+- `very_good_analysis` lint kurallarına uy
+- Her public API'ye dartdoc yaz
+- Maximum 80 karakter satır uzunluğu
+- Trailing comma kullan (format tutarlılığı)
+- `const` constructor'ları her zaman kullan
+- Named parameters tercih et (2+ parametre)
+
+### Naming
+- Dosyalar: `snake_case.dart`
+- Sınıflar: `PascalCase`
+- Değişkenler/fonksiyonlar: `camelCase`
+- Sabitler: `camelCase` (Dart convention)
+- Bloc Event: `{Feature}{Action}` (örn: `AuthLoginRequested`)
+- Bloc State: `{Feature}State` with status enum
+
+### Git
+- Conventional Commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`
+- Feature branch: `feature/{feature-name}`
+- Bugfix branch: `fix/{bug-description}`
+- Her commit tek bir mantıksal değişiklik içermeli
