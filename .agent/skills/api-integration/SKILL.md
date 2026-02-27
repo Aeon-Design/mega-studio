@@ -1,433 +1,344 @@
----
-name: "API Integration"
-version: "1.0.0"
-description: "Dio, Retrofit patterns, error handling, and network layer architecture"
-primary_users:
-  - backend-specialist
-  - mobile-developer
-dependencies:
-  - clean-architecture
-tags:
-  - network
-  - api
----
+# 🌐 API Integration Skill
 
-# 🌐 API Integration
-
-## Quick Start
-
-Dio + Retrofit ile type-safe API entegrasyonu. Error handling, interceptors,
-ve offline-first stratejileri.
+> Dio setup, Retrofit, error handling, caching ve network katmanı
 
 ---
 
-## 📚 Core Setup
+## Network Katmanı Mimarisi
 
-### 1. Dependencies
-
-```yaml
-dependencies:
-  dio: ^5.4.0
-  retrofit: ^4.0.3
-  json_annotation: ^4.8.1
-  connectivity_plus: ^5.0.2
-  
-dev_dependencies:
-  retrofit_generator: ^8.0.6
-  json_serializable: ^6.7.1
-  build_runner: ^2.4.8
+```
+Presentation → UseCase → Repository → DataSource → Dio Client → API
+                                           ↓
+                                     Local Cache (Hive)
 ```
 
-### 2. Dio Client Setup
+---
 
+## Retrofit ile Type-Safe API
+
+### API Service Tanımı
 ```dart
+// lib/features/task/data/datasources/task_api_service.dart
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
+import 'package:retrofit/retrofit.dart';
 
-class DioClient {
-  static Dio create({
-    required String baseUrl,
-    required SecureStorageService storage,
-  }) {
-    final dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      sendTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
-    
-    // Interceptors
-    dio.interceptors.addAll([
-      AuthInterceptor(storage),
-      LoggingInterceptor(),
-      RetryInterceptor(dio),
-      ErrorInterceptor(),
-    ]);
-    
-    return dio;
-  }
+part 'task_api_service.g.dart';
+
+@RestApi()
+@injectable
+abstract class TaskApiService {
+  @factoryMethod
+  factory TaskApiService(Dio dio) = _TaskApiService;
+
+  @GET('/tasks')
+  Future<List<TaskModel>> getTasks({
+    @Query('page') required int page,
+    @Query('limit') int limit = 20,
+    @Query('status') String? status,
+  });
+
+  @GET('/tasks/{id}')
+  Future<TaskModel> getTask(@Path('id') String id);
+
+  @POST('/tasks')
+  Future<TaskModel> createTask(@Body() CreateTaskRequest request);
+
+  @PUT('/tasks/{id}')
+  Future<TaskModel> updateTask(
+    @Path('id') String id,
+    @Body() UpdateTaskRequest request,
+  );
+
+  @DELETE('/tasks/{id}')
+  Future<void> deleteTask(@Path('id') String id);
+
+  @POST('/tasks/{id}/toggle')
+  Future<TaskModel> toggleTask(@Path('id') String id);
+
+  @Multipart()
+  @POST('/tasks/{id}/attachment')
+  Future<AttachmentModel> uploadAttachment(
+    @Path('id') String id,
+    @Part(name: 'file') File file,
+  );
 }
 ```
 
-### 3. Auth Interceptor
-
+### Model Tanımı (Freezed + JsonSerializable)
 ```dart
-class AuthInterceptor extends Interceptor {
-  final SecureStorageService _storage;
-  
-  AuthInterceptor(this._storage);
-  
+// lib/features/task/data/models/task_model.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'task_model.freezed.dart';
+part 'task_model.g.dart';
+
+@freezed
+class TaskModel with _$TaskModel {
+  const factory TaskModel({
+    required String id,
+    required String title,
+    String? description,
+    @Default(false) bool isCompleted,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    @JsonKey(name: 'due_date') DateTime? dueDate,
+    @Default(TaskPriority.medium) TaskPriority priority,
+    List<String>? tags,
+  }) = _TaskModel;
+
+  factory TaskModel.fromJson(Map<String, dynamic> json) =>
+      _$TaskModelFromJson(json);
+}
+
+// Entity'ye dönüştürme extension'ı
+extension TaskModelX on TaskModel {
+  Task toEntity() => Task(
+    id: id,
+    title: title,
+    description: description,
+    isCompleted: isCompleted,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    dueDate: dueDate,
+    priority: priority,
+    tags: tags ?? [],
+  );
+}
+
+extension TaskListModelX on List<TaskModel> {
+  List<Task> toEntities() => map((m) => m.toEntity()).toList();
+}
+```
+
+---
+
+## Dio Interceptor'lar
+
+### Cache Interceptor
+```dart
+class CacheInterceptor extends Interceptor {
+  final Box<String> _cacheBox;
+  final Duration _maxAge;
+
+  CacheInterceptor({
+    required Box<String> cacheBox,
+    Duration maxAge = const Duration(minutes: 5),
+  })  : _cacheBox = cacheBox,
+        _maxAge = maxAge;
+
+  String _cacheKey(RequestOptions options) {
+    return '${options.method}:${options.uri}';
+  }
+
   @override
-  void onRequest(
+  Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // Skip auth for public endpoints
-    if (_isPublicEndpoint(options.path)) {
-      return handler.next(options);
+    // Sadece GET isteklerini cache'le
+    if (options.method != 'GET') {
+      handler.next(options);
+      return;
     }
-    
-    final token = await _storage.getAccessToken();
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-    
-    handler.next(options);
-  }
-  
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
-      // Token expired - try refresh
-      final refreshed = await _refreshToken();
-      if (refreshed) {
-        // Retry original request
-        final response = await _retry(err.requestOptions);
-        return handler.resolve(response);
+
+    final key = _cacheKey(options);
+    final cached = _cacheBox.get(key);
+
+    if (cached != null) {
+      final cacheData = jsonDecode(cached) as Map<String, dynamic>;
+      final cachedAt = DateTime.parse(cacheData['cached_at'] as String);
+
+      if (DateTime.now().difference(cachedAt) < _maxAge) {
+        handler.resolve(Response(
+          requestOptions: options,
+          data: cacheData['data'],
+          statusCode: 200,
+        ));
+        return;
       }
     }
-    handler.next(err);
+
+    handler.next(options);
   }
-  
-  bool _isPublicEndpoint(String path) {
-    const publicPaths = ['/auth/login', '/auth/register', '/health'];
-    return publicPaths.any((p) => path.contains(p));
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (response.requestOptions.method == 'GET' &&
+        response.statusCode == 200) {
+      final key = _cacheKey(response.requestOptions);
+      _cacheBox.put(key, jsonEncode({
+        'data': response.data,
+        'cached_at': DateTime.now().toIso8601String(),
+      }));
+    }
+    handler.next(response);
   }
 }
 ```
 
-### 4. Retry Interceptor
-
+### Retry Interceptor
 ```dart
 class RetryInterceptor extends Interceptor {
   final Dio _dio;
-  final int maxRetries;
-  
-  RetryInterceptor(this._dio, {this.maxRetries = 3});
-  
+  final int _maxRetries;
+
+  RetryInterceptor({required Dio dio, int maxRetries = 3})
+      : _dio = dio,
+        _maxRetries = maxRetries;
+
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (_shouldRetry(err)) {
-      final retryCount = err.requestOptions.extra['retryCount'] ?? 0;
-      
-      if (retryCount < maxRetries) {
-        // Exponential backoff
-        await Future.delayed(Duration(seconds: pow(2, retryCount).toInt()));
-        
-        err.requestOptions.extra['retryCount'] = retryCount + 1;
-        
-        try {
-          final response = await _dio.fetch(err.requestOptions);
-          return handler.resolve(response);
-        } catch (e) {
-          return handler.next(err);
-        }
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final retryCount = err.requestOptions.extra['retryCount'] as int? ?? 0;
+
+    if (_shouldRetry(err) && retryCount < _maxRetries) {
+      await Future.delayed(Duration(seconds: math.pow(2, retryCount).toInt()));
+
+      err.requestOptions.extra['retryCount'] = retryCount + 1;
+
+      try {
+        final response = await _dio.fetch(err.requestOptions);
+        handler.resolve(response);
+        return;
+      } catch (e) {
+        // Retry de başarısız olursa devam et
       }
     }
     handler.next(err);
   }
-  
+
   bool _shouldRetry(DioException err) {
     return err.type == DioExceptionType.connectionTimeout ||
-           err.type == DioExceptionType.receiveTimeout ||
-           (err.response?.statusCode ?? 0) >= 500;
+        err.type == DioExceptionType.receiveTimeout ||
+        (err.response?.statusCode ?? 0) >= 500;
   }
 }
 ```
 
 ---
 
-## 🔧 Retrofit Integration
-
-### 1. API Client Definition
+## Repository Pattern (Offline-First)
 
 ```dart
-import 'package:retrofit/retrofit.dart';
-import 'package:dio/dio.dart';
+// lib/features/task/data/repositories/task_repository_impl.dart
+@LazySingleton(as: TaskRepository)
+class TaskRepositoryImpl implements TaskRepository {
+  final TaskApiService _apiService;
+  final TaskLocalDataSource _localDataSource;
+  final NetworkInfo _networkInfo;
 
-part 'api_client.g.dart';
+  const TaskRepositoryImpl({
+    required TaskApiService apiService,
+    required TaskLocalDataSource localDataSource,
+    required NetworkInfo networkInfo,
+  })  : _apiService = apiService,
+        _localDataSource = localDataSource,
+        _networkInfo = networkInfo;
 
-@RestApi()
-abstract class ApiClient {
-  factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
-  
-  // GET
-  @GET('/users')
-  Future<List<UserModel>> getUsers();
-  
-  @GET('/users/{id}')
-  Future<UserModel> getUserById(@Path('id') String id);
-  
-  // POST
-  @POST('/users')
-  Future<UserModel> createUser(@Body() CreateUserRequest request);
-  
-  // PUT
-  @PUT('/users/{id}')
-  Future<UserModel> updateUser(
-    @Path('id') String id,
-    @Body() UpdateUserRequest request,
-  );
-  
-  // DELETE
-  @DELETE('/users/{id}')
-  Future<void> deleteUser(@Path('id') String id);
-  
-  // Query parameters
-  @GET('/tasks')
-  Future<PaginatedResponse<TaskModel>> getTasks(
-    @Query('page') int page,
-    @Query('limit') int limit,
-    @Query('status') String? status,
-  );
-  
-  // Multipart (file upload)
-  @POST('/upload')
-  @MultiPart()
-  Future<UploadResponse> uploadFile(
-    @Part() File file,
-    @Part(name: 'description') String? description,
-  );
-  
-  // Headers
-  @GET('/protected')
-  @Headers({'X-Custom-Header': 'value'})
-  Future<ProtectedData> getProtectedData();
-}
-```
-
-### 2. Request/Response Models
-
-```dart
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'user_model.freezed.dart';
-part 'user_model.g.dart';
-
-@freezed
-class UserModel with _$UserModel {
-  const factory UserModel({
-    required String id,
-    required String name,
-    required String email,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'avatar_url') String? avatarUrl,
-  }) = _UserModel;
-  
-  factory UserModel.fromJson(Map<String, dynamic> json) => 
-      _$UserModelFromJson(json);
-}
-
-@freezed
-class CreateUserRequest with _$CreateUserRequest {
-  const factory CreateUserRequest({
-    required String name,
-    required String email,
-    required String password,
-  }) = _CreateUserRequest;
-  
-  factory CreateUserRequest.fromJson(Map<String, dynamic> json) => 
-      _$CreateUserRequestFromJson(json);
-}
-
-@freezed
-class PaginatedResponse<T> with _$PaginatedResponse<T> {
-  const factory PaginatedResponse({
-    required List<T> data,
-    required int page,
-    @JsonKey(name: 'total_pages') required int totalPages,
-    @JsonKey(name: 'total_items') required int totalItems,
-  }) = _PaginatedResponse<T>;
-  
-  factory PaginatedResponse.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object?) fromJsonT,
-  ) => _$PaginatedResponseFromJson(json, fromJsonT);
-}
-```
-
----
-
-## ⚠️ Error Handling
-
-### 1. Exception Types
-
-```dart
-sealed class AppException implements Exception {
-  final String message;
-  final String? code;
-  
-  const AppException(this.message, {this.code});
-}
-
-class ServerException extends AppException {
-  final int statusCode;
-  
-  const ServerException(super.message, {required this.statusCode, super.code});
-}
-
-class NetworkException extends AppException {
-  const NetworkException([super.message = 'Bağlantı hatası']);
-}
-
-class CacheException extends AppException {
-  const CacheException([super.message = 'Önbellek hatası']);
-}
-
-class UnauthorizedException extends AppException {
-  const UnauthorizedException([super.message = 'Yetkilendirme hatası']);
-}
-```
-
-### 2. Error Interceptor
-
-```dart
-class ErrorInterceptor extends Interceptor {
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    final exception = _mapException(err);
-    handler.reject(DioException(
-      requestOptions: err.requestOptions,
-      error: exception,
-      type: err.type,
-      response: err.response,
-    ));
-  }
-  
-  AppException _mapException(DioException err) {
-    switch (err.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.sendTimeout:
-        return const NetworkException('Bağlantı zaman aşımına uğradı');
-        
-      case DioExceptionType.connectionError:
-        return const NetworkException('İnternet bağlantısı yok');
-        
-      case DioExceptionType.badResponse:
-        return _handleBadResponse(err.response);
-        
-      default:
-        return const AppException('Beklenmeyen hata');
+  Future<Either<Failure, List<Task>>> getTasks({
+    required int page,
+    TaskFilter? filter,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final models = await _apiService.getTasks(
+          page: page,
+          status: filter?.toApiString(),
+        );
+        // Cache'e kaydet
+        if (page == 1) {
+          await _localDataSource.cacheTasks(models);
+        }
+        return Right(models.toEntities());
+      } on DioException catch (e) {
+        return Left(ServerFailure(
+          message: _mapDioError(e),
+          code: e.response?.statusCode,
+        ));
+      }
+    } else {
+      // Offline — cache'ten oku
+      try {
+        final cached = await _localDataSource.getCachedTasks();
+        return Right(cached.toEntities());
+      } catch (_) {
+        return const Left(CacheFailure(
+          message: 'Çevrimdışı ve önbellek boş',
+        ));
+      }
     }
   }
-  
-  AppException _handleBadResponse(Response? response) {
-    final statusCode = response?.statusCode ?? 500;
-    final data = response?.data;
-    
-    final message = data is Map 
-        ? (data['message'] ?? data['error'] ?? 'Sunucu hatası')
-        : 'Sunucu hatası';
-    
-    switch (statusCode) {
-      case 400:
-        return ServerException(message, statusCode: 400, code: 'BAD_REQUEST');
-      case 401:
-        return const UnauthorizedException();
-      case 403:
-        return ServerException('Erişim reddedildi', statusCode: 403);
-      case 404:
-        return ServerException('Kaynak bulunamadı', statusCode: 404);
-      case 422:
-        return ServerException(message, statusCode: 422, code: 'VALIDATION');
-      case 429:
-        return ServerException('Çok fazla istek', statusCode: 429);
-      default:
-        return ServerException(message, statusCode: statusCode);
-    }
+
+  String _mapDioError(DioException e) {
+    if (e is NoInternetConnectionException) return 'İnternet bağlantısı yok';
+    if (e is DeadlineExceededException) return 'İstek zaman aşımına uğradı';
+    if (e is UnauthorizedException) return 'Oturum süresi doldu';
+    if (e is NotFoundException) return 'İçerik bulunamadı';
+    return e.response?.data?['message']?.toString() ?? 'Sunucu hatası';
   }
 }
 ```
 
 ---
 
-## 📡 Connectivity Handling
+## Connectivity Handling
 
 ```dart
-class NetworkInfo {
+// lib/core/network/network_info.dart
+abstract class NetworkInfo {
+  Future<bool> get isConnected;
+  Stream<bool> get onConnectivityChanged;
+}
+
+@LazySingleton(as: NetworkInfo)
+class NetworkInfoImpl implements NetworkInfo {
   final Connectivity _connectivity;
-  
-  NetworkInfo(this._connectivity);
-  
+
+  NetworkInfoImpl(this._connectivity);
+
+  @override
   Future<bool> get isConnected async {
     final result = await _connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    return !result.contains(ConnectivityResult.none);
   }
-  
+
+  @override
   Stream<bool> get onConnectivityChanged {
     return _connectivity.onConnectivityChanged.map(
-      (result) => result != ConnectivityResult.none,
+      (results) => !results.contains(ConnectivityResult.none),
     );
   }
 }
 
-// Repository'de kullanım
-class TaskRepositoryImpl implements TaskRepository {
-  final ApiClient _api;
-  final TaskLocalDataSource _local;
-  final NetworkInfo _networkInfo;
-  
+// UI'da connectivity gösterimi
+class ConnectivityBanner extends StatelessWidget {
+  const ConnectivityBanner({super.key});
+
   @override
-  Future<Either<Failure, List<Task>>> getTasks() async {
-    if (await _networkInfo.isConnected) {
-      try {
-        final response = await _api.getTasks(page: 1, limit: 100);
-        await _local.cacheTasks(response.data);
-        return Right(response.data.map((m) => m.toEntity()).toList());
-      } on AppException catch (e) {
-        return Left(ServerFailure(e.message));
-      }
-    } else {
-      try {
-        final cached = await _local.getCachedTasks();
-        return Right(cached.map((m) => m.toEntity()).toList());
-      } on CacheException {
-        return Left(const CacheFailure('Önbellek boş'));
-      }
-    }
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: getIt<NetworkInfo>().onConnectivityChanged,
+      builder: (context, snapshot) {
+        if (snapshot.data == false) {
+          return MaterialBanner(
+            content: const Text('Çevrimdışı — Veriler eski olabilir'),
+            leading: const Icon(Icons.wifi_off),
+            backgroundColor: context.colorScheme.errorContainer,
+            actions: [
+              TextButton(
+                onPressed: () {},
+                child: const Text('Kapat'),
+              ),
+            ],
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 }
 ```
-
----
-
-## ✅ API Checklist
-
-- [ ] Auth interceptor token refresh var mı?
-- [ ] Retry logic implemented mı?
-- [ ] Error handling comprehensive mı?
-- [ ] Offline fallback var mı?
-- [ ] Request/response logging (debug only)?
-- [ ] Timeout'lar ayarlı mı?
-
----
-
-## 🔗 Related Resources
-
-- [templates/dio_client.dart](templates/dio_client.dart)
-- [templates/retrofit_service.dart](templates/retrofit_service.dart)
-- Grimoire: `backend_scaling.md`

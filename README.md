@@ -1,9 +1,9 @@
-# 🏭 Mega Studio v7.0
+# 🏭 Mega Studio v8.0
 
 > **Flutter için AI-Powered Geliştirme Stüdyosu**
 > 52 Ajan • 19 Skill • 50+ Workflow • Maestro Features
 
-Mega Studio, Antigravity (Gemini CLI) için tasarlanmış kapsamlı bir Flutter geliştirme sistemidir. A'dan Z'ye proje yönetimi, otonom kalite kontrolü ve modüler skill sistemi sunar.
+Mega Studio, Antigravity (Gemini CLI) için tasarlanmış kapsamlı bir Flutter geliştirme sistemidir. A'dan Z'ye proje yönetimi, otonom kalite kontrolü ve modüler skill sistemi sunar. En güncel ana kurallar için lütfen [RULES.md](RULES.md) dosyasına göz atın.
 
 ---
 

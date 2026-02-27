@@ -1,47 +1,34 @@
----
-name: "Security Hardening"
-version: "1.0.0"
-description: "OWASP Mobile Top 10, secure storage, network security, and code obfuscation"
-primary_users:
-  - security-auditor
-  - mobile-developer
-dependencies:
-  - flutter-foundations
-tags:
-  - security
-  - quality
----
+# 🔒 Security Hardening Skill
 
-# 🔒 Security Hardening
-
-## Quick Start
-
-Mobile uygulama güvenliği: veri şifreleme, güvenli depolama, network security ve kod koruması.
-OWASP Mobile Top 10'u referans al.
+> OWASP Mobile Top 10, encryption, obfuscation, certificate pinning
 
 ---
 
-## 📚 OWASP Mobile Top 10 (2024)
+## Güvenlik Kontrol Listesi
 
-| # | Risk | Flutter Çözümü |
-|---|------|----------------|
-| M1 | Improper Credential Usage | flutter_secure_storage |
-| M2 | Inadequate Supply Chain | Dependency scanning |
-| M3 | Insecure Auth/Authorization | JWT + refresh tokens |
-| M4 | Insufficient I/O Validation | Input sanitization |
-| M5 | Insecure Communication | TLS 1.3, cert pinning |
-| M6 | Inadequate Privacy Controls | Data minimization |
-| M7 | Insufficient Binary Protection | Code obfuscation |
-| M8 | Security Misconfiguration | Proper build config |
-| M9 | Insecure Data Storage | Encrypted storage |
-| M10 | Insufficient Cryptography | Strong algorithms |
+### Release Öncesi Zorunlu Kontroller
+- [ ] Tüm API key'leri `--dart-define` ile enjekte ediliyor
+- [ ] `flutter_secure_storage` ile hassas veriler korunuyor
+- [ ] `--obfuscate` flag'i aktif
+- [ ] ProGuard/R8 kuralları tanımlı
+- [ ] Debug log'lar release'de devre dışı
+- [ ] HTTP trafiği sadece HTTPS (cleartext kapalı)
+- [ ] Root/Jailbreak detection var
+- [ ] Screenshot protection (hassas ekranlar)
+- [ ] Certificate pinning aktif
+- [ ] Input validation tüm formlarda var
 
 ---
 
-## 🔐 1. Güvenli Depolama
+## Güvenli Veri Depolama
 
 ```dart
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+/// Veri sınıflandırması ve depolama stratejisi:
+///
+/// HASSAS (token, şifre, kişisel)    → FlutterSecureStorage
+/// NORMAL (tercihler, cache)          → SharedPreferences / Hive
+/// BÜYÜK (veritabanı)                → Drift + SQLCipher
+/// DOSYA (indirilen medya)           → App Documents Directory
 
 class SecureStorageService {
   static const _storage = FlutterSecureStorage(
@@ -52,200 +39,44 @@ class SecureStorageService {
     ),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
+      accountName: 'com.yourapp.secure',
     ),
   );
-  
-  // Token storage
-  static const _accessTokenKey = 'access_token';
-  static const _refreshTokenKey = 'refresh_token';
-  
-  Future<void> saveTokens({
-    required String accessToken,
-    required String refreshToken,
-  }) async {
-    await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
-  }
-  
-  Future<String?> getAccessToken() async {
-    return _storage.read(key: _accessTokenKey);
-  }
-  
-  Future<void> clearTokens() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
-  }
-  
-  // Biometric protected storage
-  Future<void> saveSensitiveData(String key, String value) async {
-    await _storage.write(
-      key: key,
-      value: value,
-      iOptions: IOSOptions(
-        accessibility: KeychainAccessibility.when_passcode_set_this_device_only,
-      ),
-    );
-  }
-}
-```
 
-### Ne nerede saklanmalı?
+  Future<void> saveToken(String token) =>
+      _storage.write(key: 'auth_token', value: token);
 
-| Veri Türü | Depolama | Şifreleme |
-|-----------|----------|-----------|
-| Access Token | SecureStorage | ✅ |
-| Refresh Token | SecureStorage | ✅ |
-| User Preferences | SharedPreferences | ❌ |
-| Cached API Data | Hive/Drift (encrypted) | ✅ |
-| Sensitive User Data | SecureStorage | ✅ |
-| App Settings | SharedPreferences | ❌ |
+  Future<String?> getToken() =>
+      _storage.read(key: 'auth_token');
 
----
+  Future<void> saveRefreshToken(String token) =>
+      _storage.write(key: 'refresh_token', value: token);
 
-## 🌐 2. Network Security
+  Future<String?> getRefreshToken() =>
+      _storage.read(key: 'refresh_token');
 
-### Certificate Pinning
-
-```dart
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'dart:io';
-
-Dio createSecureDio() {
-  final dio = Dio();
-  
-  // Certificate pinning
-  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    final client = HttpClient();
-    client.badCertificateCallback = (cert, host, port) {
-      // Pinned certificate fingerprints
-      const pinnedFingerprints = [
-        'sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
-        'sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=',
-      ];
-      
-      final fingerprint = cert.sha256Fingerprint;
-      return pinnedFingerprints.contains(fingerprint);
-    };
-    return client;
-  };
-  
-  return dio;
-}
-```
-
-### API Security Headers
-
-```dart
-class SecurityInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // Security headers
-    options.headers.addAll({
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-    });
-    
-    // Request signing (optional)
-    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-    final signature = _signRequest(options, timestamp);
-    options.headers['X-Timestamp'] = timestamp;
-    options.headers['X-Signature'] = signature;
-    
-    handler.next(options);
-  }
-  
-  String _signRequest(RequestOptions options, String timestamp) {
-    final payload = '${options.method}|${options.path}|$timestamp';
-    return HmacUtils.sha256(payload, secretKey);
-  }
+  Future<void> clearAll() => _storage.deleteAll();
 }
 ```
 
 ---
 
-## 🔑 3. Authentication Security
-
-### JWT Token Management
+## Root/Jailbreak Detection
 
 ```dart
-class AuthService {
-  final Dio _dio;
-  final SecureStorageService _storage;
-  
-  // Token refresh with retry queue
-  bool _isRefreshing = false;
-  final _refreshQueue = <Completer<String>>[];
-  
-  Future<String?> getValidAccessToken() async {
-    final accessToken = await _storage.getAccessToken();
-    
-    if (accessToken == null) return null;
-    
-    if (_isTokenExpired(accessToken)) {
-      return _refreshToken();
-    }
-    
-    return accessToken;
+import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+
+class DeviceSecurityService {
+  Future<bool> isDeviceCompromised() async {
+    final jailbroken = await FlutterJailbreakDetection.jailbroken;
+    final developerMode = await FlutterJailbreakDetection.developerMode;
+    return jailbroken || developerMode;
   }
-  
-  bool _isTokenExpired(String token) {
-    try {
-      final parts = token.split('.');
-      final payload = json.decode(
-        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
-      );
-      final exp = payload['exp'] as int;
-      final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
-      
-      // 5 dakika buffer
-      return DateTime.now().isAfter(expiry.subtract(Duration(minutes: 5)));
-    } catch (e) {
-      return true;
-    }
-  }
-  
-  Future<String?> _refreshToken() async {
-    if (_isRefreshing) {
-      final completer = Completer<String>();
-      _refreshQueue.add(completer);
-      return completer.future;
-    }
-    
-    _isRefreshing = true;
-    
-    try {
-      final refreshToken = await _storage.getRefreshToken();
-      final response = await _dio.post('/auth/refresh', data: {
-        'refresh_token': refreshToken,
-      });
-      
-      final newAccessToken = response.data['access_token'];
-      final newRefreshToken = response.data['refresh_token'];
-      
-      await _storage.saveTokens(
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      );
-      
-      // Queue'daki bekleyenlere bildir
-      for (final completer in _refreshQueue) {
-        completer.complete(newAccessToken);
-      }
-      _refreshQueue.clear();
-      
-      return newAccessToken;
-    } catch (e) {
-      for (final completer in _refreshQueue) {
-        completer.completeError(e);
-      }
-      _refreshQueue.clear();
-      
-      await _storage.clearTokens();
-      return null;
-    } finally {
-      _isRefreshing = false;
+
+  Future<void> enforceSecurityPolicy() async {
+    if (await isDeviceCompromised()) {
+      // Uyarı göster veya hassas özellikleri devre dışı bırak
+      // Production'da: kritik özellikler kısıtlanır
     }
   }
 }
@@ -253,115 +84,183 @@ class AuthService {
 
 ---
 
-## 🛡️ 4. Input Validation
+## Screenshot ve Screen Recording Koruması
 
 ```dart
-class InputValidator {
-  // SQL Injection prevention
-  static String sanitizeSql(String input) {
-    return input.replaceAll(RegExp(r"['\";]"), '');
+// Android: FLAG_SECURE
+// ios/Runner/AppDelegate.swift içinde:
+/*
+override func applicationWillResignActive(_ application: UIApplication) {
+    let blurEffect = UIBlurEffect(style: .light)
+    let blurView = UIVisualEffectView(effect: blurEffect)
+    blurView.frame = window!.frame
+    blurView.tag = 999
+    window?.addSubview(blurView)
+}
+
+override func applicationDidBecomeActive(_ application: UIApplication) {
+    window?.viewWithTag(999)?.removeFromSuperview()
+}
+*/
+
+// Flutter tarafında MethodChannel ile:
+class ScreenSecurityService {
+  static const _channel = MethodChannel('screen_security');
+
+  static Future<void> enableSecureMode() async {
+    await _channel.invokeMethod('enableSecure');
   }
-  
-  // XSS prevention
-  static String sanitizeHtml(String input) {
-    return input
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#x27;');
-  }
-  
-  // Email validation
-  static bool isValidEmail(String email) {
-    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return regex.hasMatch(email);
-  }
-  
-  // Phone validation (Turkey)
-  static bool isValidTurkishPhone(String phone) {
-    final cleaned = phone.replaceAll(RegExp(r'[^\d]'), '');
-    return RegExp(r'^(90)?5\d{9}$').hasMatch(cleaned);
-  }
-  
-  // Password strength
-  static PasswordStrength checkPasswordStrength(String password) {
-    if (password.length < 8) return PasswordStrength.weak;
-    
-    int score = 0;
-    if (password.contains(RegExp(r'[a-z]'))) score++;
-    if (password.contains(RegExp(r'[A-Z]'))) score++;
-    if (password.contains(RegExp(r'[0-9]'))) score++;
-    if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) score++;
-    if (password.length >= 12) score++;
-    
-    if (score <= 2) return PasswordStrength.weak;
-    if (score <= 3) return PasswordStrength.medium;
-    return PasswordStrength.strong;
+
+  static Future<void> disableSecureMode() async {
+    await _channel.invokeMethod('disableSecure');
   }
 }
 ```
 
 ---
 
-## 🔧 5. Code Obfuscation
+## API Key Güvenliği
 
-```bash
-# Android - build.gradle (app)
-android {
-    buildTypes {
-        release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
+```dart
+// ❌ ASLA — Koda gömme
+const apiKey = 'sk-1234567890abcdef';
+
+// ✅ DOĞRU — Compile-time injection
+class ApiConfig {
+  static const baseUrl = String.fromEnvironment('BASE_URL');
+  static const apiKey = String.fromEnvironment('API_KEY');
+  static const sentryDsn = String.fromEnvironment('SENTRY_DSN');
 }
 
-# Flutter build with obfuscation
-flutter build apk --release --obfuscate --split-debug-info=./debug-info
-
-flutter build appbundle --release --obfuscate --split-debug-info=./debug-info
+// Build komutu:
+// flutter build apk --dart-define=API_KEY=sk-1234 --dart-define=BASE_URL=https://api.app.com
 ```
 
-```pro
-# proguard-rules.pro
+---
+
+## Android Güvenlik Konfigürasyonu
+
+### network_security_config.xml
+```xml
+<!-- android/app/src/main/res/xml/network_security_config.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Cleartext (HTTP) trafiğini engelle -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <!-- Debug build için localhost izni -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user"/>
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>
+```
+
+### AndroidManifest.xml
+```xml
+<application
+    android:networkSecurityConfig="@xml/network_security_config"
+    android:allowBackup="false"
+    android:fullBackupContent="false"
+    ...>
+```
+
+### ProGuard Kuralları
+```
+# android/app/proguard-rules.pro
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# Flutter
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.** { *; }
+-keep class io.flutter.util.** { *; }
+-keep class io.flutter.view.** { *; }
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
--dontwarn io.flutter.embedding.**
+
+# Firebase
+-keep class com.google.firebase.** { *; }
+
+# Retrofit
+-keepattributes Signature
+-keepattributes Exceptions
 ```
 
 ---
 
-## ✅ Security Checklist
+## iOS Güvenlik Konfigürasyonu
 
-### Data Storage
-- [ ] Sensitive data SecureStorage'da mı?
-- [ ] Database encrypted mı?
-- [ ] Logs'ta sensitive data yok mu?
-- [ ] Clipboard temizleniyor mu?
+### Info.plist
+```xml
+<!-- App Transport Security -->
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <false/>
+    <!-- Sadece gerekli domain'lere izin ver -->
+    <key>NSExceptionDomains</key>
+    <dict>
+        <key>api.yourapp.com</key>
+        <dict>
+            <key>NSExceptionRequiresForwardSecrecy</key>
+            <true/>
+            <key>NSExceptionMinimumTLSVersion</key>
+            <string>TLSv1.2</string>
+        </dict>
+    </dict>
+</dict>
 
-### Network
-- [ ] TLS 1.2+ kullanılıyor mu?
-- [ ] Certificate pinning aktif mi?
-- [ ] API keys hardcoded değil mi?
-- [ ] Request/response logging production'da kapalı mı?
-
-### Authentication
-- [ ] Token secure storage'da mı?
-- [ ] Refresh token rotation var mı?
-- [ ] Session timeout var mı?
-- [ ] Biometric auth available mı?
-
-### Code
-- [ ] Obfuscation aktif mi?
-- [ ] Debug info ayrı mı?
-- [ ] Jailbreak/root detection var mı?
+<!-- Clipboard erişimi açıklaması -->
+<key>NSPasteboardUsageDescription</key>
+<string>Kopyalanan içeriği yapıştırmak için</string>
+```
 
 ---
 
-## 🔗 Related Resources
+## Güvenli Logging
 
-- [checklists/owasp_mobile.md](checklists/owasp_mobile.md)
-- [checklists/data_protection.md](checklists/data_protection.md)
-- Grimoire: `store_compliance.md`
+```dart
+// lib/core/utils/secure_logger.dart
+import 'package:logger/logger.dart';
+
+class SecureLogger {
+  static final _logger = Logger(
+    filter: _SecureFilter(),
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      lineLength: 80,
+    ),
+  );
+
+  static void d(String message) => _logger.d(message);
+  static void i(String message) => _logger.i(message);
+  static void w(String message) => _logger.w(message);
+  static void e(String message, [Object? error, StackTrace? stackTrace]) =>
+      _logger.e(message, error: error, stackTrace: stackTrace);
+
+  /// Hassas verileri maskele
+  static String mask(String value) {
+    if (value.length <= 4) return '****';
+    return '${'*' * (value.length - 4)}${value.substring(value.length - 4)}';
+  }
+}
+
+class _SecureFilter extends LogFilter {
+  @override
+  bool shouldLog(LogEvent event) {
+    // Release modda sadece error ve warning logla
+    if (kReleaseMode) {
+      return event.level.index >= Level.warning.index;
+    }
+    return true;
+  }
+}
+```

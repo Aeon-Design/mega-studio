@@ -1,6 +1,6 @@
 ﻿{
     "version":  "1.0.0",
-    "last_updated":  "2026-01-25",
+    "last_updated":  "2026-02-12",
     "agents":  [
                    {
                        "id":  "ceo",
@@ -359,7 +359,8 @@
                        "capabilities":  [
                                             "keyword-optimization",
                                             "store-listing",
-                                            "conversion"
+                                            "conversion",
+                                            "store-publishing"
                                         ],
                        "domains":  [
                                        "aso",
@@ -432,7 +433,8 @@
                                             "rejection-handling",
                                             "production-readiness",
                                             "app-config",
-                                            "release-notes"
+                                            "release-notes",
+                                            "store-publishing"
                                         ],
                        "domains":  [
                                        "release",
